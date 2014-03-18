@@ -1,4 +1,7 @@
-﻿namespace SpacePewPew
+﻿using System.Collections.Generic;
+using SpacePewPew.Ships;
+
+namespace SpacePewPew
 {
     class Game
     {
@@ -15,5 +18,8 @@
             return _instance ?? (_instance = new Game());
         }
         #endregion
+
+        private Map _map;
+        private List<Ship> _ships;
     }
 }
