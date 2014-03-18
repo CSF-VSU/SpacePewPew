@@ -28,20 +28,41 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.OGL = new Tao.Platform.Windows.SimpleOpenGlControl();
             this.SuspendLayout();
             // 
-            // Form1
+            // OGL
+            // 
+            this.OGL.AccumBits = ((byte)(0));
+            this.OGL.AutoCheckErrors = false;
+            this.OGL.AutoFinish = false;
+            this.OGL.AutoMakeCurrent = true;
+            this.OGL.AutoSwapBuffers = true;
+            this.OGL.BackColor = System.Drawing.Color.Black;
+            this.OGL.ColorBits = ((byte)(32));
+            this.OGL.DepthBits = ((byte)(16));
+            this.OGL.Location = new System.Drawing.Point(12, 12);
+            this.OGL.Name = "OGL";
+            this.OGL.Size = new System.Drawing.Size(374, 273);
+            this.OGL.StencilBits = ((byte)(0));
+            this.OGL.TabIndex = 0;
+            // 
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(398, 297);
-            this.Name = "Form1";
+            this.Controls.Add(this.OGL);
+            this.Name = "MainForm";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private Tao.Platform.Windows.SimpleOpenGlControl OGL;
     }
 }
 
