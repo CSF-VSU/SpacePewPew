@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
-using SpacePewPew.Ships;
+using System.Drawing;
+using SpacePewPew.UI;
 
 namespace SpacePewPew
 {
     public class GameState
     {
-         
+        public bool Paused { get; set; }
     }
 
     public class Memento
@@ -25,6 +26,7 @@ namespace SpacePewPew
 
         protected Game()
         {
+            _isResponding = true;
         }
 
         public static Game Instance()
@@ -34,12 +36,16 @@ namespace SpacePewPew
         #endregion
 
         #region Declarations
+
+        private bool _isResponding; // обрабатывать ли действия пользователя, если, скажем, уже юнит передвигается
+
+        private LayotManager _layotManager;
         private Map _map;
-        private List<Ship> _ships;
+        
         #endregion
         
-        #region
-        private GameState GameState { get; set; }
+        #region Memento
+        public GameState GameState { get; set; }
 
         public Memento CreateMemento()
         {
@@ -59,5 +65,24 @@ namespace SpacePewPew
         }
         #endregion
 
+        #region Controlling
+
+        public void MouseClick(Point p)
+        {
+            if (_layotManager.IsOverButton(p))
+            {
+                // нажатие на кнопку
+                return;
+            }
+            _map.Click(p);
+        }
+
+        public void MouseMove(Point p)
+        {
+            //..
+        }
+        #endregion
+
+        
     }
 }

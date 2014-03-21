@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 using Tao.FreeGlut;
 using Tao.OpenGl;
@@ -8,12 +10,14 @@ namespace SpacePewPew
     public partial class MainForm : Form
     {
         internal Game SpacePew;
+        internal Drawer OglDrawer;
 
         public MainForm()
         {
             InitializeComponent();
             OGL.InitializeContexts();
             SpacePew = Game.Instance();
+            OglDrawer = Drawer.Instance();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -42,5 +46,24 @@ namespace SpacePewPew
             Gl.glMatrixMode(Gl.GL_MODELVIEW);
             Gl.glLoadIdentity();
         }
+
+        private void MainForm_MouseDown(object sender, MouseEventArgs e)
+        {
+            SpacePew.MouseClick(new Point(e.X, e.Y));
+        }
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            OglDrawer.Draw(SpacePew.GameState);
+        }
+
+        private void MainForm_MouseMove(object sender, MouseEventArgs e)
+        {
+            //дергать не каждый раз
+        }
+
+        // log 4 net
+
+
     }
 }

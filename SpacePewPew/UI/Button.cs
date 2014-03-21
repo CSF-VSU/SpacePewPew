@@ -4,13 +4,7 @@ namespace SpacePewPew.UI
 {
     class Button : IUiElement
     {
-        // BMP back;
         // string caption; etc.
-
-        public void Draw()
-        {
-            //
-        }
 
         public Point Position { get; set; }
 
