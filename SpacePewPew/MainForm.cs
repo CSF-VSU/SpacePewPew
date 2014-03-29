@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
-using System.Threading;
 using System.Windows.Forms;
+using SpacePewPew.UI;
 using Tao.FreeGlut;
 using Tao.OpenGl;
 
@@ -11,11 +11,13 @@ namespace SpacePewPew
     {
         internal Game SpacePew;
         internal Drawer OglDrawer;
+        internal LayoutManager LayoutManager;
 
         public MainForm()
         {
             InitializeComponent();
             OGL.InitializeContexts();
+
             SpacePew = Game.Instance();
             OglDrawer = Drawer.Instance();
         }
@@ -49,6 +51,8 @@ namespace SpacePewPew
 
         private void MainForm_MouseDown(object sender, MouseEventArgs e)
         {
+            //чекнуть, не попал ли в лэйаут-элемент, ЭЛС
+
             SpacePew.MouseClick(new Point(e.X, e.Y));
         }
 

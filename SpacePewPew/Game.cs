@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using SpacePewPew.UI;
+using SpacePewPew.FactoryMethod;
+using SpacePewPew.GameObjects;
 
 namespace SpacePewPew
 {
@@ -26,7 +27,8 @@ namespace SpacePewPew
 
         protected Game()
         {
-            _isResponding = true;
+            _factory = new Factory();
+            _map = new Map();
         }
 
         public static Game Instance()
@@ -37,9 +39,8 @@ namespace SpacePewPew
 
         #region Declarations
 
-        private bool _isResponding; // обрабатывать ли действия пользователя, если, скажем, уже юнит передвигается
-
-        private LayotManager _layotManager;
+        //private bool _isResponding; // обрабатывать ли действия пользователя, если, скажем, уже юнит передвигается
+        private Factory _factory;
         private Map _map;
         
         #endregion
@@ -69,11 +70,6 @@ namespace SpacePewPew
 
         public void MouseClick(Point p)
         {
-            if (_layotManager.IsOverButton(p))
-            {
-                // нажатие на кнопку
-                return;
-            }
             _map.Click(p);
         }
 

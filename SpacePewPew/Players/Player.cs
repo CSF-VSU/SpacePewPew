@@ -11,6 +11,6 @@
         public int UnitCount { get; set; }
         public int StationCount { get; set; }
 
-        public abstract void MakeTurn(ref bool keyboardEnabled);
+
     }
 }

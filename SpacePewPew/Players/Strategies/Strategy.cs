@@ -2,6 +2,6 @@
 {
     public abstract class Strategy
     {
-
+        public abstract Decision MakeDecision();
     }
 }
