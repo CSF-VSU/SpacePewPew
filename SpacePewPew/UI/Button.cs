@@ -4,8 +4,6 @@ namespace SpacePewPew.UI
 {
     class Button : IUiElement
     {
-        // string caption; etc.
-
         public Point Position { get; set; }
 
         public bool Enabled { get; set; }

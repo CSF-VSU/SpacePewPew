@@ -11,13 +11,12 @@
 
     public enum ScreenType
     {
-        None, 
+        None,
         MainMenu,
         GameMenu,
         Pause,
         Options
     }
-
 
     /// <summary>
     /// Стадия хода юнита
