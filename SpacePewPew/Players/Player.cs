@@ -1,6 +1,6 @@
 ﻿using SpacePewPew.Players.Strategies;
 
-namespace SpacePewPew.Players
+﻿namespace SpacePewPew.Players
 {
     public class Player
     {

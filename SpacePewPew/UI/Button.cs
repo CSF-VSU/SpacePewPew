@@ -2,16 +2,30 @@
 
 namespace SpacePewPew.UI
 {
-    class Button : IUiElement
+    public delegate void EventHandler();
+
+    public class GameButton : IUiElement
     {
-        public Point Position { get; set; }
+        public PointF Position { get; set; }
+
+        public GameButton(PointF pos)
+        {
+            Position = pos;
+        }
 
         public bool Enabled { get; set; }
         public bool Transparent { get; set; }
+        
+        public event EventHandler OnClick;
 
         public void AddListener(/* some delegate to connect with */)
         {
-            //
+            
+        }
+
+        public void InvokeOnClick()
+        {
+            OnClick.Invoke();
         }
     }
 }

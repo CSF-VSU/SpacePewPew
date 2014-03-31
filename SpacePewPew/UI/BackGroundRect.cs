@@ -9,13 +9,12 @@ namespace SpacePewPew.UI
             //
         }
 
-        public Point Position
+
+        public PointF Position
         {
-            get { return new Point(); }
-            set
-            {
-                //
-            }
+            get;
+            set;
+ 
         }
     }
 }

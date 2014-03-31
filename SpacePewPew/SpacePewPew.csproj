@@ -84,7 +84,6 @@
     <Compile Include="UI\LayoutManager.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="UI\Button.cs" />
-    <Compile Include="UI\DropButton.cs" />
     <Compile Include="UI\IUiElement.cs" />
     <Compile Include="UI\BackGroundRect.cs" />
     <EmbeddedResource Include="MainForm.resx">

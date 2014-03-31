@@ -4,6 +4,6 @@ namespace SpacePewPew.UI
 {
     public interface IUiElement
     {
-        Point Position { get; set; }
+        PointF Position { get; set; }
     }
 }

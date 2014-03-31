@@ -25,13 +25,17 @@ namespace SpacePewPew
     {
         #region Singleton pattern
         private static Game _instance;
+        public ScreenType GameScreen;
 
         protected Game()
         {
             _factory = new Factory();
             _map = new Map();
+
             _players = new List<Player>(1) {new Player(PlayerColor.Red)};
             _isResponding = true;
+
+            GameScreen = ScreenType.GameMenu;
         }
 
         public static Game Instance()
@@ -39,7 +43,6 @@ namespace SpacePewPew
             return _instance ?? (_instance = new Game());
         }
         #endregion
-
 
         #region Declarations
 

@@ -1,5 +1,10 @@
-﻿namespace SpacePewPew
+using System.Drawing;
+
+namespace SpacePewPew
 {
+    public delegate void ButtonDrawDelegate(PointF position);
+
+
     public enum Race
     {
         Race1,
@@ -44,5 +49,13 @@
         Blue,
         Green,
         Orange
+    }
+
+    public static class Additional
+    {
+        public static PointF NewPoint(PointF pos)  //конвертирование координат
+        {
+            return new PointF(pos.X / Consts.OGL_WIDTH * Consts.RIGHT, pos.Y / Consts.OGL_HEIGHT * 100);
+        }
     }
 }

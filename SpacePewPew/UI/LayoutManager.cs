@@ -1,22 +1,60 @@
 ﻿using System.Drawing;
+using System.Collections.Generic;
+using System.Linq;
+
 
 namespace SpacePewPew.UI
 {
     public class LayoutManager
     {
-        public LayoutManager(ScreenType screenType)
+        private Dictionary<string, GameButton> _buttons;
+        public Dictionary<string, GameButton> Buttons
         {
-            switch (screenType)
+            get 
             {
-                case ScreenType.GameMenu: 
-                    break;
-                default: break;
+                return _buttons;
+            }
+            set
+            {
+                _buttons = value;
             }
         }
 
-        public bool IsOverButton(Point x)
+        public void AddListener(string id, EventHandler eh)
         {
-            return false;
+            Buttons[id].OnClick += eh;
+        }
+
+        public LayoutManager(ScreenType screenType)
+        {
+            Buttons = new Dictionary<string, GameButton>();
+            switch (screenType)
+            {
+                case ScreenType.GameMenu:
+                    {
+                        Buttons.Add("Exit", new GameButton(new PointF(157,90)));  //выход
+                        AddListener("Exit", () => { MainForm.ActiveForm.Close(); });
+                       
+
+                        Buttons.Add("New Game", new GameButton(new PointF(157, 50)));
+                        AddListener("New Game", () => { System.Windows.Forms.MessageBox.Show("Карта из шестигранников типа"); });
+                        break;
+                    }
+            }
+        }
+
+
+        public bool OnClick(PointF pos)
+        {
+            var result = false;
+            foreach (var btn in Buttons.Where(btn => (pos.X > btn.Value.Position.X) && (pos.X < btn.Value.Position.X + Consts.BUTTON_WIDTH) &&
+                                                     (pos.Y > btn.Value.Position.Y) && (pos.Y < btn.Value.Position.Y + Consts.BUTTON_HEIGHT)))
+            {
+                btn.Value.InvokeOnClick();
+                result = true;
+                break;
+            }
+            return result;
         }
     }
 }

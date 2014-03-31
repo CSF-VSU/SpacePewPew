@@ -13,47 +13,35 @@ namespace SpacePewPew
         internal Drawer OglDrawer;
         internal LayoutManager LayoutManager;
 
+        public ButtonDrawDelegate DrawButton;
+
         public MainForm()
-        {
+        { 
             InitializeComponent();
             OGL.InitializeContexts();
-
-            SpacePew = Game.Instance();
-            OglDrawer = Drawer.Instance();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
-        {
+        { 
             Glut.glutInit();
             Glut.glutInitDisplayMode(Glut.GLUT_RGB | Glut.GLUT_DOUBLE | Glut.GLUT_DEPTH);
 
-            Gl.glClearColor(255, 255, 255, 1);
+            Gl.glClearColor(0.8f, 0.8f, 0.8f, 1);
 
             Gl.glViewport(0, 0, OGL.Width, OGL.Height);
 
             Gl.glMatrixMode(Gl.GL_PROJECTION);
             Gl.glLoadIdentity();
 
-            if (OGL.Width <= (float)OGL.Height)
-            {
-                Glu.gluOrtho2D(0.0, 30.0 * OGL.Height / OGL.Width, 0.0, 30.0);
-            }
-            else
-            {
-                var right = 30 * (float)OGL.Width / OGL.Height;
-                //             left,right,bottom,top;
-                Glu.gluOrtho2D(0.0, right, 0.0, 30.0);
-            }
+            Glu.gluOrtho2D(0.0, Consts.RIGHT, 100.0, 0.0);
 
             Gl.glMatrixMode(Gl.GL_MODELVIEW);
             Gl.glLoadIdentity();
-        }
+            Gl.glClear(Gl.GL_COLOR_BUFFER_BIT);
 
-        private void MainForm_MouseDown(object sender, MouseEventArgs e)
-        {
-            //чекнуть, не попал ли в лэйаут-элемент, ЭЛС
-
-            SpacePew.MouseClick(new Point(e.X, e.Y));
+            SpacePew = Game.Instance();
+            OglDrawer = Drawer.Instance(DB);
+            LayoutManager = new LayoutManager(SpacePew.GameScreen);
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -66,8 +54,36 @@ namespace SpacePewPew
             //дергать не каждый раз
         }
 
-        // log 4 net
+        private void OGL_MouseClick(object sender, MouseEventArgs e)
+        { 
+            
+            if (e.Button == MouseButtons.Left)
+            {
+                SpacePew.MouseClick(new Point(e.X, e.Y));
+                LayoutManager.OnClick(Additional.NewPoint(new PointF(e.X, e.Y)));
+                Gl.glClear(Gl.GL_COLOR_BUFFER_BIT);
+
+            }   
+        }
 
 
+        #region DrawingStuff
+        private void DB(PointF pos) //рисовка кнопки
+        {
+            Gl.glColor3f(0, 0, 0);
+
+            Gl.glBegin(Gl.GL_POLYGON);
+           //  var tmp = new Additional
+            Gl.glVertex2d(pos.X, pos.Y);
+            Gl.glVertex2d(pos.X + Consts.BUTTON_WIDTH, pos.Y);
+            Gl.glVertex2d(pos.X + Consts.BUTTON_WIDTH, pos.Y + Consts.BUTTON_HEIGHT);
+            Gl.glVertex2d(pos.X, pos.Y + Consts.BUTTON_HEIGHT);
+            Gl.glEnd();
+
+            Gl.glFlush();
+            OGL.Invalidate();
+        }
+
+        #endregion
     }
 }
