@@ -11,12 +11,18 @@ namespace SpacePewPew.FactoryMethod
             public string Name { get; set; }
         }
 
-        public Dictionary<string, FactoryItem[]> Builder { get; set; }
+        public Dictionary<Race, FactoryItem[]> Builder { get; set; }
 
         public Factory()
         {
-            Builder = new Dictionary<string, FactoryItem[]>();
-            // info
+            Builder = new Dictionary<Race, FactoryItem[]> {{Race.Race1, new FactoryItem[2]}};
+            Builder[Race.Race1][0].Creator = new BattleShipCreator();
+            Builder[Race.Race1][0].Cost = 25;
+            Builder[Race.Race1][0].Name = "BattleShip";
+
+            Builder[Race.Race1][0].Creator = new AnotherBalleShipCreator();
+            Builder[Race.Race1][0].Cost = 30;
+            Builder[Race.Race1][0].Name = "AnotherBattleShip";
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Drawing;
 using SpacePewPew.FactoryMethod;
 using SpacePewPew.GameObjects;
+using SpacePewPew.Players;
 
 namespace SpacePewPew
 {
@@ -29,6 +30,8 @@ namespace SpacePewPew
         {
             _factory = new Factory();
             _map = new Map();
+            _players = new List<Player>(1) {new Player(PlayerColor.Red)};
+            _isResponding = true;
         }
 
         public static Game Instance()
@@ -37,12 +40,14 @@ namespace SpacePewPew
         }
         #endregion
 
+
         #region Declarations
 
-        //private bool _isResponding; // обрабатывать ли действия пользователя, если, скажем, уже юнит передвигается
+        private bool _isResponding;
         private Factory _factory;
         private Map _map;
-        
+        private List<Player> _players;
+
         #endregion
         
         #region Memento
@@ -78,7 +83,5 @@ namespace SpacePewPew
             //..
         }
         #endregion
-
-        
     }
 }

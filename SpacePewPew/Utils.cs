@@ -1,5 +1,11 @@
 ﻿namespace SpacePewPew
 {
+    public enum Race
+    {
+        Race1,
+        Race2
+    } 
+
     public enum DecisionType
     {
         None,

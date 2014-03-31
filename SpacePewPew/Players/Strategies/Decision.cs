@@ -7,7 +7,6 @@ namespace SpacePewPew.Players.Strategies
         public DecisionType DecisionType { get; set; }
         public Point PointA { get; set; }
         public Point PointB { get; set; }
-        public int choejlagn { get; set; }
-
+        public int ShipIndex { get; set; }
     }
 }
