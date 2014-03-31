@@ -21,6 +21,7 @@ namespace SpacePewPew
 
         private void MainForm_Load(object sender, EventArgs e)
         { 
+            //хуец
             Glut.glutInit();
             Glut.glutInitDisplayMode(Glut.GLUT_RGB | Glut.GLUT_DOUBLE | Glut.GLUT_DEPTH);
 

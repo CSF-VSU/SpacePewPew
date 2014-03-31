@@ -6,3 +6,5 @@ C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePe
 C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.exe
 C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.pdb
 C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.csprojResolveAssemblyReference.cache
+C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.exe
+C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.pdb
