@@ -1,38 +1,33 @@
 ﻿using System.Drawing;
+﻿using SpacePewPew.UI;
 
 namespace SpacePewPew
 {
     public class Drawer
     {
+        public DrawDelegate drawButton;
+
         #region Singleton pattern
         private static Drawer _instance;
 
-        protected Drawer(ButtonDrawDelegate DB)
+        protected Drawer(DrawDelegate DB)
         {
             drawButton = DB;
-            DrawButton(new PointF(157, 90));
-            DrawButton(new PointF(157, 50));
         }
 
-        
-
-        public static Drawer Instance(ButtonDrawDelegate DB)
+        public static Drawer Instance(DrawDelegate DB)
         {
             return _instance ?? (_instance = new Drawer(DB));
         }
         #endregion
 
-        public void Redraw()
+        public void Draw(GameState gameState, LayoutManager manager)
         {
-            //
+            foreach (var button in manager.Buttons.Values)
+            {
+                DrawButton(button.Position);
+            }
         }
-
-        public ButtonDrawDelegate drawButton;
-
-        public void Draw(GameState gameState)
-        {
-            // do all drawing
-        } 
 
         public void DrawButton(PointF pos)
         {

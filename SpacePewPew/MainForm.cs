@@ -13,8 +13,6 @@ namespace SpacePewPew
         internal Drawer OglDrawer;
         internal LayoutManager LayoutManager;
 
-        public ButtonDrawDelegate DrawButton;
-
         public MainForm()
         { 
             InitializeComponent();
@@ -44,11 +42,6 @@ namespace SpacePewPew
             LayoutManager = new LayoutManager(SpacePew.GameScreen);
         }
 
-        private void timer_Tick(object sender, EventArgs e)
-        {
-            OglDrawer.Draw(SpacePew.GameState);
-        }
-
         private void MainForm_MouseMove(object sender, MouseEventArgs e)
         {
             //дергать не каждый раз
@@ -62,7 +55,6 @@ namespace SpacePewPew
                 SpacePew.MouseClick(new Point(e.X, e.Y));
                 LayoutManager.OnClick(Additional.NewPoint(new PointF(e.X, e.Y)));
                 Gl.glClear(Gl.GL_COLOR_BUFFER_BIT);
-
             }   
         }
 
@@ -73,17 +65,20 @@ namespace SpacePewPew
             Gl.glColor3f(0, 0, 0);
 
             Gl.glBegin(Gl.GL_POLYGON);
-           //  var tmp = new Additional
             Gl.glVertex2d(pos.X, pos.Y);
             Gl.glVertex2d(pos.X + Consts.BUTTON_WIDTH, pos.Y);
             Gl.glVertex2d(pos.X + Consts.BUTTON_WIDTH, pos.Y + Consts.BUTTON_HEIGHT);
             Gl.glVertex2d(pos.X, pos.Y + Consts.BUTTON_HEIGHT);
             Gl.glEnd();
-
             Gl.glFlush();
             OGL.Invalidate();
         }
-
         #endregion
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            Gl.glClear(Gl.GL_COLOR_BUFFER_BIT);
+            OglDrawer.Draw(SpacePew.GameState, LayoutManager);
+        }
     }
 }

@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.OGL = new Tao.Platform.Windows.SimpleOpenGlControl();
-            this.timer = new System.Windows.Forms.Timer(this.components);
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // OGL
@@ -43,21 +43,18 @@
             this.OGL.BackColor = System.Drawing.Color.Black;
             this.OGL.ColorBits = ((byte)(32));
             this.OGL.DepthBits = ((byte)(16));
-
             this.OGL.Location = new System.Drawing.Point(2, -3);
-
             this.OGL.Name = "OGL";
             this.OGL.Size = new System.Drawing.Size(830, 460);
             this.OGL.StencilBits = ((byte)(0));
             this.OGL.TabIndex = 0;
-
             this.OGL.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OGL_MouseClick);
-
             // 
-            // timer
+            // timer1
             // 
-            this.timer.Interval = 10;
-            this.timer.Tick += new System.EventHandler(this.timer_Tick);
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 10;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // MainForm
             // 
@@ -68,8 +65,6 @@
             this.Name = "MainForm";
             this.Text = "MainForm";
             this.Load += new System.EventHandler(this.MainForm_Load);
-
-
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseMove);
             this.ResumeLayout(false);
 
@@ -79,6 +74,7 @@
 
         private Tao.Platform.Windows.SimpleOpenGlControl OGL;
         private System.Windows.Forms.Timer timer;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

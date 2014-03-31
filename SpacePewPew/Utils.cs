@@ -2,8 +2,7 @@ using System.Drawing;
 
 namespace SpacePewPew
 {
-    public delegate void ButtonDrawDelegate(PointF position);
-
+    public delegate void DrawDelegate(PointF position);
 
     public enum Race
     {

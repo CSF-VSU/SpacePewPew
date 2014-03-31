@@ -18,14 +18,9 @@ namespace SpacePewPew.UI
         
         public event EventHandler OnClick;
 
-        public void AddListener(/* some delegate to connect with */)
-        {
-            
-        }
-
         public void InvokeOnClick()
         {
-            OnClick.Invoke();
+            OnClick();
         }
     }
 }
