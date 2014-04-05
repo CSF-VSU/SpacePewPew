@@ -2,13 +2,13 @@ using System.Drawing;
 
 namespace SpacePewPew
 {
-    public delegate void DrawDelegate(PointF position);
-
-    public enum Race
+    public enum RaceName
     {
-        Race1,
-        Race2
-    } 
+        Human,
+        Dentelian,
+        Swarm,
+        Kronolian
+    }
 
     public enum DecisionType
     {
@@ -28,9 +28,6 @@ namespace SpacePewPew
         Options
     }
 
-    /// <summary>
-    /// Стадия хода юнита
-    /// </summary>
     public enum TurnState
     {
         Ready,
@@ -38,9 +35,6 @@ namespace SpacePewPew
         Finished
     }
 
-    /// <summary>
-    /// Цвет игрока
-    /// </summary>
     public enum PlayerColor
     {
         None,
@@ -54,7 +48,7 @@ namespace SpacePewPew
     {
         public static PointF NewPoint(PointF pos)  //конвертирование координат
         {
-            return new PointF(pos.X / Consts.OGL_WIDTH * Consts.RIGHT, pos.Y / Consts.OGL_HEIGHT * 100);
+            return new PointF(pos.X / Consts.OGL_WIDTH * Consts.RIGHT, pos.Y / Consts.OGL_HEIGHT * Consts.MAP_HEIGHT);
         }
     }
 }

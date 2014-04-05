@@ -1,6 +1,8 @@
-﻿namespace SpacePewPew.GameObjects.MapObjects
+﻿using System.Drawing;
+
+namespace SpacePewPew.GameObjects.MapObjects
 {
-    class Mine : Obstacle
+    class Mine : IObstacle
     {
         public int Income { get; set; }
         public int RechargeTime { get; set; }
@@ -14,5 +16,7 @@
             RechargeTime = 5;
             CoolDown = 0;
         }
+
+        
     }
 }

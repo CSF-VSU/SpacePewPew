@@ -20,7 +20,7 @@ namespace SpacePewPew.UI
 
         public void InvokeOnClick()
         {
-            OnClick();
+            OnClick.Invoke();
         }
     }
 }

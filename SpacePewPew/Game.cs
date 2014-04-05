@@ -24,13 +24,19 @@ namespace SpacePewPew
     public class Game
     {
         #region Singleton pattern
+
         private static Game _instance;
         public ScreenType GameScreen;
 
         protected Game()
         {
-            _factory = new Factory();
             _map = new Map();
+
+            _races = new Dictionary<RaceName, Race>();
+            _races[RaceName.Human] = new Race(RaceName.Human);
+            _races[RaceName.Swarm] = new Race(RaceName.Swarm);
+            _races[RaceName.Dentelian] = new Race(RaceName.Dentelian);
+            _races[RaceName.Kronolian] = new Race(RaceName.Kronolian);
 
             _players = new List<Player>(1) {new Player(PlayerColor.Red)};
             _isResponding = true;
@@ -47,9 +53,9 @@ namespace SpacePewPew
         #region Declarations
 
         private bool _isResponding;
-        private Factory _factory;
         private Map _map;
         private List<Player> _players;
+        private Dictionary<RaceName, Race> _races; 
 
         #endregion
         

@@ -1,6 +1,8 @@
-﻿namespace SpacePewPew.GameObjects.MapObjects
+﻿using System.Drawing;
+
+namespace SpacePewPew.GameObjects.MapObjects
 {
-    public class Planet : Obstacle
+    public class Planet : IObstacle
     {
         public string Name { get; set; }
 
@@ -10,7 +12,5 @@
             IsDestructable = false;
             IsPassable = false;
         }
-
-
     }
 }

@@ -1,16 +1,22 @@
-﻿namespace SpacePewPew.GameObjects.MapObjects
+﻿using System.Drawing;
+
+namespace SpacePewPew.GameObjects.MapObjects
 {
-    class Station : Obstacle
+    class Station : IObstacle
     {
         public PlayerColor OwnerColor { get; set; }
         public int Income { get; set; }
 
-        public Station()
+        protected Station()
         {
             IsPassable = true;
             IsDestructable = false;
-            OwnerColor = PlayerColor.None;
             Income = 5;
+        }
+
+        public Station(PlayerColor color) : this()
+        {
+            OwnerColor = color;
         }
 
         public void Capture(PlayerColor color)

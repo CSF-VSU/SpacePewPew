@@ -17,7 +17,7 @@
 
         public Strategy Strategy;
 
-        public Player(PlayerColor color)
+        public Player(PlayerColor color, bool isHuman)
         {
             PlayerColor = color;
             Money = 0;
@@ -25,7 +25,7 @@
             MaxTurnTime = 210;
             UnitCount = 0;
             StationCount = 0;
-            IsHuman = true;
+            IsHuman = isHuman;
         }
 
     }

@@ -24,7 +24,7 @@ namespace SpacePewPew.UI
                         Buttons["Exit"].OnClick += () => { MainForm.ActiveForm.Close(); };
 
                         Buttons["New Game"] = new GameButton(new PointF(157, 50));
-                        Buttons["New Game"].OnClick += () => { MessageBox.Show("Карта из шестигранников типа"); };
+                        //Buttons["New Game"].OnClick += () => { MessageBox.Show("Карта из шестигранников типа"); };
                       
                         break;
                     }
