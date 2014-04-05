@@ -1,5 +1,3 @@
-﻿using System.Drawing;
-
 namespace SpacePewPew.GameObjects.MapObjects
 {
     public class Planet : IObstacle

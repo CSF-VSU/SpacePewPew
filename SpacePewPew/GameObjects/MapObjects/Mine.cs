@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace SpacePewPew.GameObjects.MapObjects
+﻿namespace SpacePewPew.GameObjects.MapObjects
 {
     class Mine : IObstacle
     {
@@ -16,7 +14,5 @@ namespace SpacePewPew.GameObjects.MapObjects
             RechargeTime = 5;
             CoolDown = 0;
         }
-
-        
     }
 }

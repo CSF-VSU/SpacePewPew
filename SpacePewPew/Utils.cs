@@ -10,6 +10,7 @@ namespace SpacePewPew
         Kronolian
     }
 
+
     public enum DecisionType
     {
         None,
@@ -35,6 +36,7 @@ namespace SpacePewPew
         Finished
     }
 
+
     public enum PlayerColor
     {
         None,
@@ -48,7 +50,8 @@ namespace SpacePewPew
     {
         public static PointF NewPoint(PointF pos)  //конвертирование координат
         {
-            return new PointF(pos.X / Consts.OGL_WIDTH * Consts.RIGHT, pos.Y / Consts.OGL_HEIGHT * Consts.MAP_HEIGHT);
+            return new PointF(pos.X / Consts.OGL_WIDTH * Consts.SCREEN_WIDTH, pos.Y / Consts.OGL_HEIGHT * Consts.SCREEN_HEIGHT);
         }
     }
+
 }

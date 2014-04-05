@@ -49,11 +49,11 @@
             this.OGL.StencilBits = ((byte)(0));
             this.OGL.TabIndex = 0;
             this.OGL.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OGL_MouseClick);
+            this.OGL.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OGL_MouseMove);
             // 
             // timer1
             // 
-            this.timer1.Enabled = true;
-            this.timer1.Interval = 20;
+            this.timer1.Interval = 10;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // MainForm
@@ -65,7 +65,7 @@
             this.Name = "MainForm";
             this.Text = "MainForm";
             this.Load += new System.EventHandler(this.MainForm_Load);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseMove);
+           // this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.//MainForm_MouseMove);
             this.ResumeLayout(false);
 
         }
@@ -73,7 +73,6 @@
         #endregion
 
         private Tao.Platform.Windows.SimpleOpenGlControl OGL;
-        private System.Windows.Forms.Timer timer;
         private System.Windows.Forms.Timer timer1;
     }
 }

@@ -30,7 +30,7 @@ namespace SpacePewPew
 
         protected Game()
         {
-            _map = new Map();
+            _map = new Map(Consts.MAP_WIDTH, Consts.MAP_HEIGHT);
 
             _races = new Dictionary<RaceName, Race>();
             _races[RaceName.Human] = new Race(RaceName.Human);
@@ -38,10 +38,10 @@ namespace SpacePewPew
             _races[RaceName.Dentelian] = new Race(RaceName.Dentelian);
             _races[RaceName.Kronolian] = new Race(RaceName.Kronolian);
 
-            _players = new List<Player>(1) {new Player(PlayerColor.Red)};
+            _players = new List<Player>(1) {new Player(PlayerColor.Red, true)};
             _isResponding = true;
 
-            GameScreen = ScreenType.GameMenu;
+            GameScreen = ScreenType.MainMenu;
         }
 
         public static Game Instance()
@@ -53,7 +53,7 @@ namespace SpacePewPew
         #region Declarations
 
         private bool _isResponding;
-        private Map _map;
+        public Map _map;
         private List<Player> _players;
         private Dictionary<RaceName, Race> _races; 
 

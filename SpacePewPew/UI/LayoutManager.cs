@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace SpacePewPew.UI
 {
@@ -13,19 +12,21 @@ namespace SpacePewPew.UI
             get; set;
         }
 
+        public ScreenType ScreenType { get; private set; }
+
         public LayoutManager(ScreenType screenType)
         {
+            ScreenType = screenType;
             Buttons = new Dictionary<string, GameButton>();
             switch (screenType)
             {
-                case ScreenType.GameMenu:
+                case ScreenType.MainMenu:
                     {
                         Buttons["Exit"] = new GameButton(new PointF(157,90));
                         Buttons["Exit"].OnClick += () => { MainForm.ActiveForm.Close(); };
 
                         Buttons["New Game"] = new GameButton(new PointF(157, 50));
-                        //Buttons["New Game"].OnClick += () => { MessageBox.Show("Карта из шестигранников типа"); };
-                      
+                        Buttons["New Game"].OnClick += () => { ScreenType = ScreenType.GameMenu; };
                         break;
                     }
             }

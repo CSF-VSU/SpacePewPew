@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace SpacePewPew.GameObjects.MapObjects
+﻿namespace SpacePewPew.GameObjects.MapObjects
 {
     class Station : IObstacle
     {
