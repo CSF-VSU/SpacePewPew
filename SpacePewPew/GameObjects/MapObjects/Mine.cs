@@ -1,6 +1,6 @@
 ﻿namespace SpacePewPew.GameObjects.MapObjects
 {
-    class Mine : IObstacle
+    public class Mine : IObstacle
     {
         public int Income { get; set; }
         public int RechargeTime { get; set; }

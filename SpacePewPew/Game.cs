@@ -39,6 +39,7 @@ namespace SpacePewPew
             _races[RaceName.Kronolian] = new Race(RaceName.Kronolian);
 
             _players = new List<Player>(1) {new Player(PlayerColor.Red, true)};
+            _currentPlayer = _players[0];
             _isResponding = true;
 
             GameScreen = ScreenType.MainMenu;
@@ -55,6 +56,7 @@ namespace SpacePewPew
         private bool _isResponding;
         public Map _map;
         private List<Player> _players;
+        private Player _currentPlayer;
         private Dictionary<RaceName, Race> _races; 
 
         #endregion
@@ -91,6 +93,19 @@ namespace SpacePewPew
         {
             //..
         }
+        #endregion
+
+        #region Facade
+
+        public PlayerInfo GetPlayerInfo()
+        {
+            var result = new PlayerInfo {Color = _currentPlayer.Color};
+            result.Ships = _map.GetShipIterator(result.Color).Count;
+            result.Stations = _map.GeetStationIterator(result.Color).Count;
+            result.Money = _currentPlayer.Money;
+            return result;
+        }
+
         #endregion
     }
 }

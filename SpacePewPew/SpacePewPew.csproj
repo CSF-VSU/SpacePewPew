@@ -66,17 +66,22 @@
     <Compile Include="FactoryMethod\Creator.cs" />
     <Compile Include="FactoryMethod\Factory.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="GameObjects\GameMap\Cell.cs" />
+    <Compile Include="GameObjects\GameMap\IStationIterator.cs" />
+    <Compile Include="GameObjects\GameMap\ShipIterator.cs" />
+    <Compile Include="GameObjects\GameMap\StationIterator.cs" />
     <Compile Include="GameObjects\MapObjects\Mine.cs" />
     <Compile Include="GameObjects\MapObjects\Obstacle.cs" />
     <Compile Include="GameObjects\MapObjects\Planet.cs" />
     <Compile Include="GameObjects\MapObjects\Station.cs" />
+    <Compile Include="GameObjects\GameMap\IShipIterator.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="GameObjects\Map.cs" />
+    <Compile Include="GameObjects\GameMap\Map.cs" />
     <Compile Include="Players\Player.cs" />
     <Compile Include="Players\Strategies\Decision.cs" />
     <Compile Include="Players\Strategies\Strategy.cs" />

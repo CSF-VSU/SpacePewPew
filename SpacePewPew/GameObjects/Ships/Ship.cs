@@ -3,6 +3,8 @@
     public abstract class Ship
     {
         #region Declarations
+        public PlayerColor Color { get; set; }
+
         public string Name { get; set; }
         public string Description { get; set; }
 

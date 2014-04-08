@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 
 namespace SpacePewPew
-
 {
     public static class Consts
     {

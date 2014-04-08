@@ -4,7 +4,7 @@
 {
     public class Player
     {
-        public PlayerColor PlayerColor { get; set; }
+        public PlayerColor Color { get; set; }
         public int Money { get; set; }
 
         public int TurnTime { get; set; }
@@ -19,7 +19,7 @@
 
         public Player(PlayerColor color, bool isHuman)
         {
-            PlayerColor = color;
+            Color = color;
             Money = 0;
             TurnTime = 0;
             MaxTurnTime = 210;

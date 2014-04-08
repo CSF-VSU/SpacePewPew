@@ -1,6 +1,6 @@
 ﻿namespace SpacePewPew.GameObjects.MapObjects
 {
-    class Station : IObstacle
+    public class Station : IObstacle
     {
         public PlayerColor OwnerColor { get; set; }
         public int Income { get; set; }

@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 using SpacePewPew.UI;
-using Tao.DevIl;
 using Tao.OpenGl;
 
 namespace SpacePewPew
@@ -10,13 +9,15 @@ namespace SpacePewPew
     public partial class MainForm : Form
     {
         public Game SpacePew;
-        internal Drawer OglDrawer;
-        internal LayoutManager LayoutManager;
+        public Drawer OglDrawer;
+        public LayoutManager LayoutManager;
+        public int Tick;
 
         public MainForm()
         { 
             InitializeComponent();
             OGL.InitializeContexts();
+            Tick = 0;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -28,25 +29,22 @@ namespace SpacePewPew
             timer1.Enabled = true;
         }
 
-        /*private void MainForm_MouseMove(object sender, MouseEventArgs e)
-        {
-            var tmp = Additional.NewPoint(new PointF(e.X, e.Y));
-            var tmp1 = SpacePew._map.ConvertPoint(tmp);
-            Text = "Mouse " + tmp.X + " " + tmp.Y + "  Cell " + tmp1.X + " " + tmp1.Y; 
-        }*/
 
         private void OGL_MouseClick(object sender, MouseEventArgs e)
-        { 
-            if (e.Button == MouseButtons.Left)
+        {
+            switch (e.Button)
             {
-                SpacePew.MouseClick(new Point(e.X, e.Y));
-                LayoutManager.OnClick(Additional.NewPoint(new PointF(e.X, e.Y)));
-                Gl.glClear(Gl.GL_COLOR_BUFFER_BIT);
+                case MouseButtons.Left:
+                    SpacePew.MouseClick(new Point(e.X, e.Y));
+                    LayoutManager.OnClick(Additional.NewPoint(new PointF(e.X, e.Y)));
+                    Gl.glClear(Gl.GL_COLOR_BUFFER_BIT);
+                    break;
             }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            Tick++;
             Gl.glClear(Gl.GL_COLOR_BUFFER_BIT);
             OglDrawer.LightenedCell = SpacePew._map.LightenedCell;
             OglDrawer.Draw(SpacePew.GameState, LayoutManager);
