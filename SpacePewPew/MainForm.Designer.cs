@@ -45,7 +45,7 @@
             this.OGL.DepthBits = ((byte)(16));
             this.OGL.Location = new System.Drawing.Point(2, -3);
             this.OGL.Name = "OGL";
-            this.OGL.Size = new System.Drawing.Size(830, 460);
+            this.OGL.Size = new System.Drawing.Size(1300, 700);
             this.OGL.StencilBits = ((byte)(0));
             this.OGL.TabIndex = 0;
             this.OGL.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OGL_MouseClick);
@@ -60,12 +60,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(834, 462);
+            this.ClientSize = new System.Drawing.Size(1292, 746);
             this.Controls.Add(this.OGL);
             this.Name = "MainForm";
             this.Text = "MainForm";
             this.Load += new System.EventHandler(this.MainForm_Load);
-           // this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.//MainForm_MouseMove);
             this.ResumeLayout(false);
 
         }

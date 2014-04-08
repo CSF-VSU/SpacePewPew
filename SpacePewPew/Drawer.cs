@@ -15,7 +15,6 @@ namespace SpacePewPew
         public Dictionary<string, uint> Textures { get; set; }
         public PointF[,] CellCoors { get; set; }
         public PointF LightenedCell { get; set; }
-
         #endregion
 
         #region Singleton pattern
@@ -55,32 +54,31 @@ namespace SpacePewPew
             Gl.glClear(Gl.GL_COLOR_BUFFER_BIT);
 
             #endregion
-
             #region TexInitialize
 
             Textures = new Dictionary<string, uint>();
 
             Il.ilInit();
             Il.ilEnable(Il.IL_ORIGIN_SET);
+            Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA);
 
-
-            TexInit("BackgroundTexture.jpg", "Main Menu");
-            TexInit("BattleMap.jpg", "Battle Map");
+            TexInit(@"..\..\Textures\BackgroundTexture.jpg", "Main Menu");
+            TexInit(@"..\..\Textures\BattleMap.jpg", "Battle Map");
 
             #endregion TexInitialize;
         }
 
-
         public void Draw(GameState gameState, LayoutManager manager)
         {
+            PointF[] Coordinates;// = new PointF[4];
             switch (manager.ScreenType)
             {
                     #region MainMenuCase
 
                 case ScreenType.MainMenu:
                 {
-                    DrawTexture(Textures["Main Menu"], new PointF(0, 0),
-                        Additional.NewPoint(new PointF(Consts.OGL_WIDTH, Consts.OGL_HEIGHT)));
+                    Coordinates = new PointF[4] { new PointF(0, 0), Additional.NewPoint(new PointF(Consts.OGL_WIDTH, 0)), Additional.NewPoint(new PointF(Consts.OGL_WIDTH, Consts.OGL_HEIGHT)), Additional.NewPoint(new PointF(0, Consts.OGL_HEIGHT)) };
+                    DrawTexture(Textures["Main Menu"], Coordinates);
                     foreach (var button in manager.Buttons.Values)
                     {
                         DrawButton(button.Position);
@@ -93,22 +91,25 @@ namespace SpacePewPew
                     break;
 
                 }
-
                     #endregion
 
                     #region GameMenuCase
 
                 case ScreenType.GameMenu:
                 {
-                    DrawTexture(Textures["Battle Map"], new PointF(0, 0),
-                        Additional.NewPoint(new PointF(Consts.OGL_WIDTH, Consts.OGL_HEIGHT)));
+                    Coordinates = new PointF[4] { new PointF(0, 0), Additional.NewPoint(new PointF(Consts.OGL_WIDTH, 0)), Additional.NewPoint(new PointF(Consts.OGL_WIDTH, Consts.OGL_HEIGHT)), Additional.NewPoint(new PointF(0, Consts.OGL_HEIGHT)) };
+                    DrawTexture(Textures["Battle Map"], Coordinates);
                     DrawField(Consts.MAP_START_POS);
+
+                    Gl.glEnable(Gl.GL_BLEND);
+
+                    Gl.glDisable(Gl.GL_BLEND);
+                    
+                    DrawStatusBar();
                     break;
                 }
-
                     #endregion
             }
-
         }
 
         #region textureDrawing
@@ -145,7 +146,7 @@ namespace SpacePewPew
 
             // создаем привязку к только что созданной текстуре
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, texObject);
-
+            //Gl.glTexFilterFuncSGIS
             // устанавливаем режим фильтрации и повторения текстуры
             Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_WRAP_S, Gl.GL_REPEAT);
             Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_WRAP_T, Gl.GL_REPEAT);
@@ -168,72 +169,97 @@ namespace SpacePewPew
             return texObject;
         }
 
-        private void DrawTexture(uint texture, PointF a, PointF b)
+        private PointF[] rotate(int angle, PointF[] coors) //на вход 4 точки, на выход 4 точки
         {
-            // очистка буфера цвета и буфера глубины 
-            Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
+            PointF[] coors1 = new PointF[4]
+            {
+                new PointF( coors[0].X * (float)Math.Cos(angle * Math.PI / 180) - coors[0].Y * (float)Math.Sin(angle * Math.PI / 180), coors[0].X * (float)Math.Sin(angle * Math.PI / 180) + coors[0].Y * (float)Math.Cos(angle * Math.PI / 180) ),
+                new PointF( coors[1].X * (float)Math.Cos(angle * Math.PI / 180) - coors[1].Y * (float)Math.Sin(angle * Math.PI / 180), coors[1].X * (float)Math.Sin(angle * Math.PI / 180) + coors[1].Y * (float)Math.Cos(angle * Math.PI / 180) ),
+                new PointF( coors[2].X * (float)Math.Cos(angle * Math.PI / 180) - coors[2].Y * (float)Math.Sin(angle * Math.PI / 180), coors[2].X * (float)Math.Sin(angle * Math.PI / 180) + coors[2].Y * (float)Math.Cos(angle * Math.PI / 180) ),
+                new PointF( coors[3].X * (float)Math.Cos(angle * Math.PI / 180) - coors[3].Y * (float)Math.Sin(angle * Math.PI / 180), coors[3].X * (float)Math.Sin(angle * Math.PI / 180) + coors[3].Y * (float)Math.Cos(angle * Math.PI / 180) )
+            };
+            return coors1;
+        }
+        
+        private void DrawTexture(uint texture, PointF[] vertices)
+        {
+
             Gl.glClearColor(255, 255, 255, 1);
-            // очищение текущей матрицы 
-            Gl.glLoadIdentity();
-            // включаем режим текстурирования
+         //   Gl.glLoadIdentity();
             Gl.glEnable(Gl.GL_TEXTURE_2D);
-            // включаем режим текстурирования , указывая индификатор mGlTextureObject
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, texture); // Textures["Main Menu"]);
-            // сохраняем состояние матрицы
-            Gl.glPushMatrix();
+
+
 
             Gl.glBegin(Gl.GL_QUADS);
             // указываем поочередно вершины и текстурные координаты
-            Gl.glVertex2d(a.X, a.Y);
+            Gl.glVertex2d(vertices[0].X, vertices[0].Y);
             Gl.glTexCoord2f(1, 1);
-            Gl.glVertex2d(b.X, a.Y);
+            Gl.glVertex2d(vertices[1].X, vertices[1].Y);
             Gl.glTexCoord2f(1, 0);
-            Gl.glVertex2d(b.X, b.Y);
+            Gl.glVertex2d(vertices[2].X, vertices[2].Y);
             Gl.glTexCoord2f(0, 0);
-            Gl.glVertex2d(a.X, b.Y);
+            Gl.glVertex2d(vertices[3].X, vertices[3].Y);
             Gl.glTexCoord2f(0, 1);
 
-            // завершаем отрисовку
             Gl.glEnd();
 
-            // возвращаем матрицу
-            Gl.glPopMatrix();
-            // отключаем режим текстурирования
             Gl.glDisable(Gl.GL_TEXTURE_2D);
 
-            // обновлеям элемент со сценой
-            //OGL.Invalidate();
 
         }
 
         #endregion
 
-        #region buttonDrawing
+        #region UI Drawing
 
         private void DrawButton(PointF pos)
         {
             Gl.glColor3f(0.5f, 0.5f, 0.5f);
-
-            Gl.glBegin(Gl.GL_POLYGON);
-            Gl.glVertex2d(pos.X, pos.Y);
-            Gl.glVertex2d(pos.X + Consts.BUTTON_WIDTH, pos.Y);
-            Gl.glVertex2d(pos.X + Consts.BUTTON_WIDTH, pos.Y + Consts.BUTTON_HEIGHT);
-            Gl.glVertex2d(pos.X, pos.Y + Consts.BUTTON_HEIGHT);
-            Gl.glEnd();
-            Gl.glFlush();
+            Rect(pos.X, pos.Y, pos.X + Consts.BUTTON_WIDTH, pos.Y + Consts.BUTTON_HEIGHT);
 
             Gl.glColor3f(1, 1, 0.3f);
+            Frame(pos.X, pos.Y, pos.X + Consts.BUTTON_WIDTH, pos.Y + Consts.BUTTON_HEIGHT);           
+        }
+
+        
+
+        private void DrawStatusBar()
+        {
+            //StatusBar background
+            Gl.glColor3f(0.5f, 0.5f, 0.5f);
+            Rect(0, 0, Consts.SCREEN_WIDTH, 7);
+            
+            //PlayerName
+            Gl.glColor3f(0, 0, 0);
+            Rect(5, 1, 35, 6);
+
+            //stations
+            Rect(45, 1, 60, 6);
+
+            //ResourceGain
+            Rect(70, 1, 85, 6);
+
+            //ResourceCount
+            Rect(95, 1, 110, 6);
 
             Gl.glLineWidth(2);
-            Gl.glBegin(Gl.GL_LINE_STRIP);
-
-            Gl.glVertex2d(pos.X, pos.Y);
-            Gl.glVertex2d(pos.X + Consts.BUTTON_WIDTH, pos.Y);
-            Gl.glVertex2d(pos.X + Consts.BUTTON_WIDTH, pos.Y + Consts.BUTTON_HEIGHT);
-            Gl.glVertex2d(pos.X, pos.Y + Consts.BUTTON_HEIGHT);
-            Gl.glVertex2d(pos.X, pos.Y);
+            Gl.glBegin(Gl.GL_LINES);
+            Gl.glVertex2d(0, 7);
+            Gl.glVertex2d(Consts.SCREEN_WIDTH, 7);
             Gl.glEnd();
             Gl.glLineWidth(1);
+
+            Gl.glColor3f(1, 1, 0.3f);
+            Frame(5, 1, 35, 6);
+            Frame(45, 1, 60, 6);
+            Frame(70, 1, 85, 6);
+            Frame(95, 1, 110, 6);
+
+            drawString(new PointF(7, 4.5f), "Player Name");
+            drawString(new PointF(47, 4.5f), string.Format("{0} st.", 0));
+            drawString(new PointF(71.5f, 4.5f), string.Format("+{0} res", 0));
+            drawString(new PointF(97, 4.5f), string.Format("{0} res", 0));
         }
 
         #endregion
@@ -273,7 +299,6 @@ namespace SpacePewPew
                     }
             Gl.glLineWidth(3);
             DrawCell(LightenedCell);
-                //new PointF(lightened.X + Consts.MAP_START_POS.X, lightened.Y + Consts.MAP_START_POS.Y));
             Gl.glLineWidth(1);
 
         }
@@ -289,5 +314,31 @@ namespace SpacePewPew
         }
 
         #endregion
+
+        #region additionalDrawing
+        private void Rect(float x0, float y0, float x1, float y1)
+        {
+            Gl.glBegin(Gl.GL_POLYGON);
+            Gl.glVertex2d(x0, y0);
+            Gl.glVertex2d(x1, y0);
+            Gl.glVertex2d(x1, y1);
+            Gl.glVertex2d(x0, y1);
+            Gl.glEnd();
+        }
+
+        private void Frame(float x0, float y0, float x1, float y1)
+        {
+            Gl.glLineWidth(2);
+            Gl.glBegin(Gl.GL_LINE_STRIP);
+            Gl.glVertex2d(x0, y0);
+            Gl.glVertex2d(x1, y0);
+            Gl.glVertex2d(x1, y1);
+            Gl.glVertex2d(x0, y1);
+            Gl.glVertex2d(x0, y0);
+            Gl.glEnd();
+            Gl.glLineWidth(1);
+        }
+        #endregion
+
     }
 }

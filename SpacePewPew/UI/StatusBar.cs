@@ -9,5 +9,10 @@ namespace SpacePewPew.UI
         public PointF Position{ get; set; }
         public byte resourcesGain { get; private set; }
         public int resourcesCount { get; private set; }
+
+        public StatusBar()
+        {
+            Position = new PointF(0, 0);
+        }
     }
 }
