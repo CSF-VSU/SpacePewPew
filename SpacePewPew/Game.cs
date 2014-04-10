@@ -2,6 +2,7 @@
 using System.Drawing;
 using SpacePewPew.FactoryMethod;
 using SpacePewPew.GameObjects;
+using SpacePewPew.GameObjects.GameMap;
 using SpacePewPew.Players;
 
 namespace SpacePewPew
@@ -84,16 +85,21 @@ namespace SpacePewPew
 
         #region Controlling
 
-        public void MouseClick(Point p)
+        public void MouseClick(PointF p)
         {
             _map.Click(p);
         }
 
-        public void MouseMove(Point p)
+        public void MouseMove(PointF p)
         {
             //..
         }
         #endregion
+
+        public IMap GetGameField()
+        {
+            return _map;
+        }
 
         #region Facade
 

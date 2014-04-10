@@ -6,27 +6,24 @@ namespace SpacePewPew.GameObjects.GameMap
 	public class ShipIterator : IShipIterator
 	{
 		private List<Ship> _ships; 
-		private int _current = 0;
+		private int _current;
 
 		public PlayerColor Color { get; set; }
-	    public int Count { get; set; }
+		public int Count { get; set; }
 
-	    private void GetShips(Cell[,] cells)
+		private void GetShips(Cell[,] cells)
 		{
 			foreach (var cell in cells)
-			{
 				if (cell.Ship != null && cell.Ship.Color == Color)
-				{
-					_ships.Add(cell.Ship);
-				}
-			}
-	        Count = _ships.Count;
+					_ships.Add(cell.Ship); 
+
+			Count = _ships.Count;   
 		}
 
 		public ShipIterator(Cell[,] cells, PlayerColor color)
 		{
 			Color = color;
-			GetShips(cells);
+		    GetShips(cells);
 		}
 
 		public Ship  First()

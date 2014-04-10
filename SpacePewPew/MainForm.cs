@@ -35,19 +35,20 @@ namespace SpacePewPew
             switch (e.Button)
             {
                 case MouseButtons.Left:
-                    SpacePew.MouseClick(new Point(e.X, e.Y));
+                    SpacePew.MouseClick(new PointF(e.X, e.Y));
                     LayoutManager.OnClick(Additional.NewPoint(new PointF(e.X, e.Y)));
                     Gl.glClear(Gl.GL_COLOR_BUFFER_BIT);
                     break;
             }
         }
 
+        private int deg = 0; 
+
         private void timer1_Tick(object sender, EventArgs e)
         {
-            Tick++;
             Gl.glClear(Gl.GL_COLOR_BUFFER_BIT);
-            OglDrawer.LightenedCell = SpacePew._map.LightenedCell;
-            OglDrawer.Draw(SpacePew.GameState, LayoutManager);
+            deg++;
+            OglDrawer.Draw(SpacePew.GameState, LayoutManager, SpacePew.GetGameField(), deg);
             OGL.Invalidate();
         }
 

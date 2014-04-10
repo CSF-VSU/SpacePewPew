@@ -34,7 +34,7 @@ namespace SpacePewPew
         MainMenu,
         GameMenu,
         Pause,
-        Options
+        Options,
     }
 
     public enum TurnState
@@ -60,6 +60,7 @@ namespace SpacePewPew
         {
             return new PointF(pos.X / Consts.OGL_WIDTH * Consts.SCREEN_WIDTH, pos.Y / Consts.OGL_HEIGHT * Consts.SCREEN_HEIGHT);
         }
+
     }
 
 }

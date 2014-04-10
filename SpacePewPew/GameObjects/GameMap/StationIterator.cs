@@ -6,7 +6,7 @@ namespace SpacePewPew.GameObjects.GameMap
 	public class StationIterator : IStationIterator
 	{
 		private List<Station> _stations; 
-		private int _current = 0;
+		private int _current;
 
 		public PlayerColor Color { get; set; }
 		public int Count { get; set; }
@@ -26,7 +26,7 @@ namespace SpacePewPew.GameObjects.GameMap
 		public StationIterator(Cell[,] cells, PlayerColor color)
 		{
 			Color = color;
-			GetStations(cells);
+		    GetStations(cells);
 		}
 
 		public Station First()
