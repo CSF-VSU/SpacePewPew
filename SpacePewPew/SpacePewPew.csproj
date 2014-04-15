@@ -59,6 +59,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Action.cs" />
     <Compile Include="Consts.cs" />
     <Compile Include="Drawer.cs" />
     <Compile Include="FactoryMethod\AnotherBalleShipCreator.cs" />
@@ -83,7 +84,10 @@
     </Compile>
     <Compile Include="GameObjects\GameMap\Map.cs" />
     <Compile Include="Players\Player.cs" />
+    <Compile Include="Players\Strategies\AIStrategy.cs" />
     <Compile Include="Players\Strategies\Decision.cs" />
+    <Compile Include="Players\Strategies\DecisionEvent.cs" />
+    <Compile Include="Players\Strategies\HumanStrategy.cs" />
     <Compile Include="Players\Strategies\Strategy.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

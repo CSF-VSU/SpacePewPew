@@ -7,7 +7,7 @@
         public PlayerColor Color { get; set; }
         public int Money { get; set; }
 
-        public int TurnTime { get; set; }
+        public int TimeLeft { get; set; }
         public int MaxTurnTime { get; set; }
 
         public int UnitCount { get; set; }
@@ -21,8 +21,8 @@
         {
             Color = color;
             Money = 0;
-            TurnTime = 0;
-            MaxTurnTime = 210;
+            TimeLeft = 210      * 25;
+            MaxTurnTime = 210   * 25;
             UnitCount = 0;
             StationCount = 0;
             IsHuman = isHuman;

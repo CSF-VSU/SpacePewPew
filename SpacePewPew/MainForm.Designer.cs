@@ -53,7 +53,7 @@
             // 
             // timer1
             // 
-            this.timer1.Interval = 10;
+            this.timer1.Interval = 41;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // MainForm
@@ -65,7 +65,6 @@
             this.Name = "MainForm";
             this.Text = "MainForm";
             this.Load += new System.EventHandler(this.MainForm_Load);
-           // this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.//MainForm_MouseMove);
             this.ResumeLayout(false);
 
         }

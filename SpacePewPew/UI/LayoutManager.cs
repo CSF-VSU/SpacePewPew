@@ -6,13 +6,13 @@ namespace SpacePewPew.UI
 {
     public class LayoutManager
     {
-
         public Dictionary<string, GameButton> Buttons
         {
             get; set;
         }
 
         public ScreenType ScreenType { get; private set; }
+
 
         public LayoutManager(ScreenType screenType)
         {
@@ -26,7 +26,7 @@ namespace SpacePewPew.UI
                         Buttons["Exit"].OnClick += () => { MainForm.ActiveForm.Close(); };
 
                         Buttons["New Game"] = new GameButton(new PointF(157, 50));
-                        Buttons["New Game"].OnClick += () => { ScreenType = ScreenType.GameMenu; };
+                        Buttons["New Game"].OnClick += () => { ScreenType = ScreenType.Game; };
                         break;
                     }
             }

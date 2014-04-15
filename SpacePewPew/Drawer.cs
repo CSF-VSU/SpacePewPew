@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using SpacePewPew.GameObjects.GameMap;
+using SpacePewPew.Players.Strategies;
 using SpacePewPew.UI;
 using Tao.DevIl;
 using Tao.FreeGlut;
@@ -11,10 +12,39 @@ namespace SpacePewPew
 {
     public class Drawer
     {
+        public class ShipAttributes
+        {
+            public ShipAttributes(string texName, string color, Point pos, int direction)
+            {
+                TexName = texName;
+                Color = color;
+                Direction = direction;
+                Pos = pos;
+            }
+
+            public Point Pos { get; set; }
+            public string TexName { get; set; }
+            public string Color { get; set; }
+            public int Direction { get; set; }
+        }
+
+
         #region Declarations
 
         public Dictionary<string, uint> Textures { get; set; }
+        //public Dictionary<Type, string> ShipTex { get; set; }
+
+        public Dictionary<int, ShipAttributes> ShipsInfo { get; set; }
+
+        private ActionState state;
+        public PointF LightenedCell { get; set; }
         public PointF[,] CellCoors { get; set; }
+
+        private bool _isResponding;
+
+        // public bool inAction { get; set; } // флаг для движения, поворота и тд
+
+
         #endregion
 
         #region Singleton pattern
@@ -24,6 +54,10 @@ namespace SpacePewPew
         protected Drawer()
         {
             CellCoors = new PointF[Consts.MAP_WIDTH, Consts.MAP_HEIGHT];
+            state = ActionState.None;
+            LightenedCell = Consts.MAP_START_POS;
+            ShipsInfo = new Dictionary<int, ShipAttributes>();
+
         }
 
         public static Drawer Instance()
@@ -35,6 +69,9 @@ namespace SpacePewPew
 
         public void Initialize()
         {
+
+            // ShipsInfo[map.MapCells[i, j].Ship.id].Pos = new ShipAttributes("Ship", "ShipColor", new Point(i, j), 0);
+
             #region GlutInitialize
 
             Glut.glutInit();
@@ -53,6 +90,7 @@ namespace SpacePewPew
             Gl.glClear(Gl.GL_COLOR_BUFFER_BIT);
 
             #endregion
+
             #region TexInitialize
 
             Textures = new Dictionary<string, uint>();
@@ -63,67 +101,236 @@ namespace SpacePewPew
 
             TexInit(@"..\..\Textures\BackgroundTexture.jpg", "Main Menu");
             TexInit(@"..\..\Textures\BattleMap.jpg", "Battle Map");
-            TexInit(@"..\..\ShipModels\Korab.png", "Ship");                     
-            TexInit(@"..\..\ShipModels\redKorab.png", "ShipColor");             
-            TexInit(@"..\..\ShipModels\greenKorab.png", "ShipColorGreen");      
+            TexInit(@"..\..\ShipModels\Korab.png", "Ship");
+            TexInit(@"..\..\ShipModels\redKorab.png", "ShipColor");
+            TexInit(@"..\..\ShipModels\greenKorab.png", "ShipColorGreen");
+
             #endregion TexInitialize;
         }
 
-        public void Draw(GameState gameState, LayoutManager manager, IMap map, int deg)
+        private Point nextCell;
+        private int newDir = 0;
+        private int rotateDir = 1;
+        private int Count = 0;
+        private Point Destination;
+
+        // сохраняй состояние IMap
+        // + флажок isDrawing
+
+        public void Draw(GameState gameState, LayoutManager manager, IMap map) //, ref Action act)
         {
             PointF[] coordinates;
+
             switch (manager.ScreenType)
             {
-                #region MainMenuCase
+
+                    #region MainMenuCase
 
                 case ScreenType.MainMenu:
+                {
+
+
+                    coordinates = new[]
+                    
+                    
                     {
-                        coordinates = new[] { new PointF(0, 0), Additional.NewPoint(new PointF(Consts.OGL_WIDTH, 0)), Additional.NewPoint(new PointF(Consts.OGL_WIDTH, Consts.OGL_HEIGHT)), Additional.NewPoint(new PointF(0, Consts.OGL_HEIGHT)) };
-                        DrawTexture(Textures["Main Menu"], coordinates);
-                        foreach (var button in manager.Buttons.Values)
+                    
+                        
+                        new PointF(0, 0), Additional.NewPoint(new PointF(Consts.OGL_WIDTH, 0)),
+                        Additional.NewPoint(new PointF(Consts.OGL_WIDTH, Consts.OGL_HEIGHT)),
+                        Additional.NewPoint(new PointF(0, Consts.OGL_HEIGHT))
+
+
+                    };
+
+
+                    DrawTexture(Textures["Main Menu"], coordinates);
+                    
+                    foreach (var button in manager.Buttons.Values)
+                    
+                    {
+                    
+                        DrawButton(button.Position);
+                    }
+
+
+
+                    foreach (var btn in manager.Buttons)
+                    {
+                        DrawString(new PointF(btn.Value.Position.X + 2, btn.Value.Position.Y + 4), btn.Key);
+                    }
+                    break;
+
+                }
+
+                    #endregion
+
+                    #region GameCase
+
+                    PointF tmp; //<-- ОСТОРОЖНО, ГОВНОКОД!!!
+
+                case ScreenType.Game:
+                {
+                    coordinates = new[]
+                    {
+                        new PointF(0, 0), Additional.NewPoint(new PointF(Consts.OGL_WIDTH, 0)),
+                        Additional.NewPoint(new PointF(Consts.OGL_WIDTH, Consts.OGL_HEIGHT)),
+                        Additional.NewPoint(new PointF(0, Consts.OGL_HEIGHT))
+                    };
+                    DrawTexture(Textures["Battle Map"], coordinates);
+                    DrawField(LightenedCell);
+
+                    /*if (act.IsReady)
+                    {
+
+                        state = ActionState.Rotating;
+                        Destination = act.Destination;
+                        act.Refresh();
+
+                    }*/
+
+
+                    Gl.glEnable(Gl.GL_BLEND);
+
+                    switch (state)
+                    {
+                        case ActionState.None:
                         {
-                            DrawButton(button.Position);
+                            for (int i = 0; i < Consts.MAP_WIDTH; i++)
+                                for (int j = 0; j < Consts.MAP_HEIGHT; j++)
+                                {
+                                    if (map.MapCells[i, j].Ship != null)
+                                    {
+                                        ShipAttributes tmp1;
+                                        if (ShipsInfo.TryGetValue(map.MapCells[i, j].Ship.id, out tmp1)) //сукасукасука!
+                                            ShipsInfo[map.MapCells[i, j].Ship.id].Pos = new Point(i, j);
+                                                // = new ShipAttributes("Ship", "ShipColor", new Point(i, j), 0); //попровить этот хуец
+                                        else
+                                            ShipsInfo[map.MapCells[i, j].Ship.id] = new ShipAttributes("Ship",
+                                                "ShipColor", new Point(i, j), 0);
+                                    }
+                                }
+                            break;
                         }
 
-                        foreach (var btn in manager.Buttons)
+                        case ActionState.Rotating:
                         {
-                            DrawString(new PointF(btn.Value.Position.X + 2, btn.Value.Position.Y + 4), btn.Key);
+                            newDir = getNewDirection(ShipsInfo[act.ShipId].Pos, act.Path[act.Path.Count - 1]);
+                                //initialization
+
+                            if (ShipsInfo[act.ShipId].Direction != newDir)
+                            {
+                                tmp = CellToScreen(ShipsInfo[act.ShipId].Pos);
+                                /*  if (rotateDir == -1)//(Math.Abs(ShipsInfo[act.ShipId].Direction - newDir) < (360 - Math.Abs(ShipsInfo[act.ShipId].Direction - newDir)))
+                                       {
+                                           elementaryRotate('-', 10, tmp.X, tmp.Y);
+                                           ShipsInfo[act.ShipId].Direction -= 20;
+                                       }
+                                       else
+                                       {
+                                          elementaryRotate('+', 10, tmp.X, tmp.Y);
+                                          ShipsInfo[act.ShipId].Direction += 20;
+                                  
+                                       }  */
+                                if (rotateDir == -1)
+                                    elementaryRotate('-', 10, tmp.X, tmp.Y);
+                                else
+                                    elementaryRotate('+', 10, tmp.X, tmp.Y);
+                                ShipsInfo[act.ShipId].Direction += rotateDir*20;
+                                if (ShipsInfo[act.ShipId].Direction >= 360) ShipsInfo[act.ShipId].Direction -= 360;
+                                if (ShipsInfo[act.ShipId].Direction < 0) ShipsInfo[act.ShipId].Direction += 360;
+                            }
+                            else
+                            {
+                                //act.Refresh();
+                                state = ActionState.Moving;
+                            }
+                            break;
                         }
-                        break;
+                        case ActionState.Moving:
+                        {
+                            Count++;
+                            nextCell = act.Path[act.Path.Count - 1];
+                            act.Path.RemoveAt(act.Path.Count - 1);
+                            newDir = getNewDirection(ShipsInfo[act.ShipId].Pos, nextCell);
+
+                            ShipsInfo[act.ShipId].Pos = nextCell;
+
+                            if (nextCell != Destination)
+                            {
+                                //  if (ShipsInfo[act.ShipId].Direction < 0) ShipsInfo[act.ShipId].Direction += 360;
+                                if (
+                                    !(Math.Abs(ShipsInfo[act.ShipId].Direction - newDir) <
+                                      (360 - Math.Abs(ShipsInfo[act.ShipId].Direction - newDir))))
+                                    rotateDir *= -1;
+                                state = ActionState.Rotating;
+                            }
+                            else
+                            {
+                                //act.Refresh();
+                                state = ActionState.None;
+                            }
+
+                            break;
+                        }
 
                     }
-                #endregion
+                }
 
-                #region GameMenuCase
-
-                case ScreenType.GameMenu:
+                    // PointF tmp;
+                    foreach (var a in ShipsInfo)
                     {
-                        coordinates = new[] { new PointF(0, 0), Additional.NewPoint(new PointF(Consts.OGL_WIDTH, 0)), Additional.NewPoint(new PointF(Consts.OGL_WIDTH, Consts.OGL_HEIGHT)), Additional.NewPoint(new PointF(0, Consts.OGL_HEIGHT)) };
-                        DrawTexture(Textures["Battle Map"], coordinates);
-                        DrawField(map.LightenedCell);
-
-                        Gl.glEnable(Gl.GL_BLEND);
-                        // ur ship goes hia
-                        int k = 0;
-                        k += deg;
-
-                        var coor = rotate(k, 10, 75, 45);
-                        DrawTexture(Textures["Ship"], coor);
-
-                        DrawTexture(Textures["ShipColor"], coor);
-
-                        coor = rotate(20, 10, 45, 25);
-                        DrawTexture(Textures["Ship"], coor);
-
-                        DrawTexture(Textures["ShipColorGreen"], coor);
-                        Gl.glDisable(Gl.GL_BLEND);
-
-                        DrawStatusBar();
-                        break;
+                        tmp = CellToScreen(a.Value.Pos);
+                        //  tmp = elementaryTranslate(tmp, CellToScreen(nextCell), Count);
+                        DrawTexture(Textures[a.Value.TexName], rotate(- a.Value.Direction, 10, tmp.X, tmp.Y));
+                        DrawTexture(Textures[a.Value.Color], rotate(- a.Value.Direction, 10, tmp.X, tmp.Y));
                     }
-                #endregion
+
+                    Gl.glDisable(Gl.GL_BLEND);
+
+                    DrawStatusBar();
+                    break;
             }
+
+            #endregion
         }
+    
+
+
+    #region coordinatesConvertation
+        public Point ScreenToCell(PointF p)
+        {
+            for (var i = 0; i < Consts.MAP_WIDTH; i++)
+                for (var j = 0; j < Consts.MAP_HEIGHT; j++)
+                {
+                    PointF center;
+                    if (i % 2 == 0)
+                        center = new PointF(Consts.MAP_START_POS.X + i / 2 * 3 * Consts.CELL_SIDE + Consts.CELL_SIDE, Consts.MAP_START_POS.Y + j * (float)Math.Sqrt(3) * Consts.CELL_SIDE + Consts.CELL_SIDE * (float)Math.Sqrt(3) / 2);
+                    else
+                        center = new PointF(Consts.MAP_START_POS.X + (1.5f + (i - 1) / 2 * 3) * Consts.CELL_SIDE + Consts.CELL_SIDE, Consts.MAP_START_POS.Y + (float)Math.Sqrt(3) * Consts.CELL_SIDE / 2 + j * (float)Math.Sqrt(3) * Consts.CELL_SIDE + Consts.CELL_SIDE * (float)Math.Sqrt(3) / 2);
+                    if (Math.Sqrt(Math.Pow(p.X - center.X, 2) + Math.Pow(p.Y - center.Y, 2)) < Consts.CELL_SIDE)
+                    {
+                        LightenedCell = new PointF(center.X - Consts.CELL_SIDE, center.Y - Consts.CELL_SIDE * (float)Math.Sqrt(3) / 2);
+                        return new Point(i, j);
+                    }
+                }
+
+            return new Point();
+        }
+
+        public PointF CellToScreen(Point p)
+        {
+            float x = p.X * 1.5f * Consts.CELL_SIDE;
+            float y;
+            if (p.X % 2 == 0)
+                y = (float)Math.Sqrt(3) * p.Y * Consts.CELL_SIDE;
+            else
+                y = (float)Math.Sqrt(3) * (p.Y + (float)1/2) * Consts.CELL_SIDE;
+            return new PointF(x + Consts.MAP_START_POS.X + Consts.CELL_SIDE, y + Consts.MAP_START_POS.Y + Consts.CELL_SIDE * (float)Math.Sqrt(3)/2);
+        }
+
+        #endregion
+
 
         #region textureDrawing
 
@@ -183,24 +390,6 @@ namespace SpacePewPew
         }
 
 
-
-        private PointF[] rotate(int angle, float side, float translationX, float translationY) //на вход 4 точки, на выход 4 точки
-        {
-            var a = side / 2;
-            PointF[] coors1 =
-            {
-                new PointF( -a * (float)Math.Cos(angle * Math.PI / 180) + a * (float)Math.Sin(angle * Math.PI / 180), -a * (float)Math.Sin(angle * Math.PI / 180) - a * (float)Math.Cos(angle * Math.PI / 180) ),
-                new PointF( a * (float)Math.Cos(angle * Math.PI / 180) + a * (float)Math.Sin(angle * Math.PI / 180), a * (float)Math.Sin(angle * Math.PI / 180) - a * (float)Math.Cos(angle * Math.PI / 180) ),
-                new PointF( a * (float)Math.Cos(angle * Math.PI / 180) - a * (float)Math.Sin(angle * Math.PI / 180), a * (float)Math.Sin(angle * Math.PI / 180) + a * (float)Math.Cos(angle * Math.PI / 180) ),
-                new PointF(- a * (float)Math.Cos(angle * Math.PI / 180) - a * (float)Math.Sin(angle * Math.PI / 180), - a * (float)Math.Sin(angle * Math.PI / 180) + a * (float)Math.Cos(angle * Math.PI / 180) )
-            };
-            for (var i = 0; i < coors1.Length; i++)
-            {
-                coors1[i].X += translationX; coors1[i].Y += translationY;
-            }
-
-            return coors1;
-        }
 
         private void DrawTexture(uint texture, PointF[] vertices)
         {
@@ -360,5 +549,69 @@ namespace SpacePewPew
         }
         #endregion
 
+        #region actionDrawing
+        private PointF[] rotate(int angle, float side, float translationX, float translationY) //на вход 4 точки, на выход 4 точки
+        {
+            var a = side / 2;
+            PointF[] coors1 =
+            {
+                new PointF( -a * (float)Math.Cos(angle * Math.PI / 180) + a * (float)Math.Sin(angle * Math.PI / 180), -a * (float)Math.Sin(angle * Math.PI / 180) - a * (float)Math.Cos(angle * Math.PI / 180) ),
+                new PointF( a * (float)Math.Cos(angle * Math.PI / 180) + a * (float)Math.Sin(angle * Math.PI / 180), a * (float)Math.Sin(angle * Math.PI / 180) - a * (float)Math.Cos(angle * Math.PI / 180) ),
+                new PointF( a * (float)Math.Cos(angle * Math.PI / 180) - a * (float)Math.Sin(angle * Math.PI / 180), a * (float)Math.Sin(angle * Math.PI / 180) + a * (float)Math.Cos(angle * Math.PI / 180) ),
+                new PointF(- a * (float)Math.Cos(angle * Math.PI / 180) - a * (float)Math.Sin(angle * Math.PI / 180), - a * (float)Math.Sin(angle * Math.PI / 180) + a * (float)Math.Cos(angle * Math.PI / 180) )
+            };
+            for (var i = 0; i < coors1.Length; i++)
+            {
+                coors1[i].X += translationX; coors1[i].Y += translationY;
+            }
+
+            return coors1;
+        }
+
+        private PointF[] elementaryRotate(char dir, float side, float translationX, float translationY)   //dir: - counterclockwise, + clockwise
+        {
+            PointF[] coors;
+            coors = dir == '+' ? rotate(20, side, translationX, translationY) : rotate(-20, side, translationX, translationY);
+            return coors;
+        }
+
+        private int getNewDirection(Point a, Point b)  //a - old direction, b - new
+        {
+            switch (a.X % 2)
+            {
+                case 0:
+                    if (b.Y == a.Y)
+                        return b.X > a.X ? 240 : 120;
+                    if (b.Y < a.Y)
+                        if (b.X > a.X) return 300;
+                        else if (b.X < a.X) return 60;
+                        else return 0;
+                    return 180;
+
+                case 1:
+                    if (b.Y == a.Y)
+                        return b.X > a.X ? 300 : 60;
+                    if (b.Y <= a.Y) return 0;
+                    if (b.X > a.X) return 240;
+                    return b.X < a.X ? 120 : 180;
+            }
+            return 0;
+        }
+
+        private PointF ElementaryTranslate(PointF a, PointF b, int multyplier)
+        {
+            return new PointF(a.X + (b.X - a.X) * multyplier / 10, a.Y + (b.Y - a.Y) * multyplier / 10);
+        }
+
+        #endregion
+
+
+        //-------------------------------
+
+        public void DecisionHandler(object sender, DecisionArgs e)
+        {
+            // VESHAI FLAZHKI O TOM SHTO NOT RESPONDENG
+            // do drawing
+        }
     }
 }

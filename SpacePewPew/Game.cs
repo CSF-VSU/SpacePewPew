@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using SpacePewPew.FactoryMethod;
-using SpacePewPew.GameObjects;
 using SpacePewPew.GameObjects.GameMap;
 using SpacePewPew.Players;
+using SpacePewPew.Players.Strategies;
 
 namespace SpacePewPew
 {
@@ -39,7 +39,8 @@ namespace SpacePewPew
             _races[RaceName.Dentelian] = new Race(RaceName.Dentelian);
             _races[RaceName.Kronolian] = new Race(RaceName.Kronolian);
 
-            _players = new List<Player>(1) {new Player(PlayerColor.Red, true)};
+            _players = new List<Player>(2) {new Player(PlayerColor.Red, true), 
+                                            new Player(PlayerColor.Blue, true)};
             _currentPlayer = _players[0];
             _isResponding = true;
 
@@ -50,6 +51,12 @@ namespace SpacePewPew
         {
             return _instance ?? (_instance = new Game());
         }
+
+        public void Init(Drawer drawer)
+        {
+            DecisionDone += drawer.DecisionHandler;
+        }
+
         #endregion
 
         #region Declarations
@@ -59,6 +66,8 @@ namespace SpacePewPew
         private List<Player> _players;
         private Player _currentPlayer;
         private Dictionary<RaceName, Race> _races; 
+
+        public event DecisionHandler DecisionDone;
 
         #endregion
         
@@ -83,14 +92,43 @@ namespace SpacePewPew
         }
         #endregion
 
-        #region Controlling
+        #region Extra methods
 
-        public void MouseClick(PointF p)
+        private Player PassTurn()
         {
-            _map.Click(p);
+            var index = _players.IndexOf(_currentPlayer);
+            index++;
+            if (index == _players.Count)
+                index = 0;
+            return _players[index];
         }
 
-        public void MouseMove(PointF p)
+        #endregion
+
+        #region Controlling
+
+        public void Tick()
+        {
+            if (--_currentPlayer.TimeLeft == 0)
+            {
+                _currentPlayer = PassTurn();
+            }
+
+            var decision = _currentPlayer.Strategy.MakeDecision(_map);
+            if (decision.DecisionType == DecisionType.Halt) return;
+            
+            DecisionDone.Invoke(this, new DecisionArgs { Decision = decision });
+            _isResponding = false;
+        }
+
+
+        public void MouseClick(Point p)
+        {
+            if (_isResponding)
+                _map.Click(p);
+        }
+
+        public void MouseMove(Point p)
         {
             //..
         }

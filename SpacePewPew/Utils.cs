@@ -9,6 +9,7 @@ namespace SpacePewPew
         public int Stations { get; set; }
         public int Money { get; set; }
     }
+   
 
     public enum RaceName
     {
@@ -28,14 +29,16 @@ namespace SpacePewPew
         Buy
     }
 
+
     public enum ScreenType
     {
         None,
         MainMenu,
-        GameMenu,
+        Game,
         Pause,
         Options,
     }
+
 
     public enum TurnState
     {
@@ -54,13 +57,20 @@ namespace SpacePewPew
         Orange
     }
 
+
+    public enum ActionState
+    {
+        None,
+        Rotating,
+        Moving
+    }
+
+
     public static class Additional
     {
         public static PointF NewPoint(PointF pos)  //конвертирование координат
         {
             return new PointF(pos.X / Consts.OGL_WIDTH * Consts.SCREEN_WIDTH, pos.Y / Consts.OGL_HEIGHT * Consts.SCREEN_HEIGHT);
         }
-
     }
-
 }
