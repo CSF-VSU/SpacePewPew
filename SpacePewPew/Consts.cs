@@ -4,7 +4,6 @@ namespace SpacePewPew
 {
     public static class Consts
     {
-        //huec
         public static readonly int OGL_WIDTH  = 830;
         public static readonly int OGL_HEIGHT = 460;
 
@@ -20,5 +19,9 @@ namespace SpacePewPew
 
         public static readonly float SCREEN_HEIGHT = 100;
         public static readonly float SCREEN_WIDTH = SCREEN_HEIGHT * OGL_WIDTH/OGL_HEIGHT;
+        public static readonly float STATUS_BAR_HEIGHT = 7;
+
+        public static readonly float LISTVIEWITEM_WIDTH = 75;
+        public static readonly float LISTVIEWITEM_HEIGHT = 2.5f * BUTTON_HEIGHT;
     }
 }

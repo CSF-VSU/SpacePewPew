@@ -1,12 +1,24 @@
-﻿using SpacePewPew.GameObjects.GameMap;
+﻿using System;
+using SpacePewPew.GameObjects.GameMap;
 
 namespace SpacePewPew.Players.Strategies
 {
-    class HumanStrategy : Strategy
+    [Serializable]
+    public class HumanStrategy : Strategy
     {
+        public HumanStrategy()
+        {
+            ClickAppeared = false;
+        }
+
         public override Decision MakeDecision(Map map)
         {
-            return new Decision {DecisionType = DecisionType.Halt};
+            if (!ClickAppeared)
+            {
+                return null;
+            }
+            ClickAppeared = false;
+            return map.Click(MousePos);
         }
     }
 }

@@ -23,7 +23,8 @@ namespace SpacePewPew.GameObjects.GameMap
 		public ShipIterator(Cell[,] cells, PlayerColor color)
 		{
 			Color = color;
-		    GetShips(cells);
+			_ships = new List<Ship>();
+			GetShips(cells);
 		}
 
 		public Ship  First()

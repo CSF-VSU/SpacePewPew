@@ -1,7 +1,9 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace SpacePewPew.GameObjects.MapObjects
 {
+    [Serializable]
     public abstract class IObstacle
     {
         public bool     IsPassable      { get; set; }

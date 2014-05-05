@@ -1,19 +1,15 @@
-﻿using SpacePewPew.GameObjects.Ships;
+﻿using System;
+using SpacePewPew.GameObjects.Ships;
 
 namespace SpacePewPew.FactoryMethod
 {
+    [Serializable]
     public class BattleShipCreator : Creator
     {
-        public BattleShipCreator()
-        {
-            lastId = 0;
-        }
         public int lastId { get; set; }
         public override Ship FactoryMethod()
         {
-            lastId++;
-            return new BattleShip();
-            
+            return new BattleShip(GetNextId());
         }
     }
 }

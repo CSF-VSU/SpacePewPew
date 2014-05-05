@@ -26,7 +26,8 @@ namespace SpacePewPew.GameObjects.GameMap
 		public StationIterator(Cell[,] cells, PlayerColor color)
 		{
 			Color = color;
-		    GetStations(cells);
+			_stations = new List<Station>();
+			GetStations(cells);
 		}
 
 		public Station First()
@@ -46,9 +47,9 @@ namespace SpacePewPew.GameObjects.GameMap
 			get { return _current >= _stations.Count; }
 		}
 
-	    public Station CurrentStation
-	    {
-	        get { return _stations[_current]; }
-	    }
+		public Station CurrentStation
+		{
+			get { return _stations[_current]; }
+		}
 	}
 }

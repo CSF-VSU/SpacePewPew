@@ -1,25 +1,35 @@
+C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.exe
+C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.pdb
+C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\SpacePewPew\SpacePewPew\bin\Debug\SpacePewPew.exe
+C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\SpacePewPew\SpacePewPew\bin\Debug\SpacePewPew.pdb
+C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\SpacePewPew\SpacePewPew\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.MainForm.resources
+C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.Properties.Resources.resources
+C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\SpacePewPew\SpacePewPew\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\SpacePewPew\SpacePewPew\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.exe
+C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.pdb
 C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\bin\Debug\SpacePewPew.exe
 C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\bin\Debug\SpacePewPew.pdb
+C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.csprojResolveAssemblyReference.cache
 C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.MainForm.resources
 C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.Properties.Resources.resources
 C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.csproj.GenerateResource.Cache
-C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.exe
-C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.pdb
-C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.csprojResolveAssemblyReference.cache
-C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\master\SpacePewPew\obj\x86\Debug\SpacePewPew.exe
-C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\master\SpacePewPew\obj\x86\Debug\SpacePewPew.pdb
-C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\master\SpacePewPew\bin\Debug\SpacePewPew.exe
-C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\master\SpacePewPew\bin\Debug\SpacePewPew.pdb
-C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\master\SpacePewPew\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\master\SpacePewPew\obj\x86\Debug\SpacePewPew.MainForm.resources
-C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\master\SpacePewPew\obj\x86\Debug\SpacePewPew.Properties.Resources.resources
-C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\master\SpacePewPew\obj\x86\Debug\GenerateResource.read.1.tlog
-C:\Documents and Settings\Admin\Рабочий стол\Учебное\C#\master\SpacePewPew\obj\x86\Debug\GenerateResource.write.1.tlog
-C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPewLast\SpacePewPew\obj\x86\Debug\SpacePewPew.exe
-C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPewLast\SpacePewPew\obj\x86\Debug\SpacePewPew.pdb
-C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPewLast\SpacePewPew\bin\Debug\SpacePewPew.exe
-C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPewLast\SpacePewPew\bin\Debug\SpacePewPew.pdb
-C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPewLast\SpacePewPew\obj\x86\Debug\SpacePewPew.csprojResolveAssemblyReference.cache
-C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPewLast\SpacePewPew\obj\x86\Debug\SpacePewPew.MainForm.resources
-C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPewLast\SpacePewPew\obj\x86\Debug\SpacePewPew.Properties.Resources.resources
-C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPewLast\SpacePewPew\obj\x86\Debug\SpacePewPew.csproj.GenerateResource.Cache
+C:\Users\1\Downloads\SpacePewPew_last\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.exe
+C:\Users\1\Downloads\SpacePewPew_last\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.pdb
+C:\Users\1\Downloads\SpacePewPew_last\SpacePewPew\SpacePewPew\bin\Debug\SpacePewPew.exe
+C:\Users\1\Downloads\SpacePewPew_last\SpacePewPew\SpacePewPew\bin\Debug\SpacePewPew.pdb
+C:\Users\1\Downloads\SpacePewPew_last\SpacePewPew\SpacePewPew\bin\Debug\Tao.DevIl.xml
+C:\Users\1\Downloads\SpacePewPew_last\SpacePewPew\SpacePewPew\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\1\Downloads\SpacePewPew_last\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.MainForm.resources
+C:\Users\1\Downloads\SpacePewPew_last\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.Properties.Resources.resources
+C:\Users\1\Downloads\SpacePewPew_last\SpacePewPew\SpacePewPew\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Users\1\Downloads\SpacePewPew_last\SpacePewPew\SpacePewPew\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.exe
+C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.pdb
+C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\SpacePewPew\bin\Debug\SpacePewPew.exe
+C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\SpacePewPew\bin\Debug\SpacePewPew.pdb
+C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.csprojResolveAssemblyReference.cache
+C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.MainForm.resources
+C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.Properties.Resources.resources
+C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.csproj.GenerateResource.Cache
