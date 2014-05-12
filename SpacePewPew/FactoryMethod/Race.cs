@@ -21,15 +21,15 @@
                     break;
                 case RaceName.Swarm:
                     Name = "Swarm";
-                    Description = "Breed is immortal";
+                    Description = "Another race";
                     break;
                 case RaceName.Dentelian:
                     Name = "Dentelian";
-                    Description = "Will crush you.. slowly";
+                    Description = "And another one";
                     break;
                 case RaceName.Kronolian:
                     Name = "Kronolian";
-                    Description = "In mind we trust";
+                    Description = "How ambitious are we! 4 races!";
                     break;
             }
         }

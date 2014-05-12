@@ -1,5 +1,8 @@
+using System;
+
 namespace SpacePewPew.GameObjects.MapObjects
 {
+    [Serializable]
     public class Planet : IObstacle
     {
         public string Name { get; set; }

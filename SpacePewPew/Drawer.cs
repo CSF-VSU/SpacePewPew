@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using SpacePewPew.GameLogic;
 using SpacePewPew.GameObjects.GameMap;
 using SpacePewPew.Players.Strategies;
 using SpacePewPew.UI;
@@ -7,6 +8,7 @@ using Tao.FreeGlut;
 using Tao.OpenGl;
 ﻿using System;
 ﻿using System.Collections.Generic;
+using System.Threading;
 
 namespace SpacePewPew
 {
@@ -28,11 +30,9 @@ namespace SpacePewPew
             public int Direction { get; set; }
         }
 
-
         #region Declarations
 
         public Dictionary<string, uint> Textures { get; set; }
-        //public Dictionary<Type, string> ShipTex { get; set; }
 
         public Dictionary<int, ShipAttributes> ShipsInfo { get; set; }
 
@@ -40,11 +40,15 @@ namespace SpacePewPew
         public PointF LightenedCell { get; set; }
         public PointF[,] CellCoors { get; set; }
 
-        private bool _isResponding;
+        private bool _doneDrawing = true;
 
-        // public bool inAction { get; set; } // флаг для движения, поворота и тд
+        private Point nextCell;
+        private int newDir;
+        private int _shipId = -1;
 
 
+        private Point Destination;
+        private Decision processingDecision;
         #endregion
 
         #region Singleton pattern
@@ -57,7 +61,6 @@ namespace SpacePewPew
             state = ActionState.None;
             LightenedCell = Consts.MAP_START_POS;
             ShipsInfo = new Dictionary<int, ShipAttributes>();
-
         }
 
         public static Drawer Instance()
@@ -69,9 +72,6 @@ namespace SpacePewPew
 
         public void Initialize()
         {
-
-            // ShipsInfo[map.MapCells[i, j].Ship.id].Pos = new ShipAttributes("Ship", "ShipColor", new Point(i, j), 0);
-
             #region GlutInitialize
 
             Glut.glutInit();
@@ -108,66 +108,36 @@ namespace SpacePewPew
             #endregion TexInitialize;
         }
 
-        private Point nextCell;
-        private int newDir = 0;
-        private int rotateDir = 1;
-        private int Count = 0;
-        private Point Destination;
-
-        // сохраняй состояние IMap
-        // + флажок isDrawing
-
-        public void Draw(GameState gameState, LayoutManager manager, IMap map) //, ref Action act)
+        public void Draw(LayoutManager manager, IMapView map) //, ref Action act)
         {
             PointF[] coordinates;
 
             switch (manager.ScreenType)
             {
-
-                    #region MainMenuCase
+                #region MainMenuCase
 
                 case ScreenType.MainMenu:
                 {
-
-
-                    coordinates = new[]
-                    
-                    
-                    {
-                    
-                        
-                        new PointF(0, 0), Additional.NewPoint(new PointF(Consts.OGL_WIDTH, 0)),
+                    coordinates = new[]                     
+                    {      
+                      new PointF(0, 0), Additional.NewPoint(new PointF(Consts.OGL_WIDTH, 0)),
                         Additional.NewPoint(new PointF(Consts.OGL_WIDTH, Consts.OGL_HEIGHT)),
                         Additional.NewPoint(new PointF(0, Consts.OGL_HEIGHT))
-
-
                     };
-
 
                     DrawTexture(Textures["Main Menu"], coordinates);
                     
-                    foreach (var button in manager.Buttons.Values)
-                    
-                    {
-                    
-                        DrawButton(button.Position);
-                    }
-
-
-
-                    foreach (var btn in manager.Buttons)
-                    {
+                    foreach (var btn in manager.Components)
+                    {   
+                        DrawButton(btn.Value.Position);
                         DrawString(new PointF(btn.Value.Position.X + 2, btn.Value.Position.Y + 4), btn.Key);
+
                     }
                     break;
-
                 }
+                #endregion
 
-                    #endregion
-
-                    #region GameCase
-
-                    PointF tmp; //<-- ОСТОРОЖНО, ГОВНОКОД!!!
+               #region GameCase
 
                 case ScreenType.Game:
                 {
@@ -177,127 +147,51 @@ namespace SpacePewPew
                         Additional.NewPoint(new PointF(Consts.OGL_WIDTH, Consts.OGL_HEIGHT)),
                         Additional.NewPoint(new PointF(0, Consts.OGL_HEIGHT))
                     };
+
                     DrawTexture(Textures["Battle Map"], coordinates);
+
                     DrawField(LightenedCell);
-
-                    /*if (act.IsReady)
-                    {
-
-                        state = ActionState.Rotating;
-                        Destination = act.Destination;
-                        act.Refresh();
-
-                    }*/
-
-
+                    //DrawCell(LightenedCell);
+            
                     Gl.glEnable(Gl.GL_BLEND);
 
-                    switch (state)
-                    {
-                        case ActionState.None:
-                        {
-                            for (int i = 0; i < Consts.MAP_WIDTH; i++)
-                                for (int j = 0; j < Consts.MAP_HEIGHT; j++)
-                                {
-                                    if (map.MapCells[i, j].Ship != null)
-                                    {
-                                        ShipAttributes tmp1;
-                                        if (ShipsInfo.TryGetValue(map.MapCells[i, j].Ship.id, out tmp1)) //сукасукасука!
-                                            ShipsInfo[map.MapCells[i, j].Ship.id].Pos = new Point(i, j);
-                                                // = new ShipAttributes("Ship", "ShipColor", new Point(i, j), 0); //попровить этот хуец
-                                        else
-                                            ShipsInfo[map.MapCells[i, j].Ship.id] = new ShipAttributes("Ship",
-                                                "ShipColor", new Point(i, j), 0);
-                                    }
-                                }
-                            break;
-                        }
-
-                        case ActionState.Rotating:
-                        {
-                            newDir = getNewDirection(ShipsInfo[act.ShipId].Pos, act.Path[act.Path.Count - 1]);
-                                //initialization
-
-                            if (ShipsInfo[act.ShipId].Direction != newDir)
+                    for (int i = 0; i < map.MapCells.GetLength(0); i++ )
+                        for (int j = 0; j < map.MapCells.GetLength(1); j++)
+                            if (map.MapCells[i, j].IsLightened)
                             {
-                                tmp = CellToScreen(ShipsInfo[act.ShipId].Pos);
-                                /*  if (rotateDir == -1)//(Math.Abs(ShipsInfo[act.ShipId].Direction - newDir) < (360 - Math.Abs(ShipsInfo[act.ShipId].Direction - newDir)))
-                                       {
-                                           elementaryRotate('-', 10, tmp.X, tmp.Y);
-                                           ShipsInfo[act.ShipId].Direction -= 20;
-                                       }
-                                       else
-                                       {
-                                          elementaryRotate('+', 10, tmp.X, tmp.Y);
-                                          ShipsInfo[act.ShipId].Direction += 20;
-                                  
-                                       }  */
-                                if (rotateDir == -1)
-                                    elementaryRotate('-', 10, tmp.X, tmp.Y);
-                                else
-                                    elementaryRotate('+', 10, tmp.X, tmp.Y);
-                                ShipsInfo[act.ShipId].Direction += rotateDir*20;
-                                if (ShipsInfo[act.ShipId].Direction >= 360) ShipsInfo[act.ShipId].Direction -= 360;
-                                if (ShipsInfo[act.ShipId].Direction < 0) ShipsInfo[act.ShipId].Direction += 360;
+                                Gl.glColor3f(1, 0, 0);                              
+                                PointF t = CellToScreen(new Point(i, j));                               
+                                DrawCell(new PointF(t.X - 3/2 * Consts.CELL_SIDE, t.Y - (float)Math.Sqrt(3) / 2 * Consts.CELL_SIDE));
                             }
-                            else
-                            {
-                                //act.Refresh();
-                                state = ActionState.Moving;
-                            }
-                            break;
-                        }
-                        case ActionState.Moving:
-                        {
-                            Count++;
-                            nextCell = act.Path[act.Path.Count - 1];
-                            act.Path.RemoveAt(act.Path.Count - 1);
-                            newDir = getNewDirection(ShipsInfo[act.ShipId].Pos, nextCell);
+                    DrawAction(map);
 
-                            ShipsInfo[act.ShipId].Pos = nextCell;
-
-                            if (nextCell != Destination)
-                            {
-                                //  if (ShipsInfo[act.ShipId].Direction < 0) ShipsInfo[act.ShipId].Direction += 360;
-                                if (
-                                    !(Math.Abs(ShipsInfo[act.ShipId].Direction - newDir) <
-                                      (360 - Math.Abs(ShipsInfo[act.ShipId].Direction - newDir))))
-                                    rotateDir *= -1;
-                                state = ActionState.Rotating;
-                            }
-                            else
-                            {
-                                //act.Refresh();
-                                state = ActionState.None;
-                            }
-
-                            break;
-                        }
-
-                    }
-                }
-
-                    // PointF tmp;
                     foreach (var a in ShipsInfo)
                     {
+                        PointF tmp;
                         tmp = CellToScreen(a.Value.Pos);
-                        //  tmp = elementaryTranslate(tmp, CellToScreen(nextCell), Count);
-                        DrawTexture(Textures[a.Value.TexName], rotate(- a.Value.Direction, 10, tmp.X, tmp.Y));
-                        DrawTexture(Textures[a.Value.Color], rotate(- a.Value.Direction, 10, tmp.X, tmp.Y));
+                        DrawTexture(Textures[a.Value.TexName], rotate(-a.Value.Direction, 10, tmp.X, tmp.Y));
+                        DrawTexture(Textures[a.Value.Color], rotate(-a.Value.Direction, 10, tmp.X, tmp.Y));
                     }
 
                     Gl.glDisable(Gl.GL_BLEND);
 
-                    DrawStatusBar();
-                    break;
+                    DrawStatusBar(manager);
+
+                    if ((manager.Components["Shop Menu"] as ListView).Visible)
+                    {
+                        DrawListView(manager);
+                    }
+             
+                    Animate();
+                }
+
+                break;
+               #endregion
             }
-
-            #endregion
         }
-    
 
 
-    #region coordinatesConvertation
+        #region coordinatesConvertation
         public Point ScreenToCell(PointF p)
         {
             for (var i = 0; i < Consts.MAP_WIDTH; i++)
@@ -320,7 +214,7 @@ namespace SpacePewPew
 
         public PointF CellToScreen(Point p)
         {
-            float x = p.X * 1.5f * Consts.CELL_SIDE;
+            var x = p.X * 1.5f * Consts.CELL_SIDE;
             float y;
             if (p.X % 2 == 0)
                 y = (float)Math.Sqrt(3) * p.Y * Consts.CELL_SIDE;
@@ -331,16 +225,15 @@ namespace SpacePewPew
 
         #endregion
 
-
         #region textureDrawing
 
         private void TexInit(string texName, string texDictName)
         {
             if (Il.ilLoadImage(texName))
             {
-                int width = Il.ilGetInteger(Il.IL_IMAGE_WIDTH);
-                int height = Il.ilGetInteger(Il.IL_IMAGE_HEIGHT);
-                int bitspp = Il.ilGetInteger(Il.IL_IMAGE_BITS_PER_PIXEL);
+                var width = Il.ilGetInteger(Il.IL_IMAGE_WIDTH);
+                var height = Il.ilGetInteger(Il.IL_IMAGE_HEIGHT);
+                var bitspp = Il.ilGetInteger(Il.IL_IMAGE_BITS_PER_PIXEL);
                 switch (bitspp)
                 {
                     case 24:
@@ -389,17 +282,12 @@ namespace SpacePewPew
             return texObject;
         }
 
-
-
         private void DrawTexture(uint texture, PointF[] vertices)
         {
-
             Gl.glClearColor(255, 255, 255, 1);
             //   Gl.glLoadIdentity();
             Gl.glEnable(Gl.GL_TEXTURE_2D);
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, texture); // Textures["Main Menu"]);
-
-
 
             Gl.glBegin(Gl.GL_QUADS);
             // указываем поочередно вершины и текстурные координаты
@@ -415,8 +303,6 @@ namespace SpacePewPew
             Gl.glEnd();
 
             Gl.glDisable(Gl.GL_TEXTURE_2D);
-
-
         }
 
         #endregion
@@ -425,35 +311,54 @@ namespace SpacePewPew
 
         private void DrawButton(PointF pos)
         {
-            Gl.glColor3f(0.5f, 0.5f, 0.5f);
+            Gl.glColor3f(0,0,0);
             Rect(pos.X, pos.Y, pos.X + Consts.BUTTON_WIDTH, pos.Y + Consts.BUTTON_HEIGHT);
 
             Gl.glColor3f(1, 1, 0.3f);
             Frame(pos.X, pos.Y, pos.X + Consts.BUTTON_WIDTH, pos.Y + Consts.BUTTON_HEIGHT);
         }
 
-
-
-        private void DrawStatusBar()
+        private void DrawStatusBar(LayoutManager lm)
         {
             //StatusBar background
             Gl.glColor3f(0.5f, 0.5f, 0.5f);
-            Rect(0, 0, Consts.SCREEN_WIDTH, 7);
+
+            Rect(0, 0, Consts.SCREEN_WIDTH, Consts.STATUS_BAR_HEIGHT);
 
             //PlayerName
             Gl.glColor3f(0, 0, 0);
             Rect(5, 1, 35, 6);
-
+            Gl.glColor3f(1, 1, 0.3f);
+            DrawString(new PointF(6, 5), PlayerInfo.Color.ToString());
+            
             //stations
+            Gl.glColor3f(0, 0, 0);
             Rect(45, 1, 60, 6);
+            Gl.glColor3f(1, 1, 0.3f);
+            DrawString(new PointF(46, 5), PlayerInfo.Ships.ToString());
 
             //ResourceGain
+            Gl.glColor3f(0, 0, 0);
             Rect(70, 1, 85, 6);
+            Gl.glColor3f(1, 1, 0.3f);
+            DrawString(new PointF(71,5), "+" + PlayerInfo.Stations * 5);
 
             //ResourceCount
+            Gl.glColor3f(0, 0, 0);
             Rect(95, 1, 110, 6);
+            Gl.glColor3f(1, 1, 0.3f);
+            DrawString(new PointF(96,5), PlayerInfo.Money.ToString());
 
+            //TimeLeft
+            Gl.glColor3f(0, 0, 0);
+            Rect(120, 1, 135, 6);
+            Gl.glColor3f(1, 1, 0.3f);
+            DrawString(new PointF(121, 5), Additional.ConvertTime(PlayerInfo.TimeLeft));
+
+            Gl.glColor3f(0, 0, 0);
             Gl.glLineWidth(2);
+
+           // Gl.glColor3f(1, 1, 0.3f);
             Gl.glBegin(Gl.GL_LINES);
             Gl.glVertex2d(0, 7);
             Gl.glVertex2d(Consts.SCREEN_WIDTH, 7);
@@ -466,10 +371,43 @@ namespace SpacePewPew
             Frame(70, 1, 85, 6);
             Frame(95, 1, 110, 6);
 
-            DrawString(new PointF(7, 4.5f), "Player Name");
-            DrawString(new PointF(47, 4.5f), string.Format("{0} st.", 0));
-            DrawString(new PointF(71.5f, 4.5f), string.Format("+{0} res", 0));
-            DrawString(new PointF(97, 4.5f), string.Format("{0} res", 0));
+            var saveBtn = lm.Components["Save"] as GameButton;
+            DrawButton(saveBtn.Position);
+            DrawString(new PointF(saveBtn.Position.X + 2, saveBtn.Position.Y + 4), "Save");
+        }
+
+        private void DrawListView(LayoutManager manager)
+        {
+            //ListView background
+            Gl.glColor4f(0, 0, 0, 0.7f);
+
+            Gl.glEnable(Gl.GL_BLEND);
+            Rect(0, Consts.STATUS_BAR_HEIGHT, Consts.SCREEN_WIDTH, Consts.SCREEN_HEIGHT);  //STOYANOV PROSTO, SRSLY, SO EZ
+            Gl.glDisable(Gl.GL_BLEND);
+
+            Gl.glColor3f(0.5f, 0.5f, 0.5f);
+            PointF pos = (manager.Components["Shop Menu"] as ListView).Position;
+            Rect(pos.X, pos.Y, pos.X * 2.5f, Consts.SCREEN_HEIGHT - Consts.STATUS_BAR_HEIGHT / 2);
+            Frame(pos.X, pos.Y, pos.X * 2.5f, Consts.SCREEN_HEIGHT - Consts.STATUS_BAR_HEIGHT / 2);
+           
+            //ListView Buttons
+            DrawButton(manager.Components["Quit Shop"].Position);
+            DrawString(new PointF(manager.Components["Quit Shop"].Position.X + 1, manager.Components["Quit Shop"].Position.Y + 4), "Quit Shop");
+            DrawButton(manager.Components["Buy Ship"].Position);
+            DrawString(new PointF(manager.Components["Buy Ship"].Position.X + 1, manager.Components["Buy Ship"].Position.Y + 4), "Buy Ship");
+
+            var menu = manager.Components["Shop Menu"] as ListView;
+            DrawListViewItem(menu.Items[0], menu.Index == 0);
+            DrawListViewItem(menu.Items[1], menu.Index == 1);
+        }
+
+        public void DrawListViewItem(ListViewItem lvi, bool isSelected)
+        {
+            Gl.glColor3f(0, 0, 0);
+            Rect(lvi.Position.X, lvi.Position.Y, lvi.Position.X + Consts.LISTVIEWITEM_WIDTH, lvi.Position.Y + Consts.LISTVIEWITEM_HEIGHT);
+            if (isSelected)
+                Frame(lvi.Position.X, lvi.Position.Y, lvi.Position.X + Consts.LISTVIEWITEM_WIDTH, lvi.Position.Y + Consts.LISTVIEWITEM_HEIGHT);
+            DrawString(new PointF(lvi.Position.X + 2, lvi.Position.Y + Consts.LISTVIEWITEM_HEIGHT / 2 - 0.5f), lvi.ItemName);
         }
 
         #endregion
@@ -478,7 +416,6 @@ namespace SpacePewPew
 
         private void DrawCell(PointF pos)
         {
-            Gl.glColor3f(1, 1, 0.3f);
             Gl.glBegin(Gl.GL_LINE_STRIP);
             Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y);
             Gl.glVertex2d(pos.X + 3 * Consts.CELL_SIDE / 2, pos.Y);
@@ -492,6 +429,7 @@ namespace SpacePewPew
 
         private void DrawField(PointF lightenedCell)
         {
+            Gl.glColor3f(1, 1, 0.3f);
             for (var i = 0; i < Consts.MAP_WIDTH; i++)
                 for (var j = 0; j < Consts.MAP_HEIGHT; j++)
                     if (i % 2 == 0)
@@ -537,6 +475,7 @@ namespace SpacePewPew
 
         private void Frame(float x0, float y0, float x1, float y1)
         {
+            Gl.glColor3f(1, 1, 0.3f);
             Gl.glLineWidth(2);
             Gl.glBegin(Gl.GL_LINE_STRIP);
             Gl.glVertex2d(x0, y0);
@@ -550,6 +489,7 @@ namespace SpacePewPew
         #endregion
 
         #region actionDrawing
+
         private PointF[] rotate(int angle, float side, float translationX, float translationY) //на вход 4 точки, на выход 4 точки
         {
             var a = side / 2;
@@ -603,15 +543,216 @@ namespace SpacePewPew
             return new PointF(a.X + (b.X - a.X) * multyplier / 10, a.Y + (b.Y - a.Y) * multyplier / 10);
         }
 
+        
+        private void DrawAction(IMapView map)
+        {
+            switch (state)
+            {
+                case ActionState.None:
+                    {
+                        GetShipsFromIMap(map);
+                        if (map.MapCells[map.ChosenShip.X, map.ChosenShip.Y].Ship != null)
+                            _shipId = map.MapCells[map.ChosenShip.X, map.ChosenShip.Y].Ship.Id;
+                        else
+                            _shipId = -1;
+                        break;
+                    }
+
+                case ActionState.Rotating:
+                    {
+                        Rotate(map, _shipId);
+                        break;
+                    }
+                case ActionState.Moving:
+                    {
+                        Move(map, _shipId);
+                        break;
+                    }
+                case ActionState.Attack:
+                    Attack(map, _shipId);
+                    break;
+            }
+
+            if (state == ActionState.None)
+            {
+                Game.Instance().IsResponding = true;
+            }
+        }
+
+        private void GetShipsFromIMap(IMapView map)
+        {
+            for (var i = 0; i < Consts.MAP_WIDTH; i++)
+                for (var j = 0; j < Consts.MAP_HEIGHT; j++)
+                {
+                    if (map.MapCells[i, j].Ship != null)
+                    {
+                        ShipAttributes tmp1;
+                        if (ShipsInfo.TryGetValue(map.MapCells[i, j].Ship.Id, out tmp1)) //сукасукасука!
+                            ShipsInfo[map.MapCells[i, j].Ship.Id].Pos = new Point(i, j);
+                        // = new ShipAttributes("Ship", "ShipColor", new Point(i, j), 0); //попровить этот хуец
+                        else
+                            ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Ship",
+                                "ShipColor", new Point(i, j), 0);
+                    }
+                }
+        }
+
+        private void Rotate(IMapView map, int ShipId)
+        {
+            if (processingDecision.Path.Count != 0)
+                newDir = getNewDirection(ShipsInfo[ShipId].Pos,
+                    processingDecision.Path[processingDecision.Path.Count - 1]);
+            else
+            {
+                if (processingDecision.DecisionType == DecisionType.Attack)
+                    newDir = getNewDirection(ShipsInfo[ShipId].Pos, processingDecision.PointB);
+            }
+
+            if (ShipsInfo[ShipId].Direction != newDir)
+            {
+                ShipsInfo[ShipId].Direction = newDir;
+            }
+
+            switch (processingDecision.DecisionType)
+            {
+                case DecisionType.Attack:
+                    state = processingDecision.Path.Count == 0 ? ActionState.Attack : ActionState.Moving;
+                    break;
+                case DecisionType.Move:
+                    state = ActionState.Moving;
+                    break;
+            }
+        }
+
+        private void Move(IMapView map, int ShipId)
+        {
+            nextCell = processingDecision.Path[processingDecision.Path.Count - 1];
+            processingDecision.Path.RemoveAt(processingDecision.Path.Count - 1);
+
+            switch (processingDecision.DecisionType)
+            {
+                case DecisionType.Attack:
+                    ShipsInfo[ShipId].Pos = nextCell;
+                    state = ActionState.Rotating;
+                    break;
+                case DecisionType.Move:
+                    ShipsInfo[ShipId].Pos = nextCell;
+                    state = ShipsInfo[ShipId].Pos == Destination ? ActionState.None : ActionState.Rotating;
+                    break;
+            }
+
+            if (nextCell != Destination)
+            {
+                ShipsInfo[ShipId].Pos = nextCell;
+
+                //TODO : это используется при плавном повороте, которого у нас все равно нет :3
+                //newDir = getNewDirection(ShipsInfo[ShipId].Pos, nextCell);
+                /*if (!(Math.Abs(ShipsInfo[ShipId].Direction - newDir) <
+                      (360 - Math.Abs(ShipsInfo[ShipId].Direction - newDir))))
+                    rotateDir *= -1;*/
+
+                state = ActionState.Rotating;
+            }
+            else
+            {
+                switch (processingDecision.DecisionType)
+                {
+                    case DecisionType.Attack:
+                        state = ActionState.Rotating;
+                        break;
+                    case DecisionType.Move:
+                        state = ActionState.None;
+                        break;
+                }
+            }
+        }
+
+        private void Attack(IMapView map, int ShipId)
+        {
+            Point t = ShipsInfo[processingDecision.ShipIndex].Pos;
+            Gl.glColor3f(1, 0, 0);
+
+            animation = "BOOM!";
+            animationTick = 15;
+            animationPos = ShipsInfo[processingDecision.ShipIndex].Pos;
+
+            ShipsInfo.Remove(processingDecision.ShipIndex);
+
+            state = ActionState.None;
+            
+        }
         #endregion
 
+        #region Animation
 
+
+        int animationTick = 0;
+        string animation = "none";
+        Point animationPos = new Point(0, 0);
+        public void Animate()
+        {            
+            switch (animation)
+            {
+                case "BOOM!":
+                    {
+                        Explotion();
+                        break;
+                    }
+                case "PewPew!":
+                    {
+                        Firing();
+                        break;
+                    }
+                default: break;
+
+            }
+
+            if (animationTick != 0)
+                animationTick--;
+            else
+                animation = "none";
+
+        }
+
+        public void Explotion()
+        {
+            Gl.glColor3f(1, 0, 0);
+            PointF position = CellToScreen(animationPos);
+            Random rand = new Random();
+            position.X -= Consts.CELL_SIDE / 2;
+            position.Y += Consts.CELL_SIDE / 4;
+
+            for (int i = 0; i < 2; i++)
+            {
+                position.X += (float)rand.Next(-60, 60) / 10;
+                position.Y += (float)rand.Next(-60, 60) / 10;
+                DrawString(position, "BOOM!");
+            }
+
+
+        }
+
+        public void Firing()
+        {
+
+        }
+
+        #endregion
         //-------------------------------
 
         public void DecisionHandler(object sender, DecisionArgs e)
         {
-            // VESHAI FLAZHKI O TOM SHTO NOT RESPONDENG
-            // do drawing
+            processingDecision = e.Decision;
+
+            state = ActionState.Rotating;
+
+            if (processingDecision.Path.Count != 0)
+                Destination = processingDecision.Path[0];
         }
     }
 }
+
+
+
+
+

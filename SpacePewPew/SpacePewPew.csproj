@@ -59,23 +59,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Action.cs" />
+    <Compile Include="GameLogic\PlayerInfo.cs" />
+    <Compile Include="UI\Action.cs" />
     <Compile Include="Consts.cs" />
     <Compile Include="Drawer.cs" />
     <Compile Include="FactoryMethod\AnotherBalleShipCreator.cs" />
     <Compile Include="FactoryMethod\BattleShipCreator.cs" />
     <Compile Include="FactoryMethod\Creator.cs" />
-    <Compile Include="Game.cs" />
+    <Compile Include="GameFileManager\FileManager.cs" />
+    <Compile Include="GameFileManager\IGameState.cs" />
+    <Compile Include="GameLogic\Game.cs" />
     <Compile Include="GameObjects\GameMap\Cell.cs" />
-    <Compile Include="GameObjects\GameMap\IMap.cs" />
-    <Compile Include="GameObjects\GameMap\IStationIterator.cs" />
-    <Compile Include="GameObjects\GameMap\ShipIterator.cs" />
-    <Compile Include="GameObjects\GameMap\StationIterator.cs" />
+    <Compile Include="GameObjects\GameMap\IMapView.cs" />
     <Compile Include="GameObjects\MapObjects\Mine.cs" />
     <Compile Include="GameObjects\MapObjects\Obstacle.cs" />
     <Compile Include="GameObjects\MapObjects\Planet.cs" />
     <Compile Include="GameObjects\MapObjects\Station.cs" />
-    <Compile Include="GameObjects\GameMap\IShipIterator.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -95,12 +94,13 @@
     <Compile Include="GameObjects\Ships\BattleShip.cs" />
     <Compile Include="GameObjects\Ships\Ship.cs" />
     <Compile Include="FactoryMethod\Race.cs" />
+    <Compile Include="UI\ListView.cs" />
+    <Compile Include="UI\ListViewItem.cs" />
     <Compile Include="UI\StatusBar.cs" />
     <Compile Include="UI\LayoutManager.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="UI\Button.cs" />
     <Compile Include="UI\IUiElement.cs" />
-    <Compile Include="UI\BackGroundRect.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

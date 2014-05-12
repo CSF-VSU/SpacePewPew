@@ -8,6 +8,5 @@ namespace SpacePewPew.GameObjects.GameMap
         Point ChosenShip { get; set; }
         Cell[,] MapCells { get; set; }
         List<Point> Lightened { get; set; }
-        List<Point> Path { get; set; }
     }
 }

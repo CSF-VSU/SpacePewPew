@@ -2,56 +2,90 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using SpacePewPew.GameObjects.MapObjects;
+using SpacePewPew.Players.Strategies;
+using SpacePewPew.GameObjects.Ships;
 
 namespace SpacePewPew.GameObjects.GameMap
 {
-    public class Map : IMap
+    [Serializable]
+    public class Map : IMapView
     {
-
         #region Declarations
         private bool _activeSelectExists;
-
 
         public bool IsResponding { get; set; }
         public Cell[,] MapCells { get; set; }
         public List<Point> Lightened { get; set; }
-        public List<Point> Path { get; set; }
         public Point ChosenShip { get; set; }
-        public SpacePewPew.FactoryMethod.BattleShipCreator Creator = new FactoryMethod.BattleShipCreator();
 
         #endregion
         
-
-        public Map(int width, int height)
+        public Map()
         {
-            
+            MapCells = new Cell[0, 0];
+          
+            _activeSelectExists = false;
+            IsResponding = true;
+        }
+
+        public void CreateEmptyMap(int width, int height)
+        {
             MapCells = new Cell[width, height];
             for (var i = 0; i < width; i++)
                 for (var j = 0; j < height; j++)
                 {
-                  //  MapCells[i, j].MapCo = new Point(i, j);
                     MapCells[i, j].IsLightened = false;
                 }
-          
-            MapCells[2, 2].Ship = Creator.FactoryMethod();
-            MapCells[2, 2].Ship.id = Creator.lastId;
-            MapCells[3, 2].Ship = Creator.FactoryMethod();
-            MapCells[3, 2].Ship.id = Creator.lastId;
-            _activeSelectExists = false;
-            Path = new List<Point>();
-            IsResponding = true;
         }
 
-        
-
-        private void Move(Point p)
+        public void LoadFrom(IMapView map)
         {
-            IsResponding = false;
+            MapCells = map.MapCells;
         }
 
-        private void Attack()
-        {
 
+        private Decision Move(Point p)
+        {
+            var path = FindWay(ChosenShip, p);
+
+            MapCells[p.X, p.Y].Ship = MapCells[ChosenShip.X, ChosenShip.Y].Ship;
+            MapCells[ChosenShip.X, ChosenShip.Y].Ship = null;
+
+            return new Decision { DecisionType = DecisionType.Move, PointA = ChosenShip, PointB = p, Path = path, ShipIndex = -1 };
+        }
+
+        private Decision Attack(Point p)
+        {
+            var path = FindWay(ChosenShip, p);
+            path.RemoveAt(0); //без последней клетки
+
+            var shipId = MapCells[p.X, p.Y].Ship.Id;
+
+            Point nearEnemy;
+            if (path.Count == 0)
+            {
+                nearEnemy = ChosenShip;
+            }
+            else
+            {
+                nearEnemy = path[0];
+                MapCells[nearEnemy.X, nearEnemy.Y].Ship = MapCells[ChosenShip.X, ChosenShip.Y].Ship;
+                MapCells[ChosenShip.X, ChosenShip.Y].Ship = null;
+            }
+
+            var damagePerTime = MapCells[nearEnemy.X, nearEnemy.Y].Ship.DamagePerTime;
+            var numberOfAttacks = MapCells[nearEnemy.X, nearEnemy.Y].Ship.NumberOfAttacks;
+            ReduceHealth(p, damagePerTime, numberOfAttacks);
+            if (MapCells[p.X, p.Y].Ship.Health <= 0)
+                MapCells[p.X, p.Y].Ship = null;
+
+            return new Decision { DecisionType = DecisionType.Attack, PointA = ChosenShip, PointB = p, Path = path, ShipIndex = shipId };
+        }
+
+        private void ReduceHealth(Point enemy, int damage, int times)
+        {
+            MapCells[enemy.X, enemy.Y].Ship.Health -= damage * times;
         }
 
         private bool IsEnemy(Point p)
@@ -64,7 +98,6 @@ namespace SpacePewPew.GameObjects.GameMap
             return true;
         }
 
-
         private bool IsEmpty(Point p)
         {
             return !(HasObstacle(p) || HasShip(p));
@@ -72,7 +105,7 @@ namespace SpacePewPew.GameObjects.GameMap
 
         private bool CanReach(Point p)
         {
-            return MapCells[p.X, p.Y].IsLightened;
+            return Lightened.Contains(p);
         }
 
         private void Unlight()
@@ -82,37 +115,43 @@ namespace SpacePewPew.GameObjects.GameMap
                     MapCells[i, j].IsLightened = false;
         }
 
-
-        public void Click(Point p)
+        //!!!
+        public Decision Click(Point p)
         {
             Unlight();
             if (_activeSelectExists)
             {
-                if (IsEnemy(p) && IsClose(p))
+                if (HasShip(p) && CanReach(p) && (!(p.Equals(ChosenShip))))
                 {
-                    Attack();
                     _activeSelectExists = false;
+                    return Attack(p);
                 }
-                else if (HasShip(p))
+                if (HasShip(p))
                 {
                     Lightened = Light(p);
+                    return null;
                 }
-                else if (CanReach(p) && (IsEmpty(p) || HasObstacle(p) && MapCells[p.X, p.Y].Obstacle.IsPassable))
+                if (CanReach(p) && (IsEmpty(p) || HasObstacle(p) && MapCells[p.X, p.Y].Obstacle.IsPassable))
                 {
-                    Move(p);
                     _activeSelectExists = false;
+                    return Move(p);
                 }
-
-                
             }
             else
             {
-                if (!HasShip(p)) return;
+                if (!HasShip(p))
+                {
+                    return null;                    
+                }
 
                 Lightened = Light(p);
                 if (IsShipMine(p))
+                {
                     _activeSelectExists = true;
+                    ChosenShip = p;
+                }
             }
+            return null;
         } 
 
 
@@ -131,8 +170,7 @@ namespace SpacePewPew.GameObjects.GameMap
             return MapCells[p.X, p.Y].Obstacle != null;
         }
 
-
-        private IEnumerable<Point> FindNeighbours(Point c)
+        private List<Point> FindNeighbours(Point c)
         {
             var neighbours = new List<Point>();
             int x = c.X, y = c.Y, width = Consts.MAP_WIDTH, height = Consts.MAP_HEIGHT;
@@ -172,7 +210,6 @@ namespace SpacePewPew.GameObjects.GameMap
             return neighbours;
         }
 
-
         public List<Point> FindWay(Point startPoint, Point destination)
         {
             var way = new List<Point>();
@@ -190,23 +227,43 @@ namespace SpacePewPew.GameObjects.GameMap
             q.Enqueue(new Point(x, y));
             while (((x != destination.X) || (y != destination.Y)) && (q.Count > 0))
             {
-                for (var i = 0; i < q.Count; i++) 
+                for (var i = 0; i < q.Count; i++)
                 {
-                    Point current = (Point)q.Dequeue();
+                    var isDone = false;
+                    var current = (Point)q.Dequeue();
                     x = oldX = current.X;
-                    y = oldY = current.Y;
+                    y = oldY = current.Y;                    
                     var neighbours = FindNeighbours(current);
                     foreach (var t in neighbours)
                     {
                         x = t.X;
                         y = t.Y;
-                        if (IsNeighbourCellEmpty(MapCells[t.X, t.Y]))
+
+                        if (x == destination.X && y == destination.Y)
                         {
-                            MapCells[t.X, t.Y].Visited = true;
-                            MapCells[t.X, t.Y].Previous = new Point(oldX, oldY);
-                            q.Enqueue(new Point(t.X, t.Y));
+                            if (IsNeighbourCellEmpty(MapCells[t.X, t.Y]) || MapCells[x, y].Ship != null) //TODO : check if enemy only
+                            {
+                                MapCells[t.X, t.Y].Visited = true;
+                                MapCells[t.X, t.Y].Previous = new Point(oldX, oldY);
+                                q.Enqueue(new Point(t.X, t.Y));
+                                isDone = true;
+                                break;
+                            }
                         }
+                        else
+                        {
+                            if (IsNeighbourCellEmpty(MapCells[t.X, t.Y]))
+                            {
+                                MapCells[t.X, t.Y].Visited = true;
+                                MapCells[t.X, t.Y].Previous = new Point(oldX, oldY);
+                                q.Enqueue(new Point(t.X, t.Y));
+                            }
+                        }
+                        
                     }
+  
+                    if (isDone)
+                        break;
                 }
             }
 
@@ -219,24 +276,28 @@ namespace SpacePewPew.GameObjects.GameMap
             return way;
         }
 
-
         private bool IsNeighbourCellEmpty(Cell c)
         {
-            return ((!(c.Visited)) && (c.Obstacle == null) && (c.Ship == null));
+            return (!(c.Visited) && c.Obstacle == null && c.Ship == null);
         }
-
 
         private List<Point> Light(Point startPoint)
         {
-            var speed = 3; //!!!!!!!!!! HARD CODE //не учитывает скорость корабля!!1111111111
+            var speed = 5;
             var counter = 0;
             MapCells[startPoint.X, startPoint.Y].IsLightened = true;
             
             var lightened = new List<Point> { startPoint };
-
-            foreach (var c in lightened)
+            
+            LightNeighbours(ref lightened, startPoint);
+            counter++;
+            for (int i = 0; i < lightened.Count; i++)
             {
-                LightNeighbours(ref lightened, c);
+                var tmp = new List<Point>();
+                for (int j = 0; j < lightened.Count; j++)
+                    tmp.Add(lightened[j]);
+                for (int j = 0; j < tmp.Count; j++)
+                    LightNeighbours(ref lightened, tmp[j]);
                 counter++;
                 if (counter >= speed)
                     break;
@@ -244,10 +305,9 @@ namespace SpacePewPew.GameObjects.GameMap
             return lightened;
         }
 
-
         private void LightNeighbours(ref List<Point> lightened, Point c)
-        {
-            var neighbours = FindNeighbours(c);
+        {            
+            List<Point> neighbours = FindNeighbours(c);
             foreach (var t in neighbours)
             {
                 MapCells[t.X, t.Y].IsLightened = true;
@@ -257,15 +317,27 @@ namespace SpacePewPew.GameObjects.GameMap
         } 
 
         #region Iterator
-        public ShipIterator GetShipIterator(PlayerColor color)
+        public IEnumerable<Ship> GetShipIterator(PlayerColor color)
         {
-            return new ShipIterator(MapCells, color);
+            for (var i = 0; i < MapCells.GetLength(0); i++)
+                for (var j = 0; j < MapCells.GetLength(1); j++)
+                    if (MapCells[i, j].Ship != null && MapCells[i, j].Ship.Color == color)
+                        yield return MapCells[i, j].Ship;
         }
 
-        public StationIterator GeetStationIterator(PlayerColor color)
+        public IEnumerable<Station> GetStationIterator(PlayerColor color)
         {
-            return  new StationIterator(MapCells, color);
+            for (var i = 0; i < MapCells.GetLength(0); i++)
+                for (var j = 0; j < MapCells.GetLength(1); j++)
+                    if (MapCells[i,j].Obstacle is Station && (MapCells[i,j].Obstacle as Station).OwnerColor == color)
+                        yield return MapCells[i, j].Obstacle as Station;
         }
+
         #endregion
+
+        public void BuildShip(Ship ship, Point coord)
+        {
+            MapCells[coord.X, coord.Y].Ship = ship;
+        }
     }
 }
