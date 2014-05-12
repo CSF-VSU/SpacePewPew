@@ -30,7 +30,6 @@ namespace SpacePewPew.GameObjects.Ships
         #endregion
 
         //TODO : prototype + ship clases + conf files
-
         public Ship(int id)
         {
             Id = id;

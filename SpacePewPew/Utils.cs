@@ -2,9 +2,6 @@ using System.Drawing;
 
 namespace SpacePewPew
 {
-    
-   
-
     public enum RaceName
     {
         Human,

@@ -154,6 +154,8 @@ namespace SpacePewPew
                     //DrawCell(LightenedCell);
             
                     Gl.glEnable(Gl.GL_BLEND);
+                    
+                    DrawAction(map);
 
                     for (int i = 0; i < map.MapCells.GetLength(0); i++ )
                         for (int j = 0; j < map.MapCells.GetLength(1); j++)
@@ -456,6 +458,7 @@ namespace SpacePewPew
 
         public void DrawString(PointF pos, string text)
         {
+            Gl.glColor3f(1, 1, 0.3f);
             Gl.glRasterPos2d(pos.X, pos.Y);
             Glut.glutBitmapString(Glut.GLUT_BITMAP_9_BY_15, text);
         }
@@ -679,7 +682,6 @@ namespace SpacePewPew
             ShipsInfo.Remove(processingDecision.ShipIndex);
 
             state = ActionState.None;
-            
         }
         #endregion
 
@@ -751,8 +753,3 @@ namespace SpacePewPew
         }
     }
 }
-
-
-
-
-

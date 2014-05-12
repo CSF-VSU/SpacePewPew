@@ -314,6 +314,7 @@ namespace SpacePewPew.GameObjects.GameMap
                 if (!(lightened.Contains(t)))
                     lightened.Add(t);
             }
+            return;
         } 
 
         #region Iterator

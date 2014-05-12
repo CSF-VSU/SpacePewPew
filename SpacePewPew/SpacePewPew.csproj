@@ -68,7 +68,9 @@
     <Compile Include="FactoryMethod\Creator.cs" />
     <Compile Include="GameFileManager\FileManager.cs" />
     <Compile Include="GameFileManager\IGameState.cs" />
+
     <Compile Include="GameLogic\Game.cs" />
+
     <Compile Include="GameObjects\GameMap\Cell.cs" />
     <Compile Include="GameObjects\GameMap\IMapView.cs" />
     <Compile Include="GameObjects\MapObjects\Mine.cs" />
