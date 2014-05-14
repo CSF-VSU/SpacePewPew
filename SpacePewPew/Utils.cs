@@ -2,6 +2,12 @@ using System.Drawing;
 
 namespace SpacePewPew
 {
+    public struct ShipNum
+    {
+        public RaceName Race { get; set; }
+        public int Index { get; set; }
+    }
+
     public enum RaceName
     {
         Human,

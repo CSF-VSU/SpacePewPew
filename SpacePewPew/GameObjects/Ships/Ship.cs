@@ -3,7 +3,7 @@
 namespace SpacePewPew.GameObjects.Ships
 {
     [Serializable]
-    public abstract class Ship
+    public class Ship : ICloneable
     {
         #region Declarations
         public int Id { get; set; }
@@ -24,15 +24,20 @@ namespace SpacePewPew.GameObjects.Ships
         public int Speed { get; set; }
         public TurnState HasTurn { get; set; }
 
-        public int DamagePerTime { get; set; }
-        public int NumberOfAttacks { get; set; }
+        public int MinDamage { get; set; }
+        public int MaxDamage { get; set; }
+        public int Volleys { get; set; }
 
         #endregion
 
-        //TODO : prototype + ship clases + conf files
         public Ship(int id)
         {
             Id = id;
+        }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
         }
     }
 }

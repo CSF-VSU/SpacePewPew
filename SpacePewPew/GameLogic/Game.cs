@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using SpacePewPew.FactoryMethod;
 using SpacePewPew.GameFileManager;
 using SpacePewPew.GameObjects.GameMap;
 using SpacePewPew.Players;
 using SpacePewPew.Players.Strategies;
+using SpacePewPew.Prototype;
 
 namespace SpacePewPew.GameLogic
 {
     [Serializable]
-    public class Game// : IGameState
+    public class Game
     {
         #region Singleton pattern
 
@@ -25,9 +25,11 @@ namespace SpacePewPew.GameLogic
             _races[RaceName.Swarm] = new Race(RaceName.Swarm);
             _races[RaceName.Dentelian] = new Race(RaceName.Dentelian);
             _races[RaceName.Kronolian] = new Race(RaceName.Kronolian);
-
+            
             IsResponding = true;
             IsShowingModal = false;
+
+            ShipCreator.GetCreator();
         }
 
         public static Game Instance()
@@ -78,7 +80,7 @@ namespace SpacePewPew.GameLogic
 
         public void BuildShip(int index)
         {
-            var ship = _races[CurrentPlayer.Race].Builder[index].FactoryMethod();
+            var ship = _races[CurrentPlayer.Race].BuildShip(index);
             ship.Color = CurrentPlayer.Color;
             Map.BuildShip(ship, BuildingCoordinate);
         }
@@ -116,10 +118,6 @@ namespace SpacePewPew.GameLogic
         }
         #endregion
 
-        /*public FileManager GetManager()
-        {
-            return manager;
-        }*/
 
         public void LoadGame(GameState state)
         {

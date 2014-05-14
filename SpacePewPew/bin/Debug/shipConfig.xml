@@ -1,0 +1,26 @@
+﻿<ArrayOfShipInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ShipInfo>
+    <Race>Human</Race>
+    <Index>0</Index>
+    <Name>Fighter</Name>
+    <Description>Typical human ship</Description>
+    <Cost>20</Cost>
+    <HP>25</HP>
+    <Speed>5</Speed>
+    <MinDamage>5</MinDamage>
+    <MaxDamage>10</MaxDamage>
+    <Volleys>2</Volleys>
+  </ShipInfo>
+  <ShipInfo>
+    <Race>Human</Race>
+    <Index>1</Index>
+    <Name>Barge</Name>
+    <Description>Fat and slow motherfucker</Description>
+    <Cost>30</Cost>
+    <HP>70</HP>
+    <Speed>2</Speed>
+    <MinDamage>2</MinDamage>
+    <MaxDamage>8</MaxDamage>
+    <Volleys>3</Volleys>
+  </ShipInfo>
+</ArrayOfShipInfo>

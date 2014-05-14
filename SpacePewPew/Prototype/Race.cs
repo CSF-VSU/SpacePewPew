@@ -1,23 +1,21 @@
-﻿namespace SpacePewPew.FactoryMethod
+﻿using SpacePewPew.GameObjects.Ships;
+
+namespace SpacePewPew.Prototype
 {
     public class Race
     {
+        private readonly RaceName _raceName ;
         public string Name { get; set; }
         public string Description { get; set; }
-        public Creator[] Builder { get; set; }
-
+        
         public Race(RaceName raceName)
         {
-            Builder = new Creator[6];
-
+            _raceName = raceName;
             switch (raceName)
             {
                 case RaceName.Human :
                     Name = "Human";
                     Description = "Typical humanssss";
-
-                    Builder[0] = new BattleShipCreator();
-                    Builder[1] = new AnotherBalleShipCreator();
                     break;
                 case RaceName.Swarm:
                     Name = "Swarm";
@@ -34,5 +32,10 @@
             }
         }
 
+
+        public Ship BuildShip(int index)
+        {
+            return ShipCreator.GetCreator().BuildShip(new ShipNum {Index = index, Race = _raceName});
+        }
     }
 }

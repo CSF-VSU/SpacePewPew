@@ -78,7 +78,5 @@ namespace SpacePewPew
             var tmp1 = OglDrawer.ScreenToCell(tmp);
             Text = String.Format("Mouse {0:00.###};  {1:00.###}    Cell: {2};{3}", tmp.X, tmp.Y, tmp1.X, tmp1.Y);
         }
-
-        
     }
 }

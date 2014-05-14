@@ -31,3 +31,5 @@ C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePe
 C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.MainForm.resources
 C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.Properties.Resources.resources
 C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.csproj.GenerateResource.Cache
+C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\bin\Debug\SpacePewPew.exe
+C:\Users\Enko\Desktop\Programming\SharpDevelop WorkSpace\CSF\SpacePewPew\SpacePewPew\bin\Debug\SpacePewPew.pdb
