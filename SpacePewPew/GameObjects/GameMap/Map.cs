@@ -39,6 +39,17 @@ namespace SpacePewPew.GameObjects.GameMap
                 {
                     MapCells[i, j].IsLightened = false;
                 }
+
+            //CAREFULЪ HARDCODE DETEHTED!
+            MapCells[2, 2].Obstacle = new Dock(); 
+            MapCells[2, 3].Obstacle = new Dock();
+            MapCells[3, 2].Obstacle = new Dock();
+            MapCells[3, 3].Obstacle = new Dock();
+
+            MapCells[2, 6].Obstacle = new Dock();
+            MapCells[2, 7].Obstacle = new Dock();
+            MapCells[3, 6].Obstacle = new Dock(); 
+            MapCells[3, 7].Obstacle = new Dock();
         }
 
         public void LoadFrom(IMapView map)
@@ -359,6 +370,11 @@ namespace SpacePewPew.GameObjects.GameMap
             _activeSelectExists = false;
             ChosenShip = new Point();
             Lightened = new List<Point>();
+        }
+
+        public bool IsBuildingArea(Point buildingCoordinate)
+        {
+            return MapCells[buildingCoordinate.X, buildingCoordinate.Y].Obstacle is Dock;
         }
     }
 }

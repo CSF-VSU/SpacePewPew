@@ -25,7 +25,7 @@ using SpacePewPew.Players.Strategies;
         {
             Color = color;
             Race = race;
-            Money = 42;
+            Money = 112;
             TimeLeft =      30 * 25;
             MaxTurnTime =   30 * 25;
             UnitCount = 0;

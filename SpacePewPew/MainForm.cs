@@ -72,8 +72,6 @@ namespace SpacePewPew
         private void OGL_MouseMove(object sender, MouseEventArgs e)
         {
             //TODO : обновлять mouseCoord
-            //mousePoint = new Point();
-            
             var tmp = Additional.NewPoint(new PointF(e.X, e.Y));
             var tmp1 = OglDrawer.ScreenToCell(tmp);
             Text = String.Format("Mouse {0:00.###};  {1:00.###}    Cell: {2};{3}", tmp.X, tmp.Y, tmp1.X, tmp1.Y);

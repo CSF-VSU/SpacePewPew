@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameLogic\PlayerInfo.cs" />
+    <Compile Include="GameObjects\MapObjects\Dock.cs" />
     <Compile Include="Prototype\ShipInfo.cs" />
     <Compile Include="UI\Action.cs" />
     <Compile Include="Consts.cs" />

@@ -68,19 +68,23 @@ namespace SpacePewPew.GameLogic
         
         #region Extra methods
 
-        private Player PassTurn()
+        public void PassTurn()
         {
             var index = Players.IndexOf(CurrentPlayer);
             index++;
             if (index == Players.Count)
                 index = 0;
             Players[index].TimeLeft = Players[index].MaxTurnTime;
-            return Players[index];
+            CurrentPlayer = Players[index];
         }
 
         public void BuildShip(int index)
         {
+            if (!Map.IsBuildingArea(BuildingCoordinate)) return;
             var ship = _races[CurrentPlayer.Race].BuildShip(index);
+
+            if (CurrentPlayer.Money < ship.Cost) return;
+            CurrentPlayer.Money -= ship.Cost;
             ship.Color = CurrentPlayer.Color;
             Map.BuildShip(ship, BuildingCoordinate);
         }
@@ -98,7 +102,7 @@ namespace SpacePewPew.GameLogic
         {
             if (--CurrentPlayer.TimeLeft == 0)
             {
-                CurrentPlayer = PassTurn();
+                PassTurn();
                 return;
             }
 

@@ -66,6 +66,9 @@ namespace SpacePewPew.UI
                        Components["Save"] = new GameButton(new PointF(140, 1));
                        (Components["Save"] as GameButton).OnClick += () => Game.Instance().Manager.SaveGame(Game.Instance());
 
+                       Components["End Turn"] = new GameButton(new PointF(160, 1));
+                       (Components["End Turn"] as GameButton).OnClick += () => Game.Instance().PassTurn();
+
                        Components["Shop Menu"] = new ListView(new PointF(Consts.SCREEN_WIDTH / 7 * 2, Consts.STATUS_BAR_HEIGHT + 1));
                        
                        Components["Quit Shop"] = new GameButton(new PointF(105, 87));  //TODO: fix this coordinates later
@@ -133,6 +136,14 @@ namespace SpacePewPew.UI
                         && pos.Y >= saveBtn.Position.Y && pos.Y <= saveBtn.Position.Y + Consts.BUTTON_HEIGHT)
                     {
                         saveBtn.InvokeOnClick();
+                        return true;
+                    }
+
+                    var endBtn = Components["End Turn"] as GameButton;
+                    if (pos.X >= endBtn.Position.X && pos.X <= endBtn.Position.X + Consts.BUTTON_WIDTH
+                        && pos.Y >= endBtn.Position.Y && pos.Y <= endBtn.Position.Y + Consts.BUTTON_HEIGHT)
+                    {
+                        endBtn.InvokeOnClick();
                         return true;
                     }
                     break;

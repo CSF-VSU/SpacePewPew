@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using SpacePewPew.GameLogic;
 using SpacePewPew.GameObjects.GameMap;
+using SpacePewPew.GameObjects.MapObjects;
 using SpacePewPew.Players.Strategies;
 using SpacePewPew.UI;
 using Tao.DevIl;
@@ -16,7 +17,7 @@ namespace SpacePewPew
     {
         public class ShipAttributes
         {
-            public ShipAttributes(string texName, string color, Point pos, int direction)
+            public ShipAttributes(string texName, PlayerColor color, Point pos, int direction)
             {
                 TexName = texName;
                 Color = color;
@@ -26,7 +27,7 @@ namespace SpacePewPew
 
             public Point Pos { get; set; }
             public string TexName { get; set; }
-            public string Color { get; set; }
+            public PlayerColor Color { get; set; }
             public int Direction { get; set; }
         }
 
@@ -102,8 +103,8 @@ namespace SpacePewPew
             TexInit(@"..\..\Textures\BackgroundTexture.jpg", "Main Menu");
             TexInit(@"..\..\Textures\BattleMap.jpg", "Battle Map");
             TexInit(@"..\..\ShipModels\Korab.png", "Ship");
-            TexInit(@"..\..\ShipModels\redKorab.png", "ShipColor");
-            TexInit(@"..\..\ShipModels\greenKorab.png", "ShipColorGreen");
+            TexInit(@"..\..\ShipModels\redKorab.png", "Red");
+            TexInit(@"..\..\ShipModels\blueKorab.png", "Blue");
 
             #endregion TexInitialize;
         }
@@ -150,7 +151,7 @@ namespace SpacePewPew
 
                     DrawTexture(Textures["Battle Map"], coordinates);
 
-                    DrawField(LightenedCell);
+                    DrawField(LightenedCell, map);
                     //DrawCell(LightenedCell);
             
                     Gl.glEnable(Gl.GL_BLEND);
@@ -162,17 +163,20 @@ namespace SpacePewPew
                             if (map.MapCells[i, j].IsLightened)
                             {
                                 Gl.glColor3f(1, 0, 0);                              
-                                PointF t = CellToScreen(new Point(i, j));                               
-                                DrawCell(new PointF(t.X - 3/2 * Consts.CELL_SIDE, t.Y - (float)Math.Sqrt(3) / 2 * Consts.CELL_SIDE));
+                                PointF t = CellToScreen(new Point(i, j));    
+                           
+                                DrawCell(t);
                             }
                     DrawAction(map);
 
                     foreach (var a in ShipsInfo)
                     {
                         PointF tmp;
+                       // string color = "Red";
                         tmp = CellToScreen(a.Value.Pos);
-                        DrawTexture(Textures[a.Value.TexName], rotate(-a.Value.Direction, 10, tmp.X, tmp.Y));
-                        DrawTexture(Textures[a.Value.Color], rotate(-a.Value.Direction, 10, tmp.X, tmp.Y));
+                        DrawTexture(Textures[a.Value.TexName], rotate(-a.Value.Direction, 10, tmp.X + Consts.CELL_SIDE, tmp.Y + (float)Math.Sqrt(3)/2 * Consts.CELL_SIDE));
+                        
+                        DrawTexture(Textures[a.Value.Color.ToString()], rotate(-a.Value.Direction, 10, tmp.X + Consts.CELL_SIDE, tmp.Y + (float)Math.Sqrt(3) / 2 * Consts.CELL_SIDE));
                     }
 
                     Gl.glDisable(Gl.GL_BLEND);
@@ -222,7 +226,7 @@ namespace SpacePewPew
                 y = (float)Math.Sqrt(3) * p.Y * Consts.CELL_SIDE;
             else
                 y = (float)Math.Sqrt(3) * (p.Y + (float)1/2) * Consts.CELL_SIDE;
-            return new PointF(x + Consts.MAP_START_POS.X + Consts.CELL_SIDE, y + Consts.MAP_START_POS.Y + Consts.CELL_SIDE * (float)Math.Sqrt(3)/2);
+            return new PointF(x + Consts.MAP_START_POS.X , y + Consts.MAP_START_POS.Y );
         }
 
         #endregion
@@ -376,6 +380,10 @@ namespace SpacePewPew
             var saveBtn = lm.Components["Save"] as GameButton;
             DrawButton(saveBtn.Position);
             DrawString(new PointF(saveBtn.Position.X + 2, saveBtn.Position.Y + 4), "Save");
+
+            var endTurnBtn = lm.Components["End Turn"] as GameButton;
+            DrawButton(endTurnBtn.Position);
+            DrawString(new PointF(endTurnBtn.Position.X + 2, endTurnBtn.Position.Y + 4), "End Turn");
         }
 
         private void DrawListView(LayoutManager manager)
@@ -418,6 +426,7 @@ namespace SpacePewPew
 
         private void DrawCell(PointF pos)
         {
+            
             Gl.glBegin(Gl.GL_LINE_STRIP);
             Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y);
             Gl.glVertex2d(pos.X + 3 * Consts.CELL_SIDE / 2, pos.Y);
@@ -429,24 +438,30 @@ namespace SpacePewPew
             Gl.glEnd();
         }
 
-        private void DrawField(PointF lightenedCell)
+        private void DrawField(PointF lightenedCell, IMapView map)
         {
-            Gl.glColor3f(1, 1, 0.3f);
+            
             for (var i = 0; i < Consts.MAP_WIDTH; i++)
                 for (var j = 0; j < Consts.MAP_HEIGHT; j++)
-                    if (i % 2 == 0)
+                {
+                    if (i%2 == 0)
                     {
-                        CellCoors[i, j] = new PointF(Consts.MAP_START_POS.X + i / 2 * 3 * Consts.CELL_SIDE,
-                            Consts.MAP_START_POS.Y + j * (float)Math.Sqrt(3) * Consts.CELL_SIDE);
+                        CellCoors[i, j] = new PointF(Consts.MAP_START_POS.X + i/2*3*Consts.CELL_SIDE,
+                            Consts.MAP_START_POS.Y + j*(float) Math.Sqrt(3)*Consts.CELL_SIDE);
+                        Gl.glColor3f(1, 1, 0.3f);
                         DrawCell(CellCoors[i, j]);
                     }
                     else
                     {
-                        CellCoors[i, j] = new PointF(Consts.MAP_START_POS.X + (1.5f + (i - 1) / 2 * 3) * Consts.CELL_SIDE,
-                            Consts.MAP_START_POS.Y + (float)(Math.Sqrt(3) * Consts.CELL_SIDE / 2) +
-                            j * (float)Math.Sqrt(3) * Consts.CELL_SIDE);
+                        CellCoors[i, j] = new PointF(Consts.MAP_START_POS.X + (1.5f + (i - 1)/2*3)*Consts.CELL_SIDE,
+                            Consts.MAP_START_POS.Y + (float) (Math.Sqrt(3)*Consts.CELL_SIDE/2) +
+                            j*(float) Math.Sqrt(3)*Consts.CELL_SIDE);
+                        Gl.glColor3f(1, 1, 0.3f);
                         DrawCell(CellCoors[i, j]);
                     }
+                    if (map.MapCells[i, j].Obstacle is Dock) DrawDock(new Point(i, j));
+                }
+
             Gl.glLineWidth(3);
             DrawCell(lightenedCell);
             Gl.glLineWidth(1);
@@ -595,7 +610,7 @@ namespace SpacePewPew
                         // = new ShipAttributes("Ship", "ShipColor", new Point(i, j), 0); //попровить этот хуец
                         else
                             ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Ship",
-                                "ShipColor", new Point(i, j), 0);
+                                map.MapCells[i, j].Ship.Color, new Point(i, j), 0);
                     }
                 }
         }
@@ -739,6 +754,26 @@ namespace SpacePewPew
 
         }
 
+        #endregion
+
+
+        #region objectdrawing
+
+        private void DrawDock(Point p)
+        {
+            Gl.glColor3f(0.9f, 0.4f, 0.3f);
+            PointF pos = CellToScreen(p);
+            Gl.glBegin(Gl.GL_POLYGON);
+            Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y);
+            Gl.glVertex2d(pos.X + 3 * Consts.CELL_SIDE / 2, pos.Y);
+            Gl.glVertex2d(pos.X + 2 * Consts.CELL_SIDE, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE / 2);
+            Gl.glVertex2d(pos.X + 3 * Consts.CELL_SIDE / 2, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE);
+            Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE);
+            Gl.glVertex2d(pos.X, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE / 2);
+            Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y);
+            Gl.glEnd();
+
+        }
         #endregion
         //-------------------------------
 

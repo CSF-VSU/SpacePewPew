@@ -8,6 +8,6 @@ namespace SpacePewPew.GameObjects.MapObjects
     {
         public bool     IsPassable      { get; set; }
         public bool     IsDestructable  { get; set; }
-        public Point    Coordinate      { get; set; }
+        //public Point    Coordinate      { get; set; }
     }
 }
