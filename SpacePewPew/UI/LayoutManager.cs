@@ -36,17 +36,17 @@ namespace SpacePewPew.UI
                case ScreenType.MainMenu:
                    {
                        Components.Clear();
-                       Components["Exit"] = new GameButton(new PointF(157, 90));
+                       Components["Exit"] = new GameButton(new PointF(157, 90), true);
                        (Components["Exit"] as GameButton).OnClick += () => { MainForm.ActiveForm.Close(); };
 
-                       Components["New Game"] = new GameButton(new PointF(157, 50));
+                       Components["New Game"] = new GameButton(new PointF(157, 50), true);
                        (Components["New Game"] as GameButton).OnClick += () => { ScreenType = ScreenType.Game;
                                                                                    Game.Instance().StartNewGame();
                                                                                    SetComponents(ScreenType.Game);
                                                                                        /* ChangeStage(screenType) //для смены дикшнари  */
                        };
 
-                       Components["Load"] = new GameButton(new PointF(157, 50 + Consts.BUTTON_HEIGHT + 5));
+                       Components["Load"] = new GameButton(new PointF(157, 50 + Consts.BUTTON_HEIGHT + 5), true);
                        (Components["Load"] as GameButton).OnClick += () =>
                        {
                            Game.Instance().Manager.LoadGame();
@@ -62,28 +62,29 @@ namespace SpacePewPew.UI
                        //компоненты меню игры: статус бар, менюшки и тд
                        Components["Status Bar"] = new StatusBar();
 
-                       Components["Save"] = new GameButton(new PointF(140, 1));
+                       Components["Save"] = new GameButton(new PointF(140, 1), true);
                        (Components["Save"] as GameButton).OnClick += () => Game.Instance().Manager.SaveGame(Game.Instance());
 
-                       Components["End Turn"] = new GameButton(new PointF(160, 1));
+                       Components["End Turn"] = new GameButton(new PointF(160, 1), true);
                        (Components["End Turn"] as GameButton).OnClick += () => Game.Instance().PassTurn();
 
                        Components["Shop Menu"] = new ListView(new PointF(Consts.SCREEN_WIDTH / 7 * 2, Consts.STATUS_BAR_HEIGHT + 1));
                        
-                       Components["Quit Shop"] = new GameButton(new PointF(105, 87));  //TODO: fix this coordinates later
+                       Components["Quit Shop"] = new GameButton(new PointF(105, 87), true);  //TODO: fix this coordinates later
                        (Components["Quit Shop"] as GameButton).OnClick += () =>
                        {
                            (Components["Shop Menu"] as ListView).Visible = false;
-                           (Components["Shop Menu"] as ListView).Index = 0;
+                           (Components["Shop Menu"] as ListView).Index = -1;
                            Game.Instance().IsShowingModal = false;
                        };
-                       Components["Buy Ship"] = new GameButton(new PointF(105 - Consts.BUTTON_WIDTH - 2, 87));
+                       Components["Buy Ship"] = new GameButton(new PointF(105 - Consts.BUTTON_WIDTH - 2, 87), false);
                        (Components["Buy Ship"] as GameButton).OnClick += () =>
                        {
                            Game.Instance().BuildShip((Components["Shop Menu"] as ListView).Index);
                            (Components["Shop Menu"] as ListView).Visible = false;
-                           (Components["Shop Menu"] as ListView).Index = 0;
+                           (Components["Shop Menu"] as ListView).Index = -1;
                            Game.Instance().IsShowingModal = false;
+
                        };
 
                        break;

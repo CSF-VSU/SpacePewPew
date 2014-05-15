@@ -130,8 +130,8 @@ namespace SpacePewPew
                     
                     foreach (var btn in manager.Components)
                     {   
-                        DrawButton(btn.Value.Position);
-                        DrawString(new PointF(btn.Value.Position.X + 2, btn.Value.Position.Y + 4), btn.Key);
+                        DrawButton((btn.Value as GameButton), btn.Key);
+                       // DrawString(new PointF(btn.Value.Position.X + 2, btn.Value.Position.Y + 4), btn.Key);
 
                     }
                     break;
@@ -313,13 +313,24 @@ namespace SpacePewPew
 
         #region UI Drawing
 
-        private void DrawButton(PointF pos)
+        private void DrawButton(GameButton btn, string Name)
         {
             Gl.glColor3f(0,0,0);
-            Rect(pos.X, pos.Y, pos.X + Consts.BUTTON_WIDTH, pos.Y + Consts.BUTTON_HEIGHT);
+            Rect(btn.Position.X, btn.Position.Y, btn.Position.X + Consts.BUTTON_WIDTH, btn.Position.Y + Consts.BUTTON_HEIGHT);
 
             Gl.glColor3f(1, 1, 0.3f);
-            Frame(pos.X, pos.Y, pos.X + Consts.BUTTON_WIDTH, pos.Y + Consts.BUTTON_HEIGHT);
+            Frame(btn.Position.X, btn.Position.Y, btn.Position.X + Consts.BUTTON_WIDTH, btn.Position.Y + Consts.BUTTON_HEIGHT);
+
+            DrawString(new PointF(btn.Position.X + 2, btn.Position.Y + 4), Name);
+
+            if (!btn.Enabled)
+            {
+                Gl.glColor4f(0.5f, 0.5f, 0.5f, 0.7f);
+
+                Gl.glEnable(Gl.GL_BLEND);
+                Rect(btn.Position.X, btn.Position.Y, btn.Position.X + Consts.BUTTON_WIDTH, btn.Position.Y + Consts.BUTTON_HEIGHT);  //STOYANOV PROSTO, SRSLY, SO EZ
+                Gl.glDisable(Gl.GL_BLEND);
+            }
         }
 
         private void DrawStatusBar(LayoutManager lm)
@@ -376,12 +387,12 @@ namespace SpacePewPew
             Frame(95, 1, 110, 6);
 
             var saveBtn = lm.Components["Save"] as GameButton;
-            DrawButton(saveBtn.Position);
-            DrawString(new PointF(saveBtn.Position.X + 2, saveBtn.Position.Y + 4), "Save");
+            DrawButton(saveBtn, "Save");
+            //DrawString(new PointF(saveBtn.Position.X + 2, saveBtn.Position.Y + 4), "Save");
 
             var endTurnBtn = lm.Components["End Turn"] as GameButton;
-            DrawButton(endTurnBtn.Position);
-            DrawString(new PointF(endTurnBtn.Position.X + 2, endTurnBtn.Position.Y + 4), "End Turn");
+            DrawButton(endTurnBtn, "End Turn");
+        //    DrawString(new PointF(endTurnBtn.Position.X + 2, endTurnBtn.Position.Y + 4), "End Turn");
         }
 
         private void DrawListView(LayoutManager manager)
@@ -399,10 +410,10 @@ namespace SpacePewPew
             Frame(pos.X, pos.Y, pos.X * 2.5f, Consts.SCREEN_HEIGHT - Consts.STATUS_BAR_HEIGHT / 2);
            
             //ListView Buttons
-            DrawButton(manager.Components["Quit Shop"].Position);
-            DrawString(new PointF(manager.Components["Quit Shop"].Position.X + 1, manager.Components["Quit Shop"].Position.Y + 4), "Quit Shop");
-            DrawButton(manager.Components["Buy Ship"].Position);
-            DrawString(new PointF(manager.Components["Buy Ship"].Position.X + 1, manager.Components["Buy Ship"].Position.Y + 4), "Buy Ship");
+            DrawButton(manager.Components["Quit Shop"] as GameButton, "Quit Shop");
+          //  DrawString(new PointF(manager.Components["Quit Shop"].Position.X + 1, manager.Components["Quit Shop"].Position.Y + 4), "Quit Shop");
+            DrawButton(manager.Components["Buy Ship"] as GameButton, "Buy Ship");
+           // DrawString(new PointF(manager.Components["Buy Ship"].Position.X + 1, manager.Components["Buy Ship"].Position.Y + 4), "Buy Ship");
 
             var menu = manager.Components["Shop Menu"] as ListView;
             DrawListViewItem(menu.Items[0], menu.Index == 0);

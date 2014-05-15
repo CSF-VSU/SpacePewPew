@@ -51,7 +51,9 @@ namespace SpacePewPew
                     var hasShip = SpacePew.Map.HasShip(p);
                     if (isBuildingArea && !hasShip)
                     {
-                        (LayoutManager.Components["Shop Menu"] as ListView).Visible = !(LayoutManager.Components["Shop Menu"] as ListView).Visible;
+                      //  (LayoutManager.Components["Shop Menu"] as ListView).Index = -1;
+                        (LayoutManager.Components["Shop Menu"] as ListView).Visible = true;//!(LayoutManager.Components["Shop Menu"] as ListView).Visible;
+                        (LayoutManager.Components["Buy Ship"] as GameButton).Enabled = false;
                         SpacePew.IsShowingModal = true;
                         SpacePew.BuildingCoordinate = OglDrawer.ScreenToCell(Additional.NewPoint(new PointF(e.X, e.Y)));
                     }

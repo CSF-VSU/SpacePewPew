@@ -41,3 +41,11 @@ C:\Users\Alexander\Desktop\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.csp
 C:\Users\Alexander\Desktop\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.MainForm.resources
 C:\Users\Alexander\Desktop\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.Properties.Resources.resources
 C:\Users\Alexander\Desktop\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.csproj.GenerateResource.Cache
+D:\Studying\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.exe
+D:\Studying\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.pdb
+D:\Studying\SpacePewPew\SpacePewPew\bin\Debug\SpacePewPew.exe
+D:\Studying\SpacePewPew\SpacePewPew\bin\Debug\SpacePewPew.pdb
+D:\Studying\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.csprojResolveAssemblyReference.cache
+D:\Studying\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.MainForm.resources
+D:\Studying\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.Properties.Resources.resources
+D:\Studying\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.csproj.GenerateResource.Cache

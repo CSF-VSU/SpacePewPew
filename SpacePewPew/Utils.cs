@@ -2,6 +2,14 @@ using System.Drawing;
 
 namespace SpacePewPew
 {
+    public struct AttackInfo
+    {
+        public int Damage { get; set; }
+        public bool IsDestroyed { get; set; }
+        //public string Debuff { get; set; }
+        public bool IsMineAttack { get; set; }
+    }
+
     public struct ShipNum
     {
         public RaceName Race { get; set; }

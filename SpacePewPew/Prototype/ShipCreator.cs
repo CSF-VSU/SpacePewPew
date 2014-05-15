@@ -49,7 +49,7 @@ namespace SpacePewPew.Prototype
 
         #endregion
 
-        private static Dictionary<ShipNum, ShipInfo> _builder;
+        public static Dictionary<ShipNum, ShipInfo> _builder;
 
 
         public Ship BuildShip(ShipNum key)

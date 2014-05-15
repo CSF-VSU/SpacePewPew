@@ -20,11 +20,13 @@ namespace SpacePewPew.GameObjects.GameMap
         public Cell[,] MapCells { get; set; }
         public List<Point> Lightened { get; set; }
         public Point ChosenShip { get; set; }
+        public Random Random { get; set; }
 
         #endregion
         
         public Map()
         {
+            Random = new Random();
             MapCells = new Cell[0, 0];
           
             _activeSelectExists = false;
@@ -105,7 +107,6 @@ namespace SpacePewPew.GameObjects.GameMap
             return null;
         }
 
-
         private Decision Move(Point p)
         {
             var path = FindWay(ChosenShip, p);
@@ -127,7 +128,7 @@ namespace SpacePewPew.GameObjects.GameMap
         private Decision Attack(Point p)
         {
             var path = FindWay(ChosenShip, p);
-            path.RemoveAt(0); //без последней клетки
+            path.RemoveAt(0);
 
             var shipId = MapCells[p.X, p.Y].Ship.Id;
 
@@ -145,20 +146,60 @@ namespace SpacePewPew.GameObjects.GameMap
 
             MapCells[nearEnemy.X, nearEnemy.Y].Ship.TurnState = TurnState.Finished;
 
-            //TODO : переписать атаку
-            var damagePerTime = MapCells[nearEnemy.X, nearEnemy.Y].Ship.MaxDamage;
-            var numberOfAttacks = MapCells[nearEnemy.X, nearEnemy.Y].Ship.Volleys;
-            ReduceHealth(p, damagePerTime, numberOfAttacks);
-            if (MapCells[p.X, p.Y].Ship.Health <= 0)
-                MapCells[p.X, p.Y].Ship = null;
-
-            return new Decision { DecisionType = DecisionType.Attack, PointA = ChosenShip, PointB = p, Path = path, ShipIndex = shipId };
+            return new Decision { DecisionType = DecisionType.Attack, PointA = ChosenShip, PointB = p, Path = path, Battle = Battle(nearEnemy, p), ShipIndex = shipId };
         }
 
-        private void ReduceHealth(Point enemy, int damage, int times)
+
+        private List<AttackInfo> Battle(Point self, Point enemy)
         {
-            MapCells[enemy.X, enemy.Y].Ship.Health -= damage * times;
+            var ship = MapCells[self.X, self.Y].Ship;
+            var enemyShip = MapCells[enemy.X, enemy.Y].Ship;
+
+            var result = new List<AttackInfo>();
+            
+            var remainSelfAtks = ship.Volleys;
+            var remainEnemyAtks = enemyShip.Volleys;
+
+            var isSelfKilled = false;
+            var isEnemyKilled = false;
+
+            while (remainSelfAtks != 0 || remainEnemyAtks != 0)
+            {
+                if (remainSelfAtks > 0)
+                {
+                    isEnemyKilled = Shoot(ship, enemyShip, enemy, true, result);
+                    remainSelfAtks--;
+                }
+
+                if (remainEnemyAtks > 0)
+                {
+                    isSelfKilled = Shoot(enemyShip, ship, self, false, result);
+                    remainEnemyAtks--;
+                }
+
+                if (isEnemyKilled || isSelfKilled) 
+                    break;
+            }
+
+            return result;
         }
+
+
+        private bool Shoot(Ship attacker, Ship target, Point coord, bool isAtkMine, List<AttackInfo> log)
+        {
+            var isDestroyed = false;
+            var myDmg = Random.Next(attacker.MinDamage, attacker.MaxDamage);
+            target.Health -= myDmg;
+            if (target.Health <= 0)
+            {
+                MapCells[coord.X, coord.Y].Ship = null;
+                isDestroyed = true;
+            }
+            var record = new AttackInfo { Damage = myDmg, IsDestroyed = isDestroyed, IsMineAttack = isAtkMine };
+            log.Add(record);
+            return isDestroyed;
+        }
+
 
         private bool IsEnemy(Point p)
         {

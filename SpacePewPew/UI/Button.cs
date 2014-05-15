@@ -8,9 +8,10 @@ namespace SpacePewPew.UI
     {
         public PointF Position { get; set; }
 
-        public GameButton(PointF pos)
+        public GameButton(PointF pos, bool enabled)
         {
             Position = pos;
+            Enabled = enabled;
         }
 
         public bool Enabled { get; set; }
