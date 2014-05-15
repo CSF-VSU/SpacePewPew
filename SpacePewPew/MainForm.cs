@@ -46,9 +46,15 @@ namespace SpacePewPew
             {
                 if (LayoutManager.ScreenType == ScreenType.Game)
                 {
-                    (LayoutManager.Components["Shop Menu"] as ListView).Visible = !(LayoutManager.Components["Shop Menu"] as ListView).Visible;
-                    SpacePew.IsShowingModal = true;
-                    SpacePew.BuildingCoordinate = OglDrawer.ScreenToCell(Additional.NewPoint(new PointF(e.X, e.Y)));
+                    var p = OglDrawer.ScreenToCell(Additional.NewPoint(new PointF(e.X, e.Y)));
+                    var isBuildingArea = SpacePew.Map.IsBuildingArea(p);
+                    var hasShip = SpacePew.Map.HasShip(p);
+                    if (isBuildingArea && !hasShip)
+                    {
+                        (LayoutManager.Components["Shop Menu"] as ListView).Visible = !(LayoutManager.Components["Shop Menu"] as ListView).Visible;
+                        SpacePew.IsShowingModal = true;
+                        SpacePew.BuildingCoordinate = OglDrawer.ScreenToCell(Additional.NewPoint(new PointF(e.X, e.Y)));
+                    }
                 }
             }
         }

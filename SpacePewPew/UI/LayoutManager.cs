@@ -26,7 +26,6 @@ namespace SpacePewPew.UI
         #endregion
 
         public Dictionary<string, IUiElement> Components  { get; set; }
-
         public ScreenType ScreenType { get; private set; }
 
 

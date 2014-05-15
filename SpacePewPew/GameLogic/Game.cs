@@ -76,6 +76,8 @@ namespace SpacePewPew.GameLogic
                 index = 0;
             Players[index].TimeLeft = Players[index].MaxTurnTime;
             CurrentPlayer = Players[index];
+            
+            Map.PassTurnRefresh();
         }
 
         public void BuildShip(int index)

@@ -58,12 +58,68 @@ namespace SpacePewPew.GameObjects.GameMap
         }
 
 
+        public Decision Click(Point p)
+        {
+            Unlight();
+            if (_activeSelectExists)
+            {
+                if (IsEnemy(p) && CanReachForAttack(p) && (!(p.Equals(ChosenShip))))
+                {
+                    _activeSelectExists = false;
+                    return Attack(p);
+                }
+                if (IsShipMine(p))
+                {
+                    if (MapCells[p.X, p.Y].Ship.TurnState != TurnState.Finished)
+                    {
+                        Lightened = Light(p);
+                        ChosenShip = p;
+                    }
+                    return null;
+                }
+                if (CanReach(p) && (IsEmpty(p) || HasObstacle(p) && MapCells[p.X, p.Y].Obstacle.IsPassable))
+                {
+                    _activeSelectExists = false;
+                    return Move(p);
+                }
+                ChosenShip = new Point();
+                _activeSelectExists = false;
+            }
+            else
+            {
+                if (!HasShip(p))
+                {
+                    return null;
+                }
+
+                if (IsShipMine(p))
+                {
+                    if (MapCells[p.X, p.Y].Ship.TurnState != TurnState.Finished)
+                    {
+                        Lightened = Light(p);
+                        _activeSelectExists = true;
+                        ChosenShip = p;
+                    }
+                }
+            }
+            return null;
+        }
+
+
         private Decision Move(Point p)
         {
             var path = FindWay(ChosenShip, p);
-
+            
             MapCells[p.X, p.Y].Ship = MapCells[ChosenShip.X, ChosenShip.Y].Ship;
             MapCells[ChosenShip.X, ChosenShip.Y].Ship = null;
+
+            MapCells[p.X, p.Y].Ship.RemainedSpeed -= path.Count;
+            MapCells[p.X, p.Y].Ship.TurnState = TurnState.InAction;
+
+            if (MapCells[p.X, p.Y].Ship.RemainedSpeed == 0)
+            {
+                MapCells[p.X, p.Y].Ship.TurnState = HasEnemyIn(GetShipsAround(p)) ? TurnState.InAction : TurnState.Finished;
+            }
 
             return new Decision { DecisionType = DecisionType.Move, PointA = ChosenShip, PointB = p, Path = path, ShipIndex = -1 };
         }
@@ -86,6 +142,9 @@ namespace SpacePewPew.GameObjects.GameMap
                 MapCells[nearEnemy.X, nearEnemy.Y].Ship = MapCells[ChosenShip.X, ChosenShip.Y].Ship;
                 MapCells[ChosenShip.X, ChosenShip.Y].Ship = null;
             }
+
+            MapCells[nearEnemy.X, nearEnemy.Y].Ship.TurnState = TurnState.Finished;
+
             //TODO : переписать атаку
             var damagePerTime = MapCells[nearEnemy.X, nearEnemy.Y].Ship.MaxDamage;
             var numberOfAttacks = MapCells[nearEnemy.X, nearEnemy.Y].Ship.Volleys;
@@ -122,6 +181,17 @@ namespace SpacePewPew.GameObjects.GameMap
             return reachable.Select(FindNeighbours).Any(neighboursList => Enumerable.Contains(neighboursList, p));
         }
 
+        private IEnumerable<Ship> GetShipsAround(Point p)
+        {
+            var neighbours = FindNeighbours(p);
+            return from n in neighbours where MapCells[n.X, n.Y].Ship != null select MapCells[n.X, n.Y].Ship;
+        }
+
+        private bool HasEnemyIn(IEnumerable<Ship> ships)
+        {
+            return ships.Any(ship => ship.Color != Game.Instance().CurrentPlayer.Color);
+        }
+
         private void Unlight()
         {
             for (var i = 0; i < Consts.MAP_WIDTH; i++)
@@ -129,47 +199,7 @@ namespace SpacePewPew.GameObjects.GameMap
                     MapCells[i, j].IsLightened = false;
         }
 
-        //!!!
-        public Decision Click(Point p)
-        {
-            Unlight();
-            if (_activeSelectExists)
-            {
-                if (IsEnemy(p) && CanReachForAttack(p) && (!(p.Equals(ChosenShip))))
-                {
-                    _activeSelectExists = false;
-                    return Attack(p);
-                }
-                if (IsShipMine(p))
-                {
-                    Lightened = Light(p);
-                    ChosenShip = p;
-                    return null;
-                }
-                if (CanReach(p) && (IsEmpty(p) || HasObstacle(p) && MapCells[p.X, p.Y].Obstacle.IsPassable))
-                {
-                    _activeSelectExists = false;
-                    return Move(p);
-                }
-                ChosenShip = new Point();
-                _activeSelectExists = false;
-            }
-            else
-            {
-                if (!HasShip(p))
-                {
-                    return null;
-                }
-
-                if (IsShipMine(p))
-                {
-                    Lightened = Light(p);
-                    _activeSelectExists = true;
-                    ChosenShip = p;
-                }
-            }
-            return null;
-        }
+        
 
 
         private bool IsShipMine(Point p)
@@ -177,7 +207,7 @@ namespace SpacePewPew.GameObjects.GameMap
             return HasShip(p) && (Game.Instance().CurrentPlayer.Color == MapCells[p.X, p.Y].Ship.Color);
         }
 
-        private bool HasShip(Point p)
+        public bool HasShip(Point p)
         {
             return MapCells[p.X, p.Y].Ship != null;
         }
@@ -260,7 +290,7 @@ namespace SpacePewPew.GameObjects.GameMap
 
                         if (x == destination.X && y == destination.Y)
                         {
-                            if (IsNeighbourCellEmpty(MapCells[t.X, t.Y]) || MapCells[x, y].Ship != null) //TODO : check if enemy only
+                            if (IsNeighbourCellEmpty(MapCells[t.X, t.Y]) || MapCells[x, y].Ship != null)
                             {
                                 MapCells[t.X, t.Y].Visited = true;
                                 MapCells[t.X, t.Y].Previous = new Point(oldX, oldY);
@@ -280,9 +310,7 @@ namespace SpacePewPew.GameObjects.GameMap
                                 q.Enqueue(new Point(t.X, t.Y));
                             }
                         }
-
                     }
-
                     if (isDone)
                         break;
                 }
@@ -302,27 +330,29 @@ namespace SpacePewPew.GameObjects.GameMap
 
         private bool IsNeighbourCellEmpty(Cell c)
         {
-            return (!(c.Visited) && c.Obstacle == null && c.Ship == null);
+            return (!(c.Visited) && (c.Obstacle == null || c.Obstacle.IsPassable) && c.Ship == null);
         }
 
 
         private List<Point> Light(Point startPoint)
         {
-            var speed = 5;
+            var speed = MapCells[startPoint.X,startPoint.Y].Ship.RemainedSpeed;
+            if (speed < 1)
+                return new List<Point>();
             var counter = 0;
             MapCells[startPoint.X, startPoint.Y].IsLightened = true;
             
             var lightened = new List<Point> { startPoint };
             
             LightNeighbours(ref lightened, startPoint);
+            if (speed == 1)
+                return lightened;
             counter++;
             for (int i = 0; i < lightened.Count; i++)
             {
-                var tmp = new List<Point>();
-                for (int j = 0; j < lightened.Count; j++)
-                    tmp.Add(lightened[j]);
-                for (int j = 0; j < tmp.Count; j++)
-                    LightNeighbours(ref lightened, tmp[j]);
+                var tmp = lightened.ToList();
+                foreach (var t in tmp)
+                    LightNeighbours(ref lightened, t);
                 counter++;
                 if (counter >= speed)
                     break;
@@ -344,19 +374,29 @@ namespace SpacePewPew.GameObjects.GameMap
         #region Iterator
         public IEnumerable<Ship> GetShipIterator(PlayerColor color)
         {
+            var result = new List<Ship>();
             for (var i = 0; i < MapCells.GetLength(0); i++)
                 for (var j = 0; j < MapCells.GetLength(1); j++)
                     if (MapCells[i, j].Ship != null && MapCells[i, j].Ship.Color == color)
+                        result.Add(MapCells[i, j].Ship);
+            return result;
+        }
+
+        public IEnumerable<Ship> GetShipIterator()
+        {
+            for (var i = 0; i < MapCells.GetLength(0); i++)
+                for (var j = 0; j < MapCells.GetLength(1); j++)
+                    if (MapCells[i, j].Ship != null)
                         yield return MapCells[i, j].Ship;
         }
 
-        public IEnumerable<Station> GetStationIterator(PlayerColor color)
+        /*public IEnumerable<Station> GetStationIterator(PlayerColor color)
         {
             for (var i = 0; i < MapCells.GetLength(0); i++)
                 for (var j = 0; j < MapCells.GetLength(1); j++)
                     if (MapCells[i,j].Obstacle is Station && (MapCells[i,j].Obstacle as Station).OwnerColor == color)
                         yield return MapCells[i, j].Obstacle as Station;
-        }
+        }*/
 
         #endregion
 
@@ -370,6 +410,23 @@ namespace SpacePewPew.GameObjects.GameMap
             _activeSelectExists = false;
             ChosenShip = new Point();
             Lightened = new List<Point>();
+
+            var color = Game.Instance().CurrentPlayer.Color;
+            var ships = GetShipIterator(color);
+
+            /*
+            var ships = new List<Ship>();
+            for (var i = 0; i < MapCells.GetLength(0); i++)
+                for (var j = 0; j < MapCells.GetLength(1); j++)
+                    if (MapCells[i, j].Ship != null && MapCells[i, j].Ship.Color == color)
+                        ships.Add(MapCells[i, j].Ship);
+            */
+            
+            foreach (var ship in ships)
+            {
+                ship.RemainedSpeed = ship.Speed;
+                ship.TurnState = TurnState.Ready;
+            }
         }
 
         public bool IsBuildingArea(Point buildingCoordinate)

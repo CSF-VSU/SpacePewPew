@@ -156,14 +156,14 @@ namespace SpacePewPew
             
                     Gl.glEnable(Gl.GL_BLEND);
                     
-                    DrawAction(map);
+                    //DrawAction(map);
 
-                    for (int i = 0; i < map.MapCells.GetLength(0); i++ )
-                        for (int j = 0; j < map.MapCells.GetLength(1); j++)
+                    for (var i = 0; i < map.MapCells.GetLength(0); i++ )
+                        for (var j = 0; j < map.MapCells.GetLength(1); j++)
                             if (map.MapCells[i, j].IsLightened)
                             {
                                 Gl.glColor3f(1, 0, 0);                              
-                                PointF t = CellToScreen(new Point(i, j));    
+                                var t = CellToScreen(new Point(i, j));    
                            
                                 DrawCell(t);
                             }
@@ -171,12 +171,10 @@ namespace SpacePewPew
 
                     foreach (var a in ShipsInfo)
                     {
-                        PointF tmp;
-                       // string color = "Red";
-                        tmp = CellToScreen(a.Value.Pos);
-                        DrawTexture(Textures[a.Value.TexName], rotate(-a.Value.Direction, 10, tmp.X + Consts.CELL_SIDE, tmp.Y + (float)Math.Sqrt(3)/2 * Consts.CELL_SIDE));
-                        
+                        var tmp = CellToScreen(a.Value.Pos);
+                        DrawTexture(Textures[a.Value.TexName], rotate(-a.Value.Direction, 10, tmp.X + Consts.CELL_SIDE, tmp.Y + (float)Math.Sqrt(3)/2 * Consts.CELL_SIDE));    
                         DrawTexture(Textures[a.Value.Color.ToString()], rotate(-a.Value.Direction, 10, tmp.X + Consts.CELL_SIDE, tmp.Y + (float)Math.Sqrt(3) / 2 * Consts.CELL_SIDE));
+                        DrawShipStatus(map);
                     }
 
                     Gl.glDisable(Gl.GL_BLEND);
@@ -347,7 +345,7 @@ namespace SpacePewPew
             Gl.glColor3f(0, 0, 0);
             Rect(70, 1, 85, 6);
             Gl.glColor3f(1, 1, 0.3f);
-            DrawString(new PointF(71,5), "+" + PlayerInfo.Stations * 5);
+            DrawString(new PointF(71,5), "+" + PlayerInfo.Ships);
 
             //ResourceCount
             Gl.glColor3f(0, 0, 0);
@@ -505,6 +503,35 @@ namespace SpacePewPew
             Gl.glLineWidth(1);
         }
         #endregion
+
+        private void DrawShipStatus(IMapView map)
+        {
+            var ships = map.GetShipIterator(Game.Instance().CurrentPlayer.Color);
+            foreach (var ship in ships)
+            {
+                
+                switch (ship.TurnState)
+                {
+                    case TurnState.Ready:
+                        Gl.glColor3f(0.1f, 0.9f, 0.1f);
+                        break;
+                    case TurnState.InAction:
+                        Gl.glColor3f(0.8f, 0.8f, 0.1f);
+                        break;
+                    case TurnState.Finished:
+                        Gl.glColor3f(0.9f, 0.1f, 0.1f);
+                        break;
+                }
+
+
+                var pos = CellToScreen(ShipsInfo[ship.Id].Pos);
+                //Gl.glLineWidth(10);
+                Gl.glPointSize(5);
+                Gl.glBegin(Gl.GL_POINTS);
+                Gl.glVertex2f(pos.X, pos.Y);
+                Gl.glEnd();
+            }
+        }
 
         #region actionDrawing
 

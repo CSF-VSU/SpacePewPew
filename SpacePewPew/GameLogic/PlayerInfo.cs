@@ -15,10 +15,10 @@ namespace SpacePewPew
             get { return Game.Instance().Map.GetShipIterator(Color).Count(); }
         }
 
-        public static int Stations
+        /*public static int Stations
         {
             get { return Game.Instance().Map.GetStationIterator(Color).Count(); }
-        }
+        }*/
 
         public static int Money
         {

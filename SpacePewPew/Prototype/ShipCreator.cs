@@ -66,11 +66,15 @@ namespace SpacePewPew.Prototype
             product.Health = product.MaxHealth;
 
             product.Speed = _builder[key].Speed;
+            product.RemainedSpeed = product.Speed;
+
             product.MinDamage = _builder[key].MinDamage;
             product.MaxDamage = _builder[key].MaxDamage;
             product.Volleys = _builder[key].Volleys;
             
             product.Exp = 0;
+
+            product.TurnState = TurnState.Finished;
             return product;
         }
 

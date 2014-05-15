@@ -22,11 +22,13 @@ namespace SpacePewPew.GameObjects.Ships
         public int NextLvlExp { get; set; }
 
         public int Speed { get; set; }
-        public TurnState HasTurn { get; set; }
+        public int RemainedSpeed { get; set; }
+        public TurnState TurnState { get; set; }
 
         public int MinDamage { get; set; }
         public int MaxDamage { get; set; }
         public int Volleys { get; set; }
+
 
         #endregion
 
