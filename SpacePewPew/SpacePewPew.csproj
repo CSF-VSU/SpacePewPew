@@ -61,11 +61,11 @@
   <ItemGroup>
     <Compile Include="GameLogic\PlayerInfo.cs" />
     <Compile Include="GameObjects\MapObjects\Dock.cs" />
-    <Compile Include="Prototype\ShipInfo.cs" />
+    <Compile Include="ShipBuilder\ShipInfo.cs" />
     <Compile Include="UI\Action.cs" />
     <Compile Include="Consts.cs" />
     <Compile Include="Drawer.cs" />
-    <Compile Include="Prototype\ShipCreator.cs" />
+    <Compile Include="ShipBuilder\ShipCreator.cs" />
     <Compile Include="GameFileManager\FileManager.cs" />
     <Compile Include="GameFileManager\IGameState.cs" />
     <Compile Include="GameLogic\Game.cs" />
@@ -91,7 +91,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GameObjects\Ships\Ship.cs" />
-    <Compile Include="Prototype\Race.cs" />
+    <Compile Include="ShipBuilder\Race.cs" />
     <Compile Include="UI\ListView.cs" />
     <Compile Include="UI\ListViewItem.cs" />
     <Compile Include="UI\StatusBar.cs" />

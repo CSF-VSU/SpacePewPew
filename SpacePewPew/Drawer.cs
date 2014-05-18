@@ -239,6 +239,7 @@ namespace SpacePewPew
 
 
         #region coordinatesConvertation
+
         public Point ScreenToCell(PointF p)
         {
             for (var i = 0; i < Consts.MAP_WIDTH; i++)
@@ -516,7 +517,7 @@ namespace SpacePewPew
                         Gl.glColor3f(1, 1, 0.3f);
                         DrawCell(CellCoors[i, j]);
                     }
-                    if (map.MapCells[i, j].Obstacle is Dock) DrawDock(new Point(i, j));
+                    if (map.MapCells[i, j].Object is Dock) DrawDock(new Point(i, j));
                 }
 
             Gl.glLineWidth(3);

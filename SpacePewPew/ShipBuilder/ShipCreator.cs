@@ -4,7 +4,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using SpacePewPew.GameObjects.Ships;
 
-namespace SpacePewPew.Prototype
+namespace SpacePewPew.ShipBuilder
 {
     [Serializable]
     public class ShipCreator
@@ -13,7 +13,7 @@ namespace SpacePewPew.Prototype
 
         private ShipCreator()
         {
-            _ship = new Ship(GetNextId());
+            _ship = new Ship();
             _builder = new Dictionary<ShipNum, ShipInfo>();
 
             var shipRecords = new List<ShipInfo>();

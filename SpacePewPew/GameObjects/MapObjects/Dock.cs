@@ -3,7 +3,7 @@
 namespace SpacePewPew.GameObjects.MapObjects
 {
     [Serializable]
-    public class Dock : IObstacle
+    public class Dock : IObject
     {
         public Dock()
         {

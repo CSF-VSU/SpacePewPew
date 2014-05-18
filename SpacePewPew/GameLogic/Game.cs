@@ -5,7 +5,7 @@ using SpacePewPew.GameFileManager;
 using SpacePewPew.GameObjects.GameMap;
 using SpacePewPew.Players;
 using SpacePewPew.Players.Strategies;
-using SpacePewPew.Prototype;
+using SpacePewPew.ShipBuilder;
 
 namespace SpacePewPew.GameLogic
 {
@@ -39,7 +39,7 @@ namespace SpacePewPew.GameLogic
 
         public void Init(Drawer drawer)
         {
-            DecisionDone += drawer.DecisionHandler;
+            //DecisionDone += drawer.DecisionHandler;
             Manager = new FileManager();
         }
 
@@ -59,10 +59,12 @@ namespace SpacePewPew.GameLogic
         
         private readonly Dictionary<RaceName, Race> _races;
 
-        public event DecisionHandler DecisionDone;
+        //public event DecisionHandler DecisionDone;
 
         public FileManager Manager { get; private set; }
 
+
+        
         #endregion
 
         
@@ -102,6 +104,8 @@ namespace SpacePewPew.GameLogic
 
         public void Tick()
         {
+            if (IsShowingModal) return;
+
             if (--CurrentPlayer.TimeLeft == 0)
             {
                 PassTurn();
@@ -110,7 +114,7 @@ namespace SpacePewPew.GameLogic
 
             var decision = CurrentPlayer.Strategy.MakeDecision(Map);
 
-            if (decision != null && !IsShowingModal)
+            if (decision != null)
                 Drawer.Instance().DecisionHandler(this, new DecisionArgs { Decision = decision });
         }
 
@@ -132,6 +136,7 @@ namespace SpacePewPew.GameLogic
             Map.LoadFrom(state.Map);
         }
 
+
         public void StartNewGame()
         {
             Map.CreateEmptyMap(Consts.MAP_WIDTH, Consts.MAP_HEIGHT);
@@ -139,6 +144,11 @@ namespace SpacePewPew.GameLogic
             Players = new List<Player>(2) {new Player(PlayerColor.Red, RaceName.Human, true), 
                                             new Player(PlayerColor.Blue, RaceName.Human, true)};
             CurrentPlayer = Players[0];
+        }
+
+        public bool CanBuildHere(Point cell)
+        {
+            return Map.IsBuildingArea(cell) && !Map.HasShip(cell);
         }
     }
 }

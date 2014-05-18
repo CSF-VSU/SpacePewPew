@@ -1,6 +1,6 @@
 ﻿using SpacePewPew.GameObjects.Ships;
 
-namespace SpacePewPew.Prototype
+namespace SpacePewPew.ShipBuilder
 {
     public class Race
     {

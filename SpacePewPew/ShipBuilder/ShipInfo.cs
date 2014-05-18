@@ -1,16 +1,7 @@
-﻿namespace SpacePewPew.Prototype
+﻿namespace SpacePewPew.ShipBuilder
 {
     public class ShipInfo
     {
-        /*
-        public int Cost { get; set; }
-
-        public int Exp { get; set; }
-        public int NextLvlExp { get; set; }
-
-        public TurnState HasTurn { get; set; }
-        */
-
         public RaceName Race { get; set; }
         public int Index { get; set; }
         

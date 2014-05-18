@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using SpacePewPew.GameLogic;
-using SpacePewPew.Prototype;
+using SpacePewPew.ShipBuilder;
 
 namespace SpacePewPew.UI
 {

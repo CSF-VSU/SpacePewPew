@@ -3,7 +3,7 @@
 namespace SpacePewPew.GameObjects.MapObjects
 {
     [Serializable]
-    public class Mine : IObstacle
+    public class Mine : IObject
     {
         public int Income { get; set; }
         public int RechargeTime { get; set; }

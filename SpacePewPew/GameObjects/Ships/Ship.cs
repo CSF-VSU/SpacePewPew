@@ -32,10 +32,10 @@ namespace SpacePewPew.GameObjects.Ships
 
         #endregion
 
-        public Ship(int id)
+        /*public Ship(int id)
         {
             Id = id;
-        }
+        }*/
 
         public object Clone()
         {

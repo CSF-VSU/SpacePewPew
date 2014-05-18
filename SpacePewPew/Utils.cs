@@ -79,6 +79,11 @@ namespace SpacePewPew
             return new PointF(pos.X / Consts.OGL_WIDTH * Consts.SCREEN_WIDTH, pos.Y / Consts.OGL_HEIGHT * Consts.SCREEN_HEIGHT);
         }
 
+        public static PointF NewPoint(float x, float y)
+        {
+            return new PointF(x / Consts.OGL_WIDTH * Consts.SCREEN_WIDTH, y / Consts.OGL_HEIGHT * Consts.SCREEN_HEIGHT);
+        }
+
         public static string ConvertTime(int tick) // преобразует время в тиках в секунды
         {
             var sec = tick/25;

@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using SpacePewPew.GameLogic;
 using SpacePewPew.UI;
 using Tao.OpenGl;
-using ListView = SpacePewPew.UI.ListView;
 
 namespace SpacePewPew
 {
@@ -13,7 +12,7 @@ namespace SpacePewPew
         public Game SpacePew;
         public static Drawer OglDrawer;
         public LayoutManager LayoutManager;
-        private Point mousePoint;
+        private PointF _mousePoint;
 
         public MainForm()
         { 
@@ -32,32 +31,30 @@ namespace SpacePewPew
             timer1.Enabled = true;
         }
 
+
         private void OGL_MouseClick(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            var point = Additional.NewPoint(e.X, e.Y);
+            switch (e.Button)
             {
-                if (!(LayoutManager.OnClick(Additional.NewPoint(new PointF(e.X, e.Y))))) //не попал в кнопку
+                case MouseButtons.Left:
+                   
+                    if (!(LayoutManager.OnClick(point)))
+                        if (LayoutManager.ScreenType == ScreenType.Game)
+                            SpacePew.MouseClick(OglDrawer.ScreenToCell(point));
+                    break;
+                case MouseButtons.Right:
                     if (LayoutManager.ScreenType == ScreenType.Game)
-                        SpacePew.MouseClick(OglDrawer.ScreenToCell(Additional.NewPoint((new PointF(e.X, e.Y)))));
-
-                Gl.glClear(Gl.GL_COLOR_BUFFER_BIT);
-            }
-            else if (e.Button == MouseButtons.Right)
-            {
-                if (LayoutManager.ScreenType == ScreenType.Game)
-                {
-                    var p = OglDrawer.ScreenToCell(Additional.NewPoint(new PointF(e.X, e.Y)));
-                    var isBuildingArea = SpacePew.Map.IsBuildingArea(p);
-                    var hasShip = SpacePew.Map.HasShip(p);
-                    if (isBuildingArea && !hasShip)
                     {
-                      //  (LayoutManager.Components["Shop Menu"] as ListView).Index = -1;
-                        (LayoutManager.Components["Shop Menu"] as ListView).Visible = true;//!(LayoutManager.Components["Shop Menu"] as ListView).Visible;
-                        (LayoutManager.Components["Buy Ship"] as GameButton).Enabled = false;
-                        SpacePew.IsShowingModal = true;
-                        SpacePew.BuildingCoordinate = OglDrawer.ScreenToCell(Additional.NewPoint(new PointF(e.X, e.Y)));
+                        if (SpacePew.CanBuildHere(OglDrawer.ScreenToCell(point)))
+                        {
+                            (LayoutManager.Components["Shop Menu"] as UI.ListView).Visible = true;
+                            (LayoutManager.Components["Buy Ship"] as GameButton).Enabled = false;
+                            SpacePew.IsShowingModal = true;
+                            SpacePew.BuildingCoordinate = OglDrawer.ScreenToCell(point);
+                        }
                     }
-                }
+                    break;
             }
         }
 
@@ -68,21 +65,21 @@ namespace SpacePewPew
 
             if (LayoutManager.GetManager().ScreenType == ScreenType.Game)
             {
+                OglDrawer.ScreenToCell(Additional.NewPoint(_mousePoint));
                 SpacePew.Tick();
-                //TODO : подсветить клеточку под MouseCoord
             }
 
             OglDrawer.Draw(LayoutManager, SpacePew.GetGameField());
-
             OGL.Invalidate();
         }
 
         private void OGL_MouseMove(object sender, MouseEventArgs e)
         {
-            //TODO : обновлять mouseCoord
-            var tmp = Additional.NewPoint(new PointF(e.X, e.Y));
+            _mousePoint = new PointF(e.X, e.Y);
+
+            /*var tmp = Additional.NewPoint(new PointF(e.X, e.Y));
             var tmp1 = OglDrawer.ScreenToCell(tmp);
-            Text = String.Format("Mouse {0:00.###};  {1:00.###}    Cell: {2};{3}", tmp.X, tmp.Y, tmp1.X, tmp1.Y);
+            Text = String.Format("Mouse {0:00.###};  {1:00.###}    Cell: {2};{3}", tmp.X, tmp.Y, tmp1.X, tmp1.Y);*/
         }
     }
 }

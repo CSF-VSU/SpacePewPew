@@ -3,7 +3,7 @@
 namespace SpacePewPew.GameObjects.MapObjects
 {
     [Serializable]
-    public class Station : IObstacle
+    public class Station : IObject
     {
         public PlayerColor OwnerColor { get; set; }
         public int Income { get; set; }
