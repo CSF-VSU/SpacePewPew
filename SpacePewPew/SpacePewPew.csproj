@@ -62,6 +62,7 @@
     <Compile Include="GameLogic\PlayerInfo.cs" />
     <Compile Include="GameObjects\MapObjects\Dock.cs" />
     <Compile Include="ShipBuilder\ShipInfo.cs" />
+    <Compile Include="UI\HealthBar.cs" />
     <Compile Include="UI\Action.cs" />
     <Compile Include="Consts.cs" />
     <Compile Include="Drawer.cs" />

@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace SpacePewPew
 {
-    public class Action
+    /*public class Action
     {
         public Action(Point startPos, Point destination)
         {
@@ -31,5 +31,5 @@ namespace SpacePewPew
        public Point Destination { get; set; }
        public List<Point> Path { get; set; }
        public bool IsReady { get; set; }
-    }
+    }*/
 }
