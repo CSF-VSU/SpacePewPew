@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Linq;
 using SpacePewPew.GameLogic;
 using SpacePewPew.GameObjects.GameMap;
 using SpacePewPew.GameObjects.MapObjects;
@@ -855,28 +856,36 @@ namespace SpacePewPew
         int animationTick = 0;
         string animation = "none";
         Point animationPos = new Point(0, 0);
+
         public void Animate(IMapView map)
-        {   
-            
+        {
+
             switch (animation)
             {
                 case "BOOM!":
-                    {
-                        Explotion();
-                     //   List<Bullet> bullets = new List<Bullet>() { new Bullet(), new Bullet(), new Bullet() }; 
-                        break;
-                    }
+                {
+                    Explotion();
+                    break;
+                }
                 case "PewPew!":
-                    {
-                        Firing(map);
-                        break;
-                    }
+                {
+                    Firing(map);
+                    break;
+                }
             }
 
             if (animationTick != 0)
+            {
                 animationTick--;
+                if (!Game.Instance().IsShowingModal)
+                    Game.Instance().IsShowingModal = true;
+            }
+
             else
+            {
                 animation = "none";
+                Game.Instance().IsShowingModal = false;
+            }
 
         }
 
@@ -976,11 +985,8 @@ namespace SpacePewPew
                         {
                             bullets[i].Timeleft = 100;
                             bullets[i].ShowTime = 8;
-                            if (map.MapCells[ScreenToCell(target).X, ScreenToCell(target).Y].Ship != null)
-                            {
-                                ShipsInfo[map.MapCells[ScreenToCell(target).X, ScreenToCell(target).Y].Ship.Id].HealthBar.CurrentHealth -= battle[i].Damage;
-                            }
-
+                                var tmp = ShipsInfo.First(ship => ship.Value.Pos == ScreenToCell(target));
+                                tmp.Value.HealthBar.CurrentHealth -= battle[i].Damage;
                         }
                     }
                     else if (!IsAround(bullets[i].Pos, attacker, 0.5f))
@@ -989,10 +995,9 @@ namespace SpacePewPew
                     {  
                         bullets[i].Timeleft = 100;
                         bullets[i].ShowTime = 8;
-                        if (map.MapCells[ScreenToCell(attacker).X, ScreenToCell(attacker).Y].Ship != null)
-                        {
-                            ShipsInfo[map.MapCells[ScreenToCell(attacker).X, ScreenToCell(attacker).Y].Ship.Id].HealthBar.CurrentHealth -= battle[i].Damage;
-                        }
+                            var tmp = ShipsInfo.First(ship => ship.Value.Pos == ScreenToCell(attacker));
+                            tmp.Value.HealthBar.CurrentHealth -= battle[i].Damage;
+
                         
                     }
 
@@ -1046,7 +1051,6 @@ namespace SpacePewPew
             Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE);
             Gl.glVertex2d(pos.X, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE / 2);
             Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y);
-       //     Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y);
             Gl.glEnd();
             Gl.glLineWidth(1);
 
