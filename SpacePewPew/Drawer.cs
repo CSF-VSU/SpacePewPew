@@ -79,7 +79,7 @@ namespace SpacePewPew
 
         public Dictionary<int, ShipAttributes> ShipsInfo { get; set; }
 
-        private ActionState state;
+        private ActionState _state;
         public PointF LightenedCell { get; set; }
         public PointF[,] CellCoors { get; set; }
 
@@ -101,7 +101,7 @@ namespace SpacePewPew
         protected Drawer()
         {
             CellCoors = new PointF[Consts.MAP_WIDTH, Consts.MAP_HEIGHT];
-            state = ActionState.None;
+            _state = ActionState.None;
             LightenedCell = Consts.MAP_START_POS;
             ShipsInfo = new Dictionary<int, ShipAttributes>();
         }
@@ -601,7 +601,6 @@ namespace SpacePewPew
 
 
                 var pos = CellToScreen(ShipsInfo[ship.Id].Pos);
-                //Gl.glLineWidth(10);
                 Gl.glPointSize(5);
                 Gl.glBegin(Gl.GL_POINTS);
                 Gl.glVertex2f(pos.X, pos.Y);
@@ -611,7 +610,7 @@ namespace SpacePewPew
 
         private void DrawHealthBar(HealthBar healthBar)
         {
-            Frame(healthBar.Position.X, healthBar.Position.Y + 2, healthBar.Position.X + 2, healthBar.Position.Y + 10);
+            Frame(healthBar.Position.X, healthBar.Position.Y + 2, healthBar.Position.X + 1, healthBar.Position.Y + 10);
             float f = (float) healthBar.CurrentHealth/healthBar.MaxHealth;
             if (f >= 0.5f) 
                 Gl.glColor3f(0, 1, 0);
@@ -620,13 +619,11 @@ namespace SpacePewPew
             else
                 Gl.glColor3f(1, 0, 0);
 
-            
-
             Gl.glBegin(Gl.GL_POLYGON);
             Gl.glVertex2f(healthBar.Position.X, healthBar.Position.Y + 10);
-            Gl.glVertex2f(healthBar.Position.X + 2, healthBar.Position.Y + 10);
-            Gl.glVertex2f(healthBar.Position.X + 2, healthBar.Position.Y + 10 - (float)8*f);
-            Gl.glVertex2f(healthBar.Position.X, healthBar.Position.Y + 10 - (float)(8*f));
+            Gl.glVertex2f(healthBar.Position.X + 1, healthBar.Position.Y + 10);
+            Gl.glVertex2f(healthBar.Position.X + 1, healthBar.Position.Y + 10 - 8*f);
+            Gl.glVertex2f(healthBar.Position.X, healthBar.Position.Y + 10 - 8*f);
             Gl.glEnd();
         }
 
@@ -690,7 +687,7 @@ namespace SpacePewPew
         
         private void DrawAction(IMapView map)
         {
-            switch (state)
+            switch (_state)
             {
                 case ActionState.None:
                     {
@@ -717,7 +714,7 @@ namespace SpacePewPew
                     break;
             }
 
-            if (state == ActionState.None)
+            if (_state == ActionState.None)
             {
                 Game.Instance().IsResponding = true;
             }
@@ -774,10 +771,10 @@ namespace SpacePewPew
             switch (processingDecision.DecisionType)
             {
                 case DecisionType.Attack:
-                    state = processingDecision.Path.Count == 0 ? ActionState.Attack : ActionState.Moving;
+                    _state = processingDecision.Path.Count == 0 ? ActionState.Attack : ActionState.Moving;
                     break;
                 case DecisionType.Move:
-                    state = ActionState.Moving;
+                    _state = ActionState.Moving;
                     break;
             }
         }
@@ -793,12 +790,12 @@ namespace SpacePewPew
                 case DecisionType.Attack:
                     ShipsInfo[ShipId].Pos = nextCell;
                     ShipsInfo[ShipId].HealthBar.Position = CellToScreen(nextCell);
-                    state = ActionState.Rotating;
+                    _state = ActionState.Rotating;
                     break;
                 case DecisionType.Move:
                     ShipsInfo[ShipId].Pos = nextCell;
                     ShipsInfo[ShipId].HealthBar.Position = CellToScreen(nextCell);
-                    state = ShipsInfo[ShipId].Pos == Destination ? ActionState.None : ActionState.Rotating;
+                    _state = ShipsInfo[ShipId].Pos == Destination ? ActionState.None : ActionState.Rotating;
                     break;
             }
 
@@ -812,17 +809,17 @@ namespace SpacePewPew
                       (360 - Math.Abs(ShipsInfo[ShipId].Direction - newDir))))
                     rotateDir *= -1;*/
 
-                state = ActionState.Rotating;
+                _state = ActionState.Rotating;
             }
             else
             {
                 switch (processingDecision.DecisionType)
                 {
                     case DecisionType.Attack:
-                        state = ActionState.Rotating;
+                        _state = ActionState.Rotating;
                         break;
                     case DecisionType.Move:
-                        state = ActionState.None;
+                        _state = ActionState.None;
                         break;
                 }
             }
@@ -848,7 +845,7 @@ namespace SpacePewPew
                 if (map.MapCells[shipPos.X, shipPos.Y].Ship == null)
                     ShipsInfo.Remove(attackerShipId);
             } */
-            state = ActionState.None;
+            _state = ActionState.None;
         }
         #endregion
 
@@ -874,8 +871,6 @@ namespace SpacePewPew
                         Firing(map);
                         break;
                     }
-                default: break;
-
             }
 
             if (animationTick != 0)
@@ -1063,7 +1058,7 @@ namespace SpacePewPew
         {
             processingDecision = e.Decision;
 
-            state = ActionState.Rotating;
+            _state = ActionState.Rotating;
 
             if (processingDecision.Path.Count != 0)
                 Destination = processingDecision.Path[0];
