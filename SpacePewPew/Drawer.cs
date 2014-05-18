@@ -39,12 +39,14 @@ namespace SpacePewPew
 
         public class ShipAttributes
         {
-            public ShipAttributes(string texName, PlayerColor color, Point pos, int direction)
+            public ShipAttributes(string texName, PlayerColor color, Point pos, int direction, HealthBar healthBar)
             {
                 TexName = texName;
                 Color = color;
                 Direction = direction;
                 Pos = pos;
+                HealthBar = healthBar;
+
               //  TexSize = texSize;
 
                 switch (TexName)
@@ -72,6 +74,7 @@ namespace SpacePewPew
             public PlayerColor Color { get; set; }
             public int Direction { get; set; }
             public int TexSize { get; private set; }
+            public HealthBar HealthBar { get; set; }
         }
 
         #region Declarations
@@ -575,6 +578,7 @@ namespace SpacePewPew
             //TODO
             DrawTexture(Textures[ship.TexName + ship.Color], rotate(-ship.Direction, ship.TexSize, tmp.X + Consts.CELL_SIDE, tmp.Y + (float)Math.Sqrt(3) / 2 * Consts.CELL_SIDE));
             DrawShipStatus(map);
+            DrawHealthBar(ship.HealthBar);
 
             //TODO: добавить в атрибуты размер модельки, наладить поворот и прочую хуиту
         }
@@ -606,6 +610,27 @@ namespace SpacePewPew
                 Gl.glVertex2f(pos.X, pos.Y);
                 Gl.glEnd();
             }
+        }
+
+        private void DrawHealthBar(HealthBar healthBar)
+        {
+            Frame(healthBar.Position.X, healthBar.Position.Y + 2, healthBar.Position.X + 2, healthBar.Position.Y + 10);
+            float f = (float) healthBar.CurrentHealth/healthBar.MaxHealth;
+            if (f >= 0.5f) 
+                Gl.glColor3f(0, 1, 0);
+            else if (f > 0.25f && f < 0.5f)
+                Gl.glColor3f(1, 1, 0.3f);
+            else
+                Gl.glColor3f(1, 0, 0);
+
+            
+
+            Gl.glBegin(Gl.GL_POLYGON);
+            Gl.glVertex2f(healthBar.Position.X, healthBar.Position.Y + 10);
+            Gl.glVertex2f(healthBar.Position.X + 2, healthBar.Position.Y + 10);
+            Gl.glVertex2f(healthBar.Position.X + 2, healthBar.Position.Y + 10 - (float)8*f);
+            Gl.glVertex2f(healthBar.Position.X, healthBar.Position.Y + 10 - (float)(8*f));
+            Gl.glEnd();
         }
 
 
@@ -719,11 +744,11 @@ namespace SpacePewPew
                                     //TODO: переделать строки в enum или еще что-нибудь
                                 case "Fighter":
                                     ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Fighter",
-                                        map.MapCells[i, j].Ship.Color, new Point(i, j), 0);
+                                        map.MapCells[i, j].Ship.Color, new Point(i, j), 0, new HealthBar(map.MapCells[i,j].Ship.MaxHealth, CellToScreen(new Point(i,j))));
                                     break;
                                 case "Barge":
                                     ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Barge",
-                                        map.MapCells[i, j].Ship.Color, new Point(i, j), 0);
+                                        map.MapCells[i, j].Ship.Color, new Point(i, j), 0, new HealthBar(map.MapCells[i,j].Ship.MaxHealth, CellToScreen(new Point(i,j))));
                                     break;
                             }
                         }
@@ -770,10 +795,12 @@ namespace SpacePewPew
             {
                 case DecisionType.Attack:
                     ShipsInfo[ShipId].Pos = nextCell;
+                    ShipsInfo[ShipId].HealthBar.Position = CellToScreen(nextCell);
                     state = ActionState.Rotating;
                     break;
                 case DecisionType.Move:
                     ShipsInfo[ShipId].Pos = nextCell;
+                    ShipsInfo[ShipId].HealthBar.Position = CellToScreen(nextCell);
                     state = ShipsInfo[ShipId].Pos == Destination ? ActionState.None : ActionState.Rotating;
                     break;
             }
@@ -810,7 +837,7 @@ namespace SpacePewPew
             Gl.glColor3f(1, 0, 0);
 
             animation = "PewPew!";
-            animationTick = 10 * processingDecision.Battle.Count + 10;
+            animationTick = 10 * processingDecision.Battle.Count + 20;
             animationPos = ShipsInfo[processingDecision.ShipIndex].Pos;
             Point shipPos = ShipsInfo[processingDecision.ShipIndex].Pos;
             animationPos = ShipsInfo[attackerShipId].Pos;
@@ -942,45 +969,55 @@ namespace SpacePewPew
 
 
 
-            foreach (var bullet in bullets)
+           // foreach (var bullet in bullets)
+            for (int i = 0; i < bullets.Count; i++)
             {
                 //   if (bullet.Timeleft == 0) bullet.Exists = false;
                 //    if (bullet.Exists)
-                if (bullet.Timeleft == 0)
+                if (bullets[i].Timeleft == 0)
                 {
-                    if (bullet.IsMine)
+                    if (bullets[i].IsMine)
                     {
-                        if (!IsAround(bullet.Pos, target, 0.5f))
-                            bullet.Pos = new PointF(bullet.Pos.X + Delta.X, bullet.Pos.Y + Delta.Y);
+                        if (!IsAround(bullets[i].Pos, target, 0.5f))
+                            bullets[i].Pos = new PointF(bullets[i].Pos.X + Delta.X, bullets[i].Pos.Y + Delta.Y);
                         else
                         {
-                            bullet.Timeleft = 100;
-                            //DrawString(bullet.Pos, bullet.Damage.ToString());
-                            bullet.ShowTime = 8;
+                            bullets[i].Timeleft = 100;
+                            bullets[i].ShowTime = 8;
+                            if (map.MapCells[ScreenToCell(target).X, ScreenToCell(target).Y].Ship != null)
+                            {
+                                ShipsInfo[map.MapCells[ScreenToCell(target).X, ScreenToCell(target).Y].Ship.Id].HealthBar.CurrentHealth -= battle[i].Damage;
+                            }
+
                         }
                     }
-                    else if (!IsAround(bullet.Pos, attacker, 0.5f))
-                        bullet.Pos = new PointF(bullet.Pos.X - Delta.X, bullet.Pos.Y - Delta.Y);
+                    else if (!IsAround(bullets[i].Pos, attacker, 0.5f))
+                        bullets[i].Pos = new PointF(bullets[i].Pos.X - Delta.X, bullets[i].Pos.Y - Delta.Y);
                     else
-                    {
-                        bullet.Timeleft = 100;
-                        bullet.ShowTime = 8;
+                    {  
+                        bullets[i].Timeleft = 100;
+                        bullets[i].ShowTime = 8;
+                        if (map.MapCells[ScreenToCell(attacker).X, ScreenToCell(attacker).Y].Ship != null)
+                        {
+                            ShipsInfo[map.MapCells[ScreenToCell(attacker).X, ScreenToCell(attacker).Y].Ship.Id].HealthBar.CurrentHealth -= battle[i].Damage;
+                        }
+                        
                     }
 
-                    DrawBullet(bullet.Pos);  
+                    DrawBullet(bullets[i].Pos);  
                 }
                 else
                 {
-                    bullet.Timeleft--;
+                    bullets[i].Timeleft--;
 
                 }
 
                 
-                if (bullet.ShowTime != 0)
+                if (bullets[i].ShowTime != 0)
                 {
                     
-                    DrawString(bullet.Pos, bullet.Damage.ToString());
-                    bullet.ShowTime--;
+                    DrawString(bullets[i].Pos, bullets[i].Damage.ToString());
+                    bullets[i].ShowTime--;
                 }
 
             }
