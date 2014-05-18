@@ -1,4 +1,7 @@
 ﻿using System.Drawing;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Messaging;
 using SpacePewPew.GameLogic;
 using SpacePewPew.GameObjects.GameMap;
 using SpacePewPew.GameObjects.MapObjects;
@@ -15,6 +18,21 @@ namespace SpacePewPew
 {
     public class Drawer
     {
+        public class Bullet
+        {
+            public PointF Pos { get; set; }
+            public bool IsMine { get; set; }
+            public int Timeleft { get; set; }
+
+            public Bullet(bool isMine, PointF pos, int timeleft)
+            {
+                IsMine = isMine;
+                Pos = pos;
+                Timeleft = timeleft;
+            }
+
+        }
+
         public class ShipAttributes
         {
             public ShipAttributes(string texName, PlayerColor color, Point pos, int direction)
@@ -23,12 +41,33 @@ namespace SpacePewPew
                 Color = color;
                 Direction = direction;
                 Pos = pos;
+              //  TexSize = texSize;
+
+                switch (TexName)
+                {
+                    case "Fighter":
+                    {
+                        TexSize = 8;
+                        break;
+                    }
+                    case "Barge":
+                    {
+                        TexSize = 15;
+                        break;
+                    }
+                    default:
+                    {
+                        TexSize = 10;
+                        break;
+                    }
+                }
             }
 
             public Point Pos { get; set; }
             public string TexName { get; set; }
             public PlayerColor Color { get; set; }
             public int Direction { get; set; }
+            public int TexSize { get; private set; }
         }
 
         #region Declarations
@@ -102,9 +141,16 @@ namespace SpacePewPew
 
             TexInit(@"..\..\Textures\BackgroundTexture.jpg", "Main Menu");
             TexInit(@"..\..\Textures\BattleMap.jpg", "Battle Map");
-            TexInit(@"..\..\ShipModels\Korab.png", "Ship");
-            TexInit(@"..\..\ShipModels\redKorab.png", "Red");
-            TexInit(@"..\..\ShipModels\blueKorab.png", "Blue");
+
+            TexInit(@"..\..\ShipModels\Barge.png", "Barge");
+            TexInit(@"..\..\ShipModels\BargeRed.png", "BargeRed");
+            TexInit(@"..\..\ShipModels\BargeBlue.png", "BargeBlue");
+
+            TexInit(@"..\..\ShipModels\Fighter.png", "Fighter");
+            TexInit(@"..\..\ShipModels\FighterRed.png", "FighterRed");
+            TexInit(@"..\..\ShipModels\FighterBlue.png", "FighterBlue");
+
+
 
             #endregion TexInitialize;
         }
@@ -152,11 +198,8 @@ namespace SpacePewPew
                     DrawTexture(Textures["Battle Map"], coordinates);
 
                     DrawField(LightenedCell, map);
-                    //DrawCell(LightenedCell);
             
                     Gl.glEnable(Gl.GL_BLEND);
-                    
-                    //DrawAction(map);
 
                     for (var i = 0; i < map.MapCells.GetLength(0); i++ )
                         for (var j = 0; j < map.MapCells.GetLength(1); j++)
@@ -170,12 +213,8 @@ namespace SpacePewPew
                     DrawAction(map);
 
                     foreach (var a in ShipsInfo)
-                    {
-                        var tmp = CellToScreen(a.Value.Pos);
-                        DrawTexture(Textures[a.Value.TexName], rotate(-a.Value.Direction, 10, tmp.X + Consts.CELL_SIDE, tmp.Y + (float)Math.Sqrt(3)/2 * Consts.CELL_SIDE));    
-                        DrawTexture(Textures[a.Value.Color.ToString()], rotate(-a.Value.Direction, 10, tmp.X + Consts.CELL_SIDE, tmp.Y + (float)Math.Sqrt(3) / 2 * Consts.CELL_SIDE));
-                        DrawShipStatus(map);
-                    }
+                        DrawShip(a.Value, map);
+                    
 
                     Gl.glDisable(Gl.GL_BLEND);
 
@@ -186,7 +225,7 @@ namespace SpacePewPew
                         DrawListView(manager);
                     }
              
-                    Animate();
+                    Animate(map);
                 }
 
                 break;
@@ -248,6 +287,11 @@ namespace SpacePewPew
                         break;
                 }
             }
+            /*else
+            {
+                var s =  Il.ilGetError();
+                int a = 4;
+            }*/
         }
 
         private uint MakeGlTexture(int format, IntPtr pixels, int w, int h)
@@ -515,6 +559,22 @@ namespace SpacePewPew
         }
         #endregion
 
+        #region shipDrawing
+
+        public void DrawShip(ShipAttributes ship, IMapView map)
+        {
+            var tmp = CellToScreen(ship.Pos);
+
+
+
+            DrawTexture(Textures[ship.TexName], rotate(-ship.Direction, ship.TexSize, tmp.X + Consts.CELL_SIDE, tmp.Y + (float)Math.Sqrt(3) / 2 * Consts.CELL_SIDE));
+            //TODO
+            DrawTexture(Textures[ship.TexName + ship.Color], rotate(-ship.Direction, ship.TexSize, tmp.X + Consts.CELL_SIDE, tmp.Y + (float)Math.Sqrt(3) / 2 * Consts.CELL_SIDE));
+            DrawShipStatus(map);
+
+            //TODO: добавить в атрибуты размер модельки, наладить поворот и прочую хуиту
+        }
+        
         private void DrawShipStatus(IMapView map)
         {
             var ships = map.GetShipIterator(Game.Instance().CurrentPlayer.Color);
@@ -544,6 +604,8 @@ namespace SpacePewPew
             }
         }
 
+
+        #endregion
         #region actionDrawing
 
         private PointF[] rotate(int angle, float side, float translationX, float translationY) //на вход 4 точки, на выход 4 точки
@@ -606,7 +668,7 @@ namespace SpacePewPew
             {
                 case ActionState.None:
                     {
-                        GetShipsFromIMap(map);
+                        GetShipsFromIMapView(map);
                         if (map.MapCells[map.ChosenShip.X, map.ChosenShip.Y].Ship != null)
                             _shipId = map.MapCells[map.ChosenShip.X, map.ChosenShip.Y].Ship.Id;
                         else
@@ -635,7 +697,7 @@ namespace SpacePewPew
             }
         }
 
-        private void GetShipsFromIMap(IMapView map)
+        private void GetShipsFromIMapView(IMapView map)
         {
             for (var i = 0; i < Consts.MAP_WIDTH; i++)
                 for (var j = 0; j < Consts.MAP_HEIGHT; j++)
@@ -645,10 +707,24 @@ namespace SpacePewPew
                         ShipAttributes tmp1;
                         if (ShipsInfo.TryGetValue(map.MapCells[i, j].Ship.Id, out tmp1)) //сукасукасука!
                             ShipsInfo[map.MapCells[i, j].Ship.Id].Pos = new Point(i, j);
-                        // = new ShipAttributes("Ship", "ShipColor", new Point(i, j), 0); //попровить этот хуец
+                            // = new ShipAttributes("Ship", "ShipColor", new Point(i, j), 0); //попровить этот хуец
                         else
-                            ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Ship",
-                                map.MapCells[i, j].Ship.Color, new Point(i, j), 0);
+                        {
+                            switch (map.MapCells[i,j].Ship.Name)
+                            {
+                                    //TODO: переделать строки в enum или еще что-нибудь
+                                case "Fighter":
+                                    ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Fighter",
+                                        map.MapCells[i, j].Ship.Color, new Point(i, j), 0);
+                                    break;
+                                case "Barge":
+                                    ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Barge",
+                                        map.MapCells[i, j].Ship.Color, new Point(i, j), 0);
+                                    break;
+                            }
+                        }
+                        //ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Ship",
+                        //        map.MapCells[i, j].Ship.Color, new Point(i, j), 0);
                     }
                 }
         }
@@ -679,6 +755,7 @@ namespace SpacePewPew
                     break;
             }
         }
+
 
         private void Move(IMapView map, int ShipId)
         {
@@ -723,17 +800,26 @@ namespace SpacePewPew
             }
         }
 
-        private void Attack(IMapView map, int ShipId)
+        private void Attack(IMapView map, int attackerShipId) //используется только Decision и карта
         {
-            Point t = ShipsInfo[processingDecision.ShipIndex].Pos;
+            
             Gl.glColor3f(1, 0, 0);
 
-            animation = "BOOM!";
-            animationTick = 15;
+            animation = "PewPew!";
+            animationTick = 10 * processingDecision.Battle.Count + 10;
             animationPos = ShipsInfo[processingDecision.ShipIndex].Pos;
+            Point shipPos = ShipsInfo[processingDecision.ShipIndex].Pos;
+            animationPos = ShipsInfo[attackerShipId].Pos;
+            attackerId = attackerShipId;
+        /*    if (animationTick == 0)
+            {
+                if (map.MapCells[shipPos.X, shipPos.Y].Ship == null) // стирание атакованного корабля
+                    ShipsInfo.Remove(processingDecision.ShipIndex);
 
-            ShipsInfo.Remove(processingDecision.ShipIndex);
-
+                shipPos = ShipsInfo[attackerShipId].Pos; // стирание атакующего корабля
+                if (map.MapCells[shipPos.X, shipPos.Y].Ship == null)
+                    ShipsInfo.Remove(attackerShipId);
+            } */
             state = ActionState.None;
         }
         #endregion
@@ -744,18 +830,20 @@ namespace SpacePewPew
         int animationTick = 0;
         string animation = "none";
         Point animationPos = new Point(0, 0);
-        public void Animate()
-        {            
+        public void Animate(IMapView map)
+        {   
+            
             switch (animation)
             {
                 case "BOOM!":
                     {
                         Explotion();
+                     //   List<Bullet> bullets = new List<Bullet>() { new Bullet(), new Bullet(), new Bullet() }; 
                         break;
                     }
                 case "PewPew!":
                     {
-                        Firing();
+                        Firing(map);
                         break;
                     }
                 default: break;
@@ -771,6 +859,7 @@ namespace SpacePewPew
 
         public void Explotion()
         {
+            
             Gl.glColor3f(1, 0, 0);
             PointF position = CellToScreen(animationPos);
             Random rand = new Random();
@@ -787,9 +876,111 @@ namespace SpacePewPew
 
         }
 
-        public void Firing()
-        {
+        List<Bullet> bullets = new List<Bullet>();
 
+        private int attackerId; //говнокод :(
+        public void Firing(IMapView map)
+        {
+            PointF attacker = CellToScreen(ShipsInfo[attackerId].Pos);
+            PointF target = CellToScreen(ShipsInfo[processingDecision.ShipIndex].Pos);
+            
+            target.X += 3/2*Consts.CELL_SIDE;
+            target.Y += (float) Math.Sqrt(3) / 2 * Consts.CELL_SIDE;
+            attacker.X += 3 / 2 * Consts.CELL_SIDE;
+            attacker.Y += (float) Math.Sqrt(3) / 2 * Consts.CELL_SIDE;
+
+            var Delta = new PointF((target.X - attacker.X)/20, (target.Y - attacker.Y)/20);
+
+            var battle = processingDecision.Battle;
+            //стрельба блядь поочередная сука
+            int pause = 0;
+            if (bullets.Count == 0)
+                
+                foreach (var step in battle)
+                {
+                    if (step.IsMineAttack)
+                        bullets.Add(new Bullet(true, attacker, pause));
+                    else
+                        bullets.Add(new Bullet(false, target, pause));
+                    pause += 10;
+                }
+
+
+            if (animationTick == 0)
+            {
+                bullets.Clear();
+
+                Point shipPos = ShipsInfo[processingDecision.ShipIndex].Pos;
+
+                
+                if (map.MapCells[shipPos.X, shipPos.Y].Ship == null) // стирание атакованного корабля
+                {
+                    animation = "BOOM!";
+                    animationTick = 30;
+                    animationPos = shipPos;
+                    ShipsInfo.Remove(processingDecision.ShipIndex);
+                }
+
+                shipPos = ShipsInfo[attackerId].Pos; // стирание атакующего корабля
+                if (map.MapCells[shipPos.X, shipPos.Y].Ship == null)
+                {
+                    animation = "BOOM!";
+                    animationTick = 30;
+                    animationPos = shipPos;
+                    ShipsInfo.Remove(attackerId);
+                    
+                    //animationPos = shipPos;
+                   // ShipsInfo.Remove(processingDecision.ShipIndex);
+
+                }
+            }
+
+
+
+            foreach (var bullet in bullets)
+            {
+                //   if (bullet.Timeleft == 0) bullet.Exists = false;
+                //    if (bullet.Exists)
+                if (bullet.Timeleft == 0)
+                {
+                    if (bullet.IsMine)
+                    {
+                        if (!IsAround(bullet.Pos, target, 0.5f))
+                            bullet.Pos = new PointF(bullet.Pos.X + Delta.X, bullet.Pos.Y + Delta.Y);
+                        else
+                        {
+                            bullet.Timeleft = 1000;
+
+                        }
+                    }
+                    else if (!IsAround(bullet.Pos, attacker, 0.5f))
+                        bullet.Pos = new PointF(bullet.Pos.X - Delta.X, bullet.Pos.Y - Delta.Y);
+                    else
+                    {
+                        bullet.Timeleft = 100;
+                    }
+
+                    DrawBullet(bullet.Pos);  
+                }
+                else
+                {
+                    bullet.Timeleft--;
+                }
+
+            }
+        }
+
+        private bool IsAround(PointF a, PointF b, float delta)
+        {
+            return (Math.Abs(a.X - b.X) < delta && Math.Abs(a.Y - b.Y) < delta);
+        }
+
+        private void DrawBullet(PointF pos)
+        {
+           Gl.glPointSize(5);
+           Gl.glBegin(Gl.GL_POINTS);
+           Gl.glVertex2f(pos.X, pos.Y);
+           Gl.glEnd();
         }
 
         #endregion
@@ -799,9 +990,10 @@ namespace SpacePewPew
 
         private void DrawDock(Point p)
         {
-            Gl.glColor3f(0.9f, 0.4f, 0.3f);
+            Gl.glColor3f(1, 0, 0);//0.9f, 0.4f, 0.3f);
+            Gl.glLineWidth(4);
             PointF pos = CellToScreen(p);
-            Gl.glBegin(Gl.GL_POLYGON);
+            Gl.glBegin(Gl.GL_LINE_STRIP);
             Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y);
             Gl.glVertex2d(pos.X + 3 * Consts.CELL_SIDE / 2, pos.Y);
             Gl.glVertex2d(pos.X + 2 * Consts.CELL_SIDE, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE / 2);
@@ -809,7 +1001,9 @@ namespace SpacePewPew
             Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE);
             Gl.glVertex2d(pos.X, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE / 2);
             Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y);
+       //     Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y);
             Gl.glEnd();
+            Gl.glLineWidth(1);
 
         }
         #endregion
