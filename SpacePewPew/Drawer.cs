@@ -23,12 +23,16 @@ namespace SpacePewPew
             public PointF Pos { get; set; }
             public bool IsMine { get; set; }
             public int Timeleft { get; set; }
+            public int Damage { get; set; }
+            public int ShowTime { get; set; }
 
-            public Bullet(bool isMine, PointF pos, int timeleft)
+            public Bullet(bool isMine, PointF pos, int timeleft, int damage)
             {
                 IsMine = isMine;
                 Pos = pos;
                 Timeleft = timeleft;
+                Damage = damage;
+                ShowTime = 0;
             }
 
         }
@@ -879,6 +883,7 @@ namespace SpacePewPew
         List<Bullet> bullets = new List<Bullet>();
 
         private int attackerId; //говнокод :(
+        private int damageNumber = 0;
         public void Firing(IMapView map)
         {
             PointF attacker = CellToScreen(ShipsInfo[attackerId].Pos);
@@ -899,9 +904,9 @@ namespace SpacePewPew
                 foreach (var step in battle)
                 {
                     if (step.IsMineAttack)
-                        bullets.Add(new Bullet(true, attacker, pause));
+                        bullets.Add(new Bullet(true, attacker, pause, step.Damage));
                     else
-                        bullets.Add(new Bullet(false, target, pause));
+                        bullets.Add(new Bullet(false, target, pause, step.Damage));
                     pause += 10;
                 }
 
@@ -949,8 +954,9 @@ namespace SpacePewPew
                             bullet.Pos = new PointF(bullet.Pos.X + Delta.X, bullet.Pos.Y + Delta.Y);
                         else
                         {
-                            bullet.Timeleft = 1000;
-
+                            bullet.Timeleft = 100;
+                            //DrawString(bullet.Pos, bullet.Damage.ToString());
+                            bullet.ShowTime = 8;
                         }
                     }
                     else if (!IsAround(bullet.Pos, attacker, 0.5f))
@@ -958,6 +964,7 @@ namespace SpacePewPew
                     else
                     {
                         bullet.Timeleft = 100;
+                        bullet.ShowTime = 8;
                     }
 
                     DrawBullet(bullet.Pos);  
@@ -965,6 +972,15 @@ namespace SpacePewPew
                 else
                 {
                     bullet.Timeleft--;
+
+                }
+
+                
+                if (bullet.ShowTime != 0)
+                {
+                    
+                    DrawString(bullet.Pos, bullet.Damage.ToString());
+                    bullet.ShowTime--;
                 }
 
             }
