@@ -476,6 +476,7 @@ namespace SpacePewPew
             if (isSelected)
                 Frame(lvi.Position.X, lvi.Position.Y, lvi.Position.X + Consts.LISTVIEWITEM_WIDTH, lvi.Position.Y + Consts.LISTVIEWITEM_HEIGHT);
             DrawString(new PointF(lvi.Position.X + 2, lvi.Position.Y + Consts.LISTVIEWITEM_HEIGHT / 2 - 0.5f), lvi.ItemName);
+            DrawString(new PointF(lvi.Position.X + 67, lvi.Position.Y + Consts.LISTVIEWITEM_HEIGHT / 2 - 0.5f), lvi.ShipCost.ToString() );
         }
 
         #endregion
