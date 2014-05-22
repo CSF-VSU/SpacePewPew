@@ -521,6 +521,7 @@ namespace SpacePewPew
                     if (map.MapCells[i, j].Object is Dock) DrawDock(new Point(i, j));
                 }
 
+            Gl.glColor3f(0, 1, 0);
             Gl.glLineWidth(3);
             DrawCell(lightenedCell);
             Gl.glLineWidth(1);

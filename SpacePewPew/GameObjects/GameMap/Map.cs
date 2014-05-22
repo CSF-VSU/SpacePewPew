@@ -73,7 +73,7 @@ namespace SpacePewPew.GameObjects.GameMap
             Unlight();
             if (_activeSelectExists)
             {
-                if (IsEnemy(p) && CanReachForAttack(p) && (!(p.Equals(ChosenShip))))
+                if (IsEnemy(p) && CanReachForAttack(p))
                 {
                     _activeSelectExists = false;
                     return Attack(p);
@@ -259,6 +259,7 @@ namespace SpacePewPew.GameObjects.GameMap
         private bool CanReachForAttack(Point p)
         {
             var reachable = Lightened.ToList();
+            reachable.Add(ChosenShip);
             return reachable.Select(FindNeighbours).Any(neighboursList => Enumerable.Contains(neighboursList, p));
         }
 
