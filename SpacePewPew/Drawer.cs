@@ -83,16 +83,13 @@ namespace SpacePewPew
         private ActionState _state;
         public PointF LightenedCell { get; set; }
         public PointF[,] CellCoors { get; set; }
-
-        private bool _doneDrawing = true;
-
-        private Point nextCell;
-        private int newDir;
+        
+        private Point _nextCell;
+        private int _newDir;
         private int _shipId = -1;
 
-
-        private Point Destination;
-        private Decision processingDecision;
+        private Point _destination;
+        private Decision _processingDecision;
         #endregion
 
         #region Singleton pattern
@@ -166,12 +163,11 @@ namespace SpacePewPew
             switch (manager.ScreenType)
             {
                 #region MainMenuCase
-
                 case ScreenType.MainMenu:
                 {
                     coordinates = new[]                     
                     {      
-                      new PointF(0, 0), Additional.NewPoint(new PointF(Consts.OGL_WIDTH, 0)),
+                        new PointF(0, 0), Additional.NewPoint(new PointF(Consts.OGL_WIDTH, 0)),
                         Additional.NewPoint(new PointF(Consts.OGL_WIDTH, Consts.OGL_HEIGHT)),
                         Additional.NewPoint(new PointF(0, Consts.OGL_HEIGHT))
                     };
@@ -181,15 +177,14 @@ namespace SpacePewPew
                     foreach (var btn in manager.Components)
                     {   
                         DrawButton((btn.Value as GameButton), btn.Key);
-                       // DrawString(new PointF(btn.Value.Position.X + 2, btn.Value.Position.Y + 4), btn.Key);
+                        // DrawString(new PointF(btn.Value.Position.X + 2, btn.Value.Position.Y + 4), btn.Key);
 
                     }
                     break;
                 }
                 #endregion
 
-               #region GameCase
-
+                #region GameCase
                 case ScreenType.Game:
                 {
                     coordinates = new[]
@@ -201,25 +196,13 @@ namespace SpacePewPew
 
                     DrawTexture(Textures["Battle Map"], coordinates);
 
-                    DrawField(LightenedCell, map);
+                    DrawField(map);
             
                     Gl.glEnable(Gl.GL_BLEND);
-
-                    for (var i = 0; i < map.MapCells.GetLength(0); i++ )
-                        for (var j = 0; j < map.MapCells.GetLength(1); j++)
-                            if (map.MapCells[i, j].IsLightened)
-                            {
-                                Gl.glColor3f(1, 0, 0);                              
-                                var t = CellToScreen(new Point(i, j));    
-                           
-                                DrawCell(t);
-                            }
                     DrawAction(map);
 
                     foreach (var a in ShipsInfo)
                         DrawShip(a.Value, map);
-                    
-
                     Gl.glDisable(Gl.GL_BLEND);
 
                     DrawStatusBar(manager);
@@ -233,7 +216,7 @@ namespace SpacePewPew
                 }
 
                 break;
-               #endregion
+                #endregion
             }
         }
 
@@ -422,7 +405,6 @@ namespace SpacePewPew
             Gl.glColor3f(0, 0, 0);
             Gl.glLineWidth(2);
 
-           // Gl.glColor3f(1, 1, 0.3f);
             Gl.glBegin(Gl.GL_LINES);
             Gl.glVertex2d(0, 7);
             Gl.glVertex2d(Consts.SCREEN_WIDTH, 7);
@@ -437,16 +419,13 @@ namespace SpacePewPew
 
             var saveBtn = lm.Components["Save"] as GameButton;
             DrawButton(saveBtn, "Save");
-            //DrawString(new PointF(saveBtn.Position.X + 2, saveBtn.Position.Y + 4), "Save");
 
             var endTurnBtn = lm.Components["End Turn"] as GameButton;
             DrawButton(endTurnBtn, "End Turn");
-        //    DrawString(new PointF(endTurnBtn.Position.X + 2, endTurnBtn.Position.Y + 4), "End Turn");
         }
 
         private void DrawListView(LayoutManager manager)
         {
-            //ListView background
             Gl.glColor4f(0, 0, 0, 0.7f);
 
             Gl.glEnable(Gl.GL_BLEND);
@@ -458,12 +437,9 @@ namespace SpacePewPew
             Rect(pos.X, pos.Y, pos.X * 2.5f, Consts.SCREEN_HEIGHT - Consts.STATUS_BAR_HEIGHT / 2);
             Frame(pos.X, pos.Y, pos.X * 2.5f, Consts.SCREEN_HEIGHT - Consts.STATUS_BAR_HEIGHT / 2);
            
-            //ListView Buttons
             DrawButton(manager.Components["Quit Shop"] as GameButton, "Quit Shop");
-          //  DrawString(new PointF(manager.Components["Quit Shop"].Position.X + 1, manager.Components["Quit Shop"].Position.Y + 4), "Quit Shop");
             DrawButton(manager.Components["Buy Ship"] as GameButton, "Buy Ship");
-           // DrawString(new PointF(manager.Components["Buy Ship"].Position.X + 1, manager.Components["Buy Ship"].Position.Y + 4), "Buy Ship");
-
+      
             var menu = manager.Components["Shop Menu"] as ListView;
             DrawListViewItem(menu.Items[0], menu.Index == 0);
             DrawListViewItem(menu.Items[1], menu.Index == 1);
@@ -485,21 +461,19 @@ namespace SpacePewPew
 
         private void DrawCell(PointF pos)
         {
-            
             Gl.glBegin(Gl.GL_LINE_STRIP);
-            Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y);
-            Gl.glVertex2d(pos.X + 3 * Consts.CELL_SIDE / 2, pos.Y);
+            Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2.0, pos.Y);
+            Gl.glVertex2d(pos.X + 3 * Consts.CELL_SIDE / 2.0, pos.Y);
             Gl.glVertex2d(pos.X + 2 * Consts.CELL_SIDE, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE / 2);
-            Gl.glVertex2d(pos.X + 3 * Consts.CELL_SIDE / 2, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE);
-            Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE);
+            Gl.glVertex2d(pos.X + 3 * Consts.CELL_SIDE / 2.0, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE);
+            Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2.0, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE);
             Gl.glVertex2d(pos.X, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE / 2);
-            Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y);
+            Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2.0, pos.Y);
             Gl.glEnd();
         }
 
-        private void DrawField(PointF lightenedCell, IMapView map)
+        private void DrawField(IMapView map)
         {
-            
             for (var i = 0; i < Consts.MAP_WIDTH; i++)
                 for (var j = 0; j < Consts.MAP_HEIGHT; j++)
                 {
@@ -521,9 +495,23 @@ namespace SpacePewPew
                     if (map.MapCells[i, j].Object is Dock) DrawDock(new Point(i, j));
                 }
 
+
+            Gl.glEnable(Gl.GL_BLEND);
+
+            for (var i = 0; i < map.MapCells.GetLength(0); i++)
+                for (var j = 0; j < map.MapCells.GetLength(1); j++)
+                    if (map.MapCells[i, j].IsLightened)
+                    {
+                        Gl.glColor3f(1, 0, 0);
+                        var t = CellToScreen(new Point(i, j));
+
+                        DrawCell(t);
+                    }
+            Gl.glDisable(Gl.GL_BLEND);
+
             Gl.glColor3f(0, 1, 0);
             Gl.glLineWidth(3);
-            DrawCell(lightenedCell);
+            DrawCell(LightenedCell);
             Gl.glLineWidth(1);
         }
 
@@ -572,10 +560,7 @@ namespace SpacePewPew
         {
             var tmp = CellToScreen(ship.Pos);
 
-
-
             DrawTexture(Textures[ship.TexName], rotate(-ship.Direction, ship.TexSize, tmp.X + Consts.CELL_SIDE, tmp.Y + (float)Math.Sqrt(3) / 2 * Consts.CELL_SIDE));
-            //TODO
             DrawTexture(Textures[ship.TexName + ship.Color], rotate(-ship.Direction, ship.TexSize, tmp.X + Consts.CELL_SIDE, tmp.Y + (float)Math.Sqrt(3) / 2 * Consts.CELL_SIDE));
             DrawShipStatus(map);
             DrawHealthBar(ship.HealthBar);
@@ -652,12 +637,12 @@ namespace SpacePewPew
             return coors1;
         }
 
-        private PointF[] elementaryRotate(char dir, float side, float translationX, float translationY)   //dir: - counterclockwise, + clockwise
+        /*private PointF[] elementaryRotate(char dir, float side, float translationX, float translationY)   //dir: - counterclockwise, + clockwise
         {
             PointF[] coors;
             coors = dir == '+' ? rotate(20, side, translationX, translationY) : rotate(-20, side, translationX, translationY);
             return coors;
-        }
+        }*/
 
         private int getNewDirection(Point a, Point b)  //a - old direction, b - new
         {
@@ -682,10 +667,11 @@ namespace SpacePewPew
             return 0;
         }
 
+        /*
         private PointF ElementaryTranslate(PointF a, PointF b, int multyplier)
         {
             return new PointF(a.X + (b.X - a.X) * multyplier / 10, a.Y + (b.Y - a.Y) * multyplier / 10);
-        }
+        }*/
 
         
         private void DrawAction(IMapView map)
@@ -704,16 +690,16 @@ namespace SpacePewPew
 
                 case ActionState.Rotating:
                     {
-                        Rotate(map, _shipId);
+                        Rotate(_shipId);
                         break;
                     }
                 case ActionState.Moving:
                     {
-                        Move(map, _shipId);
+                        Move(_shipId);
                         break;
                     }
                 case ActionState.Attack:
-                    Attack(map, _shipId);
+                    Attack(_shipId);
                     break;
             }
 
@@ -728,53 +714,49 @@ namespace SpacePewPew
             for (var i = 0; i < Consts.MAP_WIDTH; i++)
                 for (var j = 0; j < Consts.MAP_HEIGHT; j++)
                 {
-                    if (map.MapCells[i, j].Ship != null)
+                    if (map.MapCells[i, j].Ship == null) continue;
+                    
+                    ShipAttributes tmp1;
+                    if (ShipsInfo.TryGetValue(map.MapCells[i, j].Ship.Id, out tmp1)) //сукасукасука!
+                        ShipsInfo[map.MapCells[i, j].Ship.Id].Pos = new Point(i, j);
+                        // = new ShipAttributes("Ship", "ShipColor", new Point(i, j), 0); //попровить этот хуец
+                    else
                     {
-                        ShipAttributes tmp1;
-                        if (ShipsInfo.TryGetValue(map.MapCells[i, j].Ship.Id, out tmp1)) //сукасукасука!
-                            ShipsInfo[map.MapCells[i, j].Ship.Id].Pos = new Point(i, j);
-                            // = new ShipAttributes("Ship", "ShipColor", new Point(i, j), 0); //попровить этот хуец
-                        else
+                        switch (map.MapCells[i,j].Ship.Name)
                         {
-                            switch (map.MapCells[i,j].Ship.Name)
-                            {
-                                    //TODO: переделать строки в enum или еще что-нибудь
-                                case "Fighter":
-                                    ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Fighter",
-                                        map.MapCells[i, j].Ship.Color, new Point(i, j), 0, new HealthBar(map.MapCells[i,j].Ship.MaxHealth, CellToScreen(new Point(i,j))));
-                                    break;
-                                case "Barge":
-                                    ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Barge",
-                                        map.MapCells[i, j].Ship.Color, new Point(i, j), 0, new HealthBar(map.MapCells[i,j].Ship.MaxHealth, CellToScreen(new Point(i,j))));
-                                    break;
-                            }
+                                //TODO: переделать строки в enum или еще что-нибудь
+                            case "Fighter":
+                                ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Fighter",
+                                    map.MapCells[i, j].Ship.Color, new Point(i, j), 0, new HealthBar(map.MapCells[i,j].Ship.MaxHealth, CellToScreen(new Point(i,j))));
+                                break;
+                            case "Barge":
+                                ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Barge",
+                                    map.MapCells[i, j].Ship.Color, new Point(i, j), 0, new HealthBar(map.MapCells[i,j].Ship.MaxHealth, CellToScreen(new Point(i,j))));
+                                break;
                         }
-                        //ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Ship",
-                        //        map.MapCells[i, j].Ship.Color, new Point(i, j), 0);
                     }
+                    //ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Ship",
+                    //        map.MapCells[i, j].Ship.Color, new Point(i, j), 0);
                 }
         }
 
-        private void Rotate(IMapView map, int ShipId)
+        private void Rotate(int shipId)
         {
-            if (processingDecision.Path.Count != 0)
-                newDir = getNewDirection(ShipsInfo[ShipId].Pos,
-                    processingDecision.Path[processingDecision.Path.Count - 1]);
+            if (_processingDecision.Path.Count != 0)
+                _newDir = getNewDirection(ShipsInfo[shipId].Pos,
+                    _processingDecision.Path[_processingDecision.Path.Count - 1]);
             else
             {
-                if (processingDecision.DecisionType == DecisionType.Attack)
-                    newDir = getNewDirection(ShipsInfo[ShipId].Pos, processingDecision.PointB);
+                if (_processingDecision.DecisionType == DecisionType.Attack)
+                    _newDir = getNewDirection(ShipsInfo[shipId].Pos, _processingDecision.PointB);
             }
 
-            if (ShipsInfo[ShipId].Direction != newDir)
-            {
-                ShipsInfo[ShipId].Direction = newDir;
-            }
+            ShipsInfo[shipId].Direction = _newDir;
 
-            switch (processingDecision.DecisionType)
+            switch (_processingDecision.DecisionType)
             {
                 case DecisionType.Attack:
-                    _state = processingDecision.Path.Count == 0 ? ActionState.Attack : ActionState.Moving;
+                    _state = _processingDecision.Path.Count == 0 ? ActionState.Attack : ActionState.Moving;
                     break;
                 case DecisionType.Move:
                     _state = ActionState.Moving;
@@ -783,28 +765,28 @@ namespace SpacePewPew
         }
 
 
-        private void Move(IMapView map, int ShipId)
+        private void Move(int ShipId)
         {
-            nextCell = processingDecision.Path[processingDecision.Path.Count - 1];
-            processingDecision.Path.RemoveAt(processingDecision.Path.Count - 1);
+            _nextCell = _processingDecision.Path[_processingDecision.Path.Count - 1];
+            _processingDecision.Path.RemoveAt(_processingDecision.Path.Count - 1);
 
-            switch (processingDecision.DecisionType)
+            switch (_processingDecision.DecisionType)
             {
                 case DecisionType.Attack:
-                    ShipsInfo[ShipId].Pos = nextCell;
-                    ShipsInfo[ShipId].HealthBar.Position = CellToScreen(nextCell);
+                    ShipsInfo[ShipId].Pos = _nextCell;
+                    ShipsInfo[ShipId].HealthBar.Position = CellToScreen(_nextCell);
                     _state = ActionState.Rotating;
                     break;
                 case DecisionType.Move:
-                    ShipsInfo[ShipId].Pos = nextCell;
-                    ShipsInfo[ShipId].HealthBar.Position = CellToScreen(nextCell);
-                    _state = ShipsInfo[ShipId].Pos == Destination ? ActionState.None : ActionState.Rotating;
+                    ShipsInfo[ShipId].Pos = _nextCell;
+                    ShipsInfo[ShipId].HealthBar.Position = CellToScreen(_nextCell);
+                    _state = ShipsInfo[ShipId].Pos == _destination ? ActionState.None : ActionState.Rotating;
                     break;
             }
 
-            if (nextCell != Destination)
+            if (_nextCell != _destination)
             {
-                ShipsInfo[ShipId].Pos = nextCell;
+                ShipsInfo[ShipId].Pos = _nextCell;
 
                 //TODO : это используется при плавном повороте, которого у нас все равно нет :3
                 //newDir = getNewDirection(ShipsInfo[ShipId].Pos, nextCell);
@@ -816,7 +798,7 @@ namespace SpacePewPew
             }
             else
             {
-                switch (processingDecision.DecisionType)
+                switch (_processingDecision.DecisionType)
                 {
                     case DecisionType.Attack:
                         _state = ActionState.Rotating;
@@ -828,26 +810,16 @@ namespace SpacePewPew
             }
         }
 
-        private void Attack(IMapView map, int attackerShipId) //используется только Decision и карта
+        private void Attack(int attackerShipId) //используется только Decision и карта
         {
-            
             Gl.glColor3f(1, 0, 0);
 
             animation = "PewPew!";
-            animationTick = 10 * processingDecision.Battle.Count + 20;
-            animationPos = ShipsInfo[processingDecision.ShipIndex].Pos;
-            Point shipPos = ShipsInfo[processingDecision.ShipIndex].Pos;
+            animationTick = 10 * _processingDecision.Battle.Count + 20;
+            animationPos = ShipsInfo[_processingDecision.ShipIndex].Pos;
             animationPos = ShipsInfo[attackerShipId].Pos;
             attackerId = attackerShipId;
-        /*    if (animationTick == 0)
-            {
-                if (map.MapCells[shipPos.X, shipPos.Y].Ship == null) // стирание атакованного корабля
-                    ShipsInfo.Remove(processingDecision.ShipIndex);
-
-                shipPos = ShipsInfo[attackerShipId].Pos; // стирание атакующего корабля
-                if (map.MapCells[shipPos.X, shipPos.Y].Ship == null)
-                    ShipsInfo.Remove(attackerShipId);
-            } */
+      
             _state = ActionState.None;
         }
         #endregion
@@ -866,7 +838,7 @@ namespace SpacePewPew
             {
                 case "BOOM!":
                 {
-                    Explotion();
+                    Explosion();
                     break;
                 }
                 case "PewPew!":
@@ -882,42 +854,38 @@ namespace SpacePewPew
                 if (!Game.Instance().IsShowingModal)
                     Game.Instance().IsShowingModal = true;
             }
-
             else
             {
                 animation = "none";
                 Game.Instance().IsShowingModal = false;
             }
-
         }
 
-        public void Explotion()
+        public void Explosion()
         {
             
             Gl.glColor3f(1, 0, 0);
-            PointF position = CellToScreen(animationPos);
-            Random rand = new Random();
-            position.X -= Consts.CELL_SIDE / 2;
-            position.Y += Consts.CELL_SIDE / 4;
+            var position = CellToScreen(animationPos);
+            var rand = new Random();
+            position.X -= Consts.CELL_SIDE / 2.0f;
+            position.Y += Consts.CELL_SIDE / 4.0f;
 
-            for (int i = 0; i < 2; i++)
+            for (var i = 0; i < 2; i++)
             {
                 position.X += (float)rand.Next(-60, 60) / 10;
                 position.Y += (float)rand.Next(-60, 60) / 10;
                 DrawString(position, "BOOM!");
             }
-
-
         }
 
-        List<Bullet> bullets = new List<Bullet>();
+        readonly List<Bullet> bullets = new List<Bullet>();
 
-        private int attackerId; //говнокод :(
+        private int attackerId; //TODO: исправить говнокод :(
         private int damageNumber = 0;
         public void Firing(IMapView map)
         {
-            PointF attacker = CellToScreen(ShipsInfo[attackerId].Pos);
-            PointF target = CellToScreen(ShipsInfo[processingDecision.ShipIndex].Pos);
+            var attacker = CellToScreen(ShipsInfo[attackerId].Pos);
+            var target = CellToScreen(ShipsInfo[_processingDecision.ShipIndex].Pos);
             
             target.X += 3/2*Consts.CELL_SIDE;
             target.Y += (float) Math.Sqrt(3) / 2 * Consts.CELL_SIDE;
@@ -926,17 +894,16 @@ namespace SpacePewPew
 
             var Delta = new PointF((target.X - attacker.X)/20, (target.Y - attacker.Y)/20);
 
-            var battle = processingDecision.Battle;
+            var battle = _processingDecision.Battle;
             //стрельба блядь поочередная сука
-            int pause = 0;
+            var pause = 0;
             if (bullets.Count == 0)
                 
                 foreach (var step in battle)
                 {
-                    if (step.IsMineAttack)
-                        bullets.Add(new Bullet(true, attacker, pause, step.Damage));
-                    else
-                        bullets.Add(new Bullet(false, target, pause, step.Damage));
+                    bullets.Add(step.IsMineAttack
+                        ? new Bullet(true, attacker, pause, step.Damage)
+                        : new Bullet(false, target, pause, step.Damage));
                     pause += 10;
                 }
 
@@ -945,15 +912,14 @@ namespace SpacePewPew
             {
                 bullets.Clear();
 
-                Point shipPos = ShipsInfo[processingDecision.ShipIndex].Pos;
-
+                var shipPos = ShipsInfo[_processingDecision.ShipIndex].Pos;
                 
                 if (map.MapCells[shipPos.X, shipPos.Y].Ship == null) // стирание атакованного корабля
                 {
                     animation = "BOOM!";
                     animationTick = 30;
                     animationPos = shipPos;
-                    ShipsInfo.Remove(processingDecision.ShipIndex);
+                    ShipsInfo.Remove(_processingDecision.ShipIndex);
                 }
 
                 shipPos = ShipsInfo[attackerId].Pos; // стирание атакующего корабля
@@ -963,20 +929,11 @@ namespace SpacePewPew
                     animationTick = 30;
                     animationPos = shipPos;
                     ShipsInfo.Remove(attackerId);
-                    
-                    //animationPos = shipPos;
-                   // ShipsInfo.Remove(processingDecision.ShipIndex);
-
                 }
             }
 
-
-
-           // foreach (var bullet in bullets)
-            for (int i = 0; i < bullets.Count; i++)
+            for (var i = 0; i < bullets.Count; i++)
             {
-                //   if (bullet.Timeleft == 0) bullet.Exists = false;
-                //    if (bullet.Exists)
                 if (bullets[i].Timeleft == 0)
                 {
                     if (bullets[i].IsMine)
@@ -999,8 +956,6 @@ namespace SpacePewPew
                         bullets[i].ShowTime = 8;
                             var tmp = ShipsInfo.First(ship => ship.Value.Pos == ScreenToCell(attacker));
                             tmp.Value.HealthBar.CurrentHealth -= battle[i].Damage;
-
-                        
                     }
 
                     DrawBullet(bullets[i].Pos);  
@@ -1008,17 +963,12 @@ namespace SpacePewPew
                 else
                 {
                     bullets[i].Timeleft--;
-
                 }
 
+                if (bullets[i].ShowTime == 0) continue;
                 
-                if (bullets[i].ShowTime != 0)
-                {
-                    
-                    DrawString(bullets[i].Pos, bullets[i].Damage.ToString());
-                    bullets[i].ShowTime--;
-                }
-
+                DrawString(bullets[i].Pos, bullets[i].Damage.ToString());
+                bullets[i].ShowTime--;
             }
         }
 
@@ -1046,13 +996,13 @@ namespace SpacePewPew
             Gl.glLineWidth(4);
             PointF pos = CellToScreen(p);
             Gl.glBegin(Gl.GL_LINE_STRIP);
-            Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y);
-            Gl.glVertex2d(pos.X + 3 * Consts.CELL_SIDE / 2, pos.Y);
+            Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2.0, pos.Y);
+            Gl.glVertex2d(pos.X + 3 * Consts.CELL_SIDE / 2.0, pos.Y);
             Gl.glVertex2d(pos.X + 2 * Consts.CELL_SIDE, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE / 2);
-            Gl.glVertex2d(pos.X + 3 * Consts.CELL_SIDE / 2, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE);
-            Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE);
+            Gl.glVertex2d(pos.X + 3 * Consts.CELL_SIDE / 2.0, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE);
+            Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2.0, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE);
             Gl.glVertex2d(pos.X, pos.Y + Math.Sqrt(3) * Consts.CELL_SIDE / 2);
-            Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2, pos.Y);
+            Gl.glVertex2d(pos.X + Consts.CELL_SIDE / 2.0, pos.Y);
             Gl.glEnd();
             Gl.glLineWidth(1);
 
@@ -1062,12 +1012,12 @@ namespace SpacePewPew
 
         public void DecisionHandler(object sender, DecisionArgs e)
         {
-            processingDecision = e.Decision;
+            _processingDecision = e.Decision;
 
             _state = ActionState.Rotating;
 
-            if (processingDecision.Path.Count != 0)
-                Destination = processingDecision.Path[0];
+            if (_processingDecision.Path.Count != 0)
+                _destination = _processingDecision.Path[0];
         }
     }
 }

@@ -60,7 +60,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameLogic\PlayerInfo.cs" />
+    <Compile Include="GameObjects\GameMap\CellInfo.cs" />
+    <Compile Include="GameObjects\GameMap\StoredMap.cs" />
     <Compile Include="GameObjects\MapObjects\Dock.cs" />
+    <Compile Include="MapEditor\Editor.cs" />
     <Compile Include="ShipBuilder\ShipInfo.cs" />
     <Compile Include="UI\HealthBar.cs" />
     <Compile Include="UI\Action.cs" />
@@ -73,7 +76,7 @@
     <Compile Include="GameObjects\GameMap\Cell.cs" />
     <Compile Include="GameObjects\GameMap\IMapView.cs" />
     <Compile Include="GameObjects\MapObjects\Mine.cs" />
-    <Compile Include="GameObjects\MapObjects\Obstacle.cs" />
+    <Compile Include="GameObjects\MapObjects\IObject.cs" />
     <Compile Include="GameObjects\MapObjects\Planet.cs" />
     <Compile Include="GameObjects\MapObjects\Station.cs" />
     <Compile Include="MainForm.cs">
@@ -112,6 +115,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

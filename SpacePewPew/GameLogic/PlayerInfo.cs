@@ -1,7 +1,6 @@
 ﻿using System.Linq;
-using SpacePewPew.GameLogic;
 
-namespace SpacePewPew
+namespace SpacePewPew.GameLogic
 {
     public static class PlayerInfo
     {
@@ -14,11 +13,6 @@ namespace SpacePewPew
         {
             get { return Game.Instance().Map.GetShipIterator(Color).Count(); }
         }
-
-        /*public static int Stations
-        {
-            get { return Game.Instance().Map.GetStationIterator(Color).Count(); }
-        }*/
 
         public static int Money
         {

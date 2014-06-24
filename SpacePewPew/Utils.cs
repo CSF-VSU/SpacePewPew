@@ -40,8 +40,9 @@ namespace SpacePewPew
         None,
         MainMenu,
         Game,
-        Pause,
-        Options,
+        Editor
+        //Pause,
+        //Options,
     }
 
 

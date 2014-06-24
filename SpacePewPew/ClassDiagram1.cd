@@ -1,0 +1,336 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SpacePewPew.Consts" Collapsed="true">
+    <Position X="11.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgBAAAgAAAAAAEAAAAAEAQIgAgAAAAAAAAQAAAAA0AA=</HashCode>
+      <FileName>Consts.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.Drawer">
+    <Position X="7.25" Y="2.75" Width="1.5" />
+    <NestedTypes>
+      <Class Name="SpacePewPew.Drawer.Bullet" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Drawer.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="SpacePewPew.Drawer.ShipAttributes" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Drawer.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AgFFAIBAAJJkgwBQUAAQCIUEOKAEAQBkRABkAJQAAAE=</HashCode>
+      <FileName>Drawer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.GameLogic.PlayerInfo" Collapsed="true">
+    <Position X="10" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAAEAAAAAAAAAAABAAAAAAAgAAAAAA=</HashCode>
+      <FileName>GameLogic\PlayerInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.MainForm" Collapsed="true">
+    <Position X="15.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQQAgAAACAAoAAAAACAEAACAACEIAAAAAAAAAAIAAA=</HashCode>
+      <FileName>MainForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.Program" Collapsed="true">
+    <Position X="11.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.Additional" Collapsed="true">
+    <Position X="10" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAA=</HashCode>
+      <FileName>Utils.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.GameFileManager.FileManager" Collapsed="true">
+    <Position X="10" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAE=</HashCode>
+      <FileName>GameFileManager\FileManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.GameFileManager.GameState" Collapsed="true">
+    <Position X="15.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAAAAAAAAAAAAAAgAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>GameFileManager\IGameState.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.GameLogic.Game">
+    <Position X="5.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAUBAAAABggAAAQAAAQAAAEAAAgBAEAQCACgAAAQAE=</HashCode>
+      <FileName>GameLogic\Game.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.GameObjects.GameMap.Map" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABQCAIIgIAQJEBAAQBACgAAAIBABEgQCAAIHMAAAgE=</HashCode>
+      <FileName>GameObjects\GameMap\Map.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpacePewPew.GameObjects.MapObjects.Dock" Collapsed="true">
+    <Position X="7.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameObjects\MapObjects\Dock.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.GameObjects.MapObjects.Mine" Collapsed="true">
+    <Position X="0.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAKAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameObjects\MapObjects\Mine.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.GameObjects.MapObjects.IObject" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAAgAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameObjects\MapObjects\IObject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.GameObjects.MapObjects.Planet" Collapsed="true">
+    <Position X="3" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameObjects\MapObjects\Planet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.GameObjects.MapObjects.Station" Collapsed="true">
+    <Position X="5.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAAAAAAAACAAAAABAAAAAAAAA=</HashCode>
+      <FileName>GameObjects\MapObjects\Station.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.GameObjects.Ships.Ship" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="10" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACCACAgAAgCAAAAAAAABQBAQACAAAAAIAAgAAAABA=</HashCode>
+      <FileName>GameObjects\Ships\Ship.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpacePewPew.Players.Strategies.AIStrategy" Collapsed="true">
+    <Position X="2.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>Players\Strategies\AIStrategy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.Players.Strategies.Decision" Collapsed="true">
+    <Position X="13.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAIAAgAACAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Players\Strategies\Decision.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.Players.Strategies.DecisionArgs" Collapsed="true">
+    <Position X="15.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>Players\Strategies\DecisionEvent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.Players.Strategies.HumanStrategy" Collapsed="true">
+    <Position X="0.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>Players\Strategies\HumanStrategy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.Players.Strategies.Strategy" Collapsed="true">
+    <Position X="1.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAQAACAAAAAA=</HashCode>
+      <FileName>Players\Strategies\Strategy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.Properties.Resources" Collapsed="true">
+    <Position X="15.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.Properties.Settings" Collapsed="true">
+    <Position X="17" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.ShipBuilder.Race" Collapsed="true">
+    <Position X="13.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAACAAgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ShipBuilder\Race.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.ShipBuilder.ShipCreator" Collapsed="true">
+    <Position X="11.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAWAAAAAAAAABAAAAABAAAAAAAAAAAAAAAAAAAACgA=</HashCode>
+      <FileName>ShipBuilder\ShipCreator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.ShipBuilder.ShipInfo" Collapsed="true">
+    <Position X="13.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAgAAgAAAAAAAAABQBQAACAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>ShipBuilder\ShipInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.UI.GameButton" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="13.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAIAgAAAAAAACAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>UI\Button.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpacePewPew.UI.HealthBar" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAgAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UI\HealthBar.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpacePewPew.UI.LayoutManager" Collapsed="true">
+    <Position X="10" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAJAAAAAAAAIAAAAAAAAACAAIAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UI\LayoutManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpacePewPew.UI.ListView" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAgAAAAAAAAAAAAAAAIAAEAAAAAAAA=</HashCode>
+      <FileName>UI\ListView.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpacePewPew.UI.ListViewItem" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="13.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAgAAAAAAACAAAAAIAAAAAAAABAAAA=</HashCode>
+      <FileName>UI\ListViewItem.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpacePewPew.UI.StatusBar" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="15.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAgAAAAAgAAAAAAIAAAAAAAQAAAAAA=</HashCode>
+      <FileName>UI\StatusBar.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Struct Name="SpacePewPew.AttackInfo" Collapsed="true">
+    <Position X="10" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAAAAQAAAAAAAAAAAAAAAAAAABAAAAAAA=</HashCode>
+      <FileName>Utils.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="SpacePewPew.ShipNum" Collapsed="true">
+    <Position X="13.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Utils.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="SpacePewPew.GameObjects.GameMap.Cell" Collapsed="true">
+    <Position X="11.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAgAgEAAAAAAAAACAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameObjects\GameMap\Cell.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="SpacePewPew.GameObjects.GameMap.IMapView" Collapsed="true">
+    <Position X="10" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAQBAAAAAAAAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>GameObjects\GameMap\IMapView.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SpacePewPew.UI.IUiElement" Collapsed="true">
+    <Position X="11.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UI\IUiElement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="SpacePewPew.RaceName" Collapsed="true">
+    <Position X="15.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAEAAAAAAAAAAABAAAAAAAAAAAQAAAA=</HashCode>
+      <FileName>Utils.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpacePewPew.DecisionType" Collapsed="true">
+    <Position X="11.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAIAAIAAAAAAAAAAAAIAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Utils.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpacePewPew.ScreenType" Collapsed="true">
+    <Position X="17" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAQAAgAAAAAAAAAAAFAAAA=</HashCode>
+      <FileName>Utils.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpacePewPew.TurnState" Collapsed="true">
+    <Position X="10" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAQAAAAIAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utils.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpacePewPew.PlayerColor" Collapsed="true">
+    <Position X="13.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAhAAAAAAAAAAAAAAAAAAAAAAABEAAAA=</HashCode>
+      <FileName>Utils.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpacePewPew.ActionState" Collapsed="true">
+    <Position X="10" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAAAAAAAAAAAAAIAAAAAAAAAAAAEAIAA=</HashCode>
+      <FileName>Utils.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="SpacePewPew.Players.Strategies.DecisionHandler" Collapsed="true">
+    <Position X="10" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Players\Strategies\DecisionEvent.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="SpacePewPew.UI.EventHandler" Collapsed="true">
+    <Position X="11.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UI\Button.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
