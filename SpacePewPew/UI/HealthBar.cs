@@ -5,7 +5,7 @@ namespace SpacePewPew.UI
 {
     public class HealthBar : UiElement
     {
-        public PointF Position { get; set; }
+        //public PointF Position { get; set; }
         public override void Draw()
         {
             throw new System.NotImplementedException();

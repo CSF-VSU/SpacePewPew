@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="DataTypes\Delegates.cs" />
     <Compile Include="DataTypes\Structs.cs" />
+    <Compile Include="GameLogic\Editor.cs" />
     <Compile Include="GameLogic\PlayerInfo.cs" />
     <Compile Include="GameObjects\GameMap\CellInfo.cs" />
     <Compile Include="GameObjects\GameMap\StoredMap.cs" />
@@ -100,6 +101,11 @@
     <Compile Include="UI\GameListView\ListView.cs" />
     <Compile Include="UI\GameListView\ListViewItem.cs" />
     <Compile Include="UI\Proxy\Proxy.cs" />
+    <Compile Include="UI\Panel.cs" />
+    <Compile Include="UI\Proxy\UICreators\EditorUICreator.cs" />
+    <Compile Include="UI\Proxy\UICreators\GameUICreator.cs" />
+    <Compile Include="UI\Proxy\UICreators\IUiCreator.cs" />
+    <Compile Include="UI\Proxy\UICreators\MainMenuUICreator.cs" />
     <Compile Include="UI\StatusBar.cs" />
     <Compile Include="UI\Proxy\LayoutManager.cs" />
     <Compile Include="DataTypes\Enums.cs" />

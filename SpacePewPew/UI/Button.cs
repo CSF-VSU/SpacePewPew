@@ -44,7 +44,10 @@ namespace SpacePewPew.UI
         {
             if (!(pos.X >= Position.X) || !(pos.X <= Position.X + Consts.BUTTON_WIDTH) || !(pos.Y >= Position.Y) ||
                 !(pos.Y <= Position.Y + Consts.BUTTON_HEIGHT)) return false;
-            
+
+            if (!Enabled)
+                return false;
+
             OnClick();
             return true;
         }

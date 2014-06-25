@@ -65,7 +65,12 @@ namespace SpacePewPew.UI.Proxy
                     if (Manager.ScreenType == ScreenType.Game)
                     {
                         if (!_game.CanBuildHere(_drawer.ScreenToCell(newPoint))) return;
-                        
+
+                        var listView = Manager.GetComponent(typeof (GameListView.ListView), true);
+                        (listView as GameListView.ListView).SetItemsEnabledBy(data =>
+                            _game.Races[_game.CurrentPlayer.Race].BuildShip((int) data.GlyphNum).Cost <=
+                            _game.CurrentPlayer.Money);
+
                         Manager.IsShowingModal = true;
                         _game.BuildingCoordinate = _drawer.ScreenToCell(newPoint);
                     }

@@ -147,6 +147,8 @@ namespace SpacePewPew
             TexInit(@"..\..\ShipModels\Fighter.png", "Fighter");                // 6
             TexInit(@"..\..\ShipModels\FighterRed.png", "FighterRed");          // 7
             TexInit(@"..\..\ShipModels\FighterBlue.png", "FighterBlue");        // 8
+
+            TexInit(@"..\..\Textures\editorbg.jpg", "EditorBG");                // 9
         }
 
         public void Draw(LayoutManager manager, IMapView map) //, ref Action act)
@@ -163,22 +165,15 @@ namespace SpacePewPew
             {
                 #region MainMenuCase
                 case ScreenType.MainMenu:
-                {
                     DrawTexture(Textures["Main Menu"], coordinates);
-
-                    foreach (var item in manager.Components)
-                    {
-                        item.Draw();
-                    }
                     break;
-                }
+                
                 #endregion
 
                 #region GameCase
                 case ScreenType.Game:
                 {
                     DrawTexture(Textures["Battle Map"], coordinates);
-
                     DrawField(map);
             
                     Gl.glEnable(Gl.GL_BLEND);
@@ -189,27 +184,31 @@ namespace SpacePewPew
                     Gl.glDisable(Gl.GL_BLEND);
 
                     Animate(map);
-
-                    foreach (var item in manager.Components)
-                    {
-                        item.Draw();
-                    }
-                    if (!manager.IsShowingModal) return;
-                    
-                    ObscureScreen();
-                    foreach (var item in manager.ModalComponents)
-                    {
-                        if (item is ListView)
-                            (item as ListView).SetItemsEnabledBy(data =>
-                                Game.Instance().Races[Game.Instance().CurrentPlayer.Race].BuildShip((int) data.GlyphNum)
-                                    .Cost <= Game.Instance().CurrentPlayer.Money
-                            );
-
-                        item.Draw();
-                    }
                 }
                 break;
                 #endregion
+
+                case ScreenType.Editor:
+                    DrawTexture(Textures["EditorBG"], coordinates);
+                    break;
+            }
+
+            DrawUI(manager);
+        }
+
+        private void DrawUI(LayoutManager manager)
+        {
+            foreach (var item in manager.Components)
+            {
+                item.Draw();
+            }
+            if (!manager.IsShowingModal) 
+                return;
+
+            ObscureScreen();
+            foreach (var item in manager.ModalComponents)
+            {
+                item.Draw();
             }
         }
 
@@ -265,20 +264,19 @@ namespace SpacePewPew
 
         private void TexInit(string texName, string texDictName)
         {
-            if (Il.ilLoadImage(texName))
+            if (!Il.ilLoadImage(texName)) return;
+            
+            var width  = Il.ilGetInteger(Il.IL_IMAGE_WIDTH);
+            var height = Il.ilGetInteger(Il.IL_IMAGE_HEIGHT);
+            var bitspp = Il.ilGetInteger(Il.IL_IMAGE_BITS_PER_PIXEL);
+            switch (bitspp)
             {
-                var width  = Il.ilGetInteger(Il.IL_IMAGE_WIDTH);
-                var height = Il.ilGetInteger(Il.IL_IMAGE_HEIGHT);
-                var bitspp = Il.ilGetInteger(Il.IL_IMAGE_BITS_PER_PIXEL);
-                switch (bitspp)
-                {
-                    case 24:
-                        Textures[texDictName] = MakeGlTexture(Gl.GL_RGB, Il.ilGetData(), width, height);
-                        break;
-                    case 32:
-                        Textures[texDictName] = MakeGlTexture(Gl.GL_RGBA, Il.ilGetData(), width, height);
-                        break;
-                }
+                case 24:
+                    Textures[texDictName] = MakeGlTexture(Gl.GL_RGB, Il.ilGetData(), width, height);
+                    break;
+                case 32:
+                    Textures[texDictName] = MakeGlTexture(Gl.GL_RGBA, Il.ilGetData(), width, height);
+                    break;
             }
         }
 

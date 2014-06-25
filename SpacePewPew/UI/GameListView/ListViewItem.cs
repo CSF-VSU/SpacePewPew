@@ -32,7 +32,17 @@ namespace SpacePewPew.UI.GameListView
             if (IsSelected)
                 Frame(Position.X, Position.Y, Position.X + Consts.LISTVIEWITEM_WIDTH, Position.Y + Consts.LISTVIEWITEM_HEIGHT);
 
-            DrawString(new PointF(Position.X + 2, Position.Y + Consts.LISTVIEWITEM_HEIGHT / 2 - 0.5f), Text);
+            Gl.glEnable(Gl.GL_BLEND);
+            Drawer.Instance().DrawTexture(_texNum, new []
+            {
+                new PointF(Position.X + 1,                              Position.Y + 1),
+                new PointF(Position.X - 1 + Consts.LISTVIEWITEM_HEIGHT, Position.Y + 1),
+                new PointF(Position.X - 1 + Consts.LISTVIEWITEM_HEIGHT, Position.Y - 1 + Consts.LISTVIEWITEM_HEIGHT),
+                new PointF(Position.X + 1,                              Position.Y - 1 + Consts.LISTVIEWITEM_HEIGHT) 
+            });
+            Gl.glEnable(Gl.GL_BLEND);
+
+            DrawString(new PointF(Position.X + 2 + Consts.LISTVIEWITEM_HEIGHT, Position.Y + Consts.LISTVIEWITEM_HEIGHT / 2 - 0.5f), Text);
             DrawString(new PointF(Position.X + 67, Position.Y + Consts.LISTVIEWITEM_HEIGHT / 2 - 0.5f), Appendix);
         }
 
