@@ -36,6 +36,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Input.Manipulations" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -68,6 +69,9 @@
     <Compile Include="GameObjects\MapObjects\Dock.cs" />
     <Compile Include="MapEditor\Editor.cs" />
     <Compile Include="ShipBuilder\ShipInfo.cs" />
+    <Compile Include="UI\Controlling\KeyController.cs" />
+    <Compile Include="UI\GameCheckBox.cs" />
+    <Compile Include="UI\GameTextBox.cs" />
     <Compile Include="UI\HealthBar.cs" />
     <Compile Include="Consts.cs" />
     <Compile Include="Drawer.cs" />
@@ -100,16 +104,16 @@
     <Compile Include="ShipBuilder\Race.cs" />
     <Compile Include="UI\GameListView\ListView.cs" />
     <Compile Include="UI\GameListView\ListViewItem.cs" />
-    <Compile Include="UI\Proxy\Proxy.cs" />
-    <Compile Include="UI\Panel.cs" />
-    <Compile Include="UI\Proxy\UICreators\EditorUICreator.cs" />
-    <Compile Include="UI\Proxy\UICreators\GameUICreator.cs" />
-    <Compile Include="UI\Proxy\UICreators\IUiCreator.cs" />
-    <Compile Include="UI\Proxy\UICreators\MainMenuUICreator.cs" />
-    <Compile Include="UI\StatusBar.cs" />
-    <Compile Include="UI\Proxy\LayoutManager.cs" />
+    <Compile Include="UI\Controlling\Proxy.cs" />
+    <Compile Include="UI\GamePanel.cs" />
+    <Compile Include="UI\Controlling\UICreators\EditorUICreator.cs" />
+    <Compile Include="UI\Controlling\UICreators\GameUICreator.cs" />
+    <Compile Include="UI\Controlling\UICreators\IUiCreator.cs" />
+    <Compile Include="UI\Controlling\UICreators\MainMenuUICreator.cs" />
+    <Compile Include="UI\GameStatusBar.cs" />
+    <Compile Include="UI\Controlling\LayoutManager.cs" />
     <Compile Include="DataTypes\Enums.cs" />
-    <Compile Include="UI\Button.cs" />
+    <Compile Include="UI\GameButton.cs" />
     <Compile Include="UI\IUiElement.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

@@ -48,6 +48,9 @@
             this.OGL.Size = new System.Drawing.Size(830, 460);
             this.OGL.StencilBits = ((byte)(0));
             this.OGL.TabIndex = 0;
+            this.OGL.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OGL_KeyDown);
+            this.OGL.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OGL_KeyPress);
+            this.OGL.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OGL_KeyUp);
             this.OGL.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OGL_MouseClick);
             this.OGL.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OGL_MouseMove);
             // 

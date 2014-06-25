@@ -3,12 +3,12 @@ using Tao.OpenGl;
 
 namespace SpacePewPew.UI
 {
-    public class Panel : UiElement
+    public class GamePanel : UiElement
     {
         private readonly float _width;
         private readonly float _height;
 
-        public Panel(float width, float height)
+        public GamePanel(float width, float height)
         {
             _width  = width;
             _height = height;

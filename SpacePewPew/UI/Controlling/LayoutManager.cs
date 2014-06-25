@@ -11,8 +11,9 @@ namespace SpacePewPew.UI.Proxy
     {
         #region Singleton
 
-        private LayoutManager(ScreenType screenType)
+        private LayoutManager(ScreenType screenType, bool hasFocus)
         {
+            HasFocus = hasFocus;
             ScreenType = screenType;
             IsShowingModal = false;
             Components = new List<UiElement>();
@@ -22,7 +23,7 @@ namespace SpacePewPew.UI.Proxy
 
         public static LayoutManager GetManager()
         {
-            return _ins ?? (_ins = new LayoutManager(ScreenType.MainMenu));
+            return _ins ?? (_ins = new LayoutManager(ScreenType.MainMenu, false));
         }
 
         private static LayoutManager _ins;
@@ -47,6 +48,7 @@ namespace SpacePewPew.UI.Proxy
         public List<UiElement> Components { get; set; }
         public List<UiElement> ModalComponents { get; set; } 
         public ScreenType ScreenType { get; set; }
+        public bool HasFocus { get; set; }
 
         private IUiCreator _builder;
         
@@ -83,6 +85,27 @@ namespace SpacePewPew.UI.Proxy
         {
             return isModal ? ModalComponents.FirstOrDefault(item => item.GetType() == type) :
                                   Components.FirstOrDefault(item => item.GetType() == type);
+        }
+
+        public GameTextBox GetComponentWithFocus()
+        {
+            return IsShowingModal
+                ? ModalComponents.FirstOrDefault(item =>
+                {
+                    if (item is GameTextBox)
+                    {
+                        return (item as GameTextBox).HasFocus;
+                    }
+                    return false;
+                }) as GameTextBox
+                : Components.FirstOrDefault(item =>
+                {
+                    if (item is GameTextBox)
+                    {
+                        return (item as GameTextBox).HasFocus;
+                    }
+                    return false;
+                }) as GameTextBox;
         }
     }
 }

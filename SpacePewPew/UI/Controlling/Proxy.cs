@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 using SpacePewPew.GameLogic;
+using SpacePewPew.UI.Controlling;
 using Tao.OpenGl;
 
 namespace SpacePewPew.UI.Proxy
@@ -8,6 +9,7 @@ namespace SpacePewPew.UI.Proxy
     public class Proxy
     {
         public LayoutManager Manager { get; set; }
+        private readonly KeyController _keyController;
         private readonly Game _game;
         private readonly Drawer _drawer;
         private PointF _mousePoint;
@@ -19,6 +21,7 @@ namespace SpacePewPew.UI.Proxy
             Manager = LayoutManager.GetManager();
             _game = Game.Instance();
             _drawer = Drawer.Instance();
+            _keyController = new KeyController();
         }
 
         public static Proxy GetInstance()
@@ -94,6 +97,16 @@ namespace SpacePewPew.UI.Proxy
         public void GetMousePos(int x, int y)
         {
             _mousePoint = new PointF(x, y);
+        }
+
+        public void KeyDown(Keys e)
+        {
+            _keyController.KeyPress(e);
+        }
+
+        public void KeyPress(KeyPressEventArgs e)
+        {
+            //_keyController.KeyDown(e.KeyChar);
         }
     }
 }

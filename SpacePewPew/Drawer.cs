@@ -149,6 +149,9 @@ namespace SpacePewPew
             TexInit(@"..\..\ShipModels\FighterBlue.png", "FighterBlue");        // 8
 
             TexInit(@"..\..\Textures\editorbg.jpg", "EditorBG");                // 9
+
+            TexInit(@"..\..\Textures\checkBox.jpg", "UICheckBox");              // 10
+            TexInit(@"..\..\Textures\checkBoxUn.jpg", "UICheckBoxUn");          // 11
         }
 
         public void Draw(LayoutManager manager, IMapView map) //, ref Action act)

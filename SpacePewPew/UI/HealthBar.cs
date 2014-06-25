@@ -1,19 +1,17 @@
 ﻿using System.Drawing;
 
-
 namespace SpacePewPew.UI
 {
-    public class HealthBar : UiElement
+    public class HealthBar : UiElement //TODO: по-хорошему, HealthBar должен наследоваться от Sprite'а какого-нибудь, а не от UiElement'а
     {
-        //public PointF Position { get; set; }
         public override void Draw()
         {
-            throw new System.NotImplementedException();
+            //
         }
 
         public override bool Click(PointF pos)
         {
-            throw new System.NotImplementedException();
+            return false;//throw new System.NotImplementedException();
         }
 
         public int MaxHealth { get; set; }

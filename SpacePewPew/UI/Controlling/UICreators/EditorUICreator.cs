@@ -10,12 +10,20 @@ namespace SpacePewPew.UI.Proxy.UICreators
             components.Clear();
             modalComponents.Clear();
 
-            var panel = new Panel(Consts.SCREEN_WIDTH, Consts.STATUS_BAR_HEIGHT + 1);
+            var panel = new GamePanel(Consts.SCREEN_WIDTH, Consts.STATUS_BAR_HEIGHT + 1);
             components.Add(panel);
+
+
+            var textBox = new GameTextBox(new PointF(20, 20)) { Text = "hello, editor!" };
+            modalComponents.Add(textBox);
+            var checkBox = new GameCheckBox(new PointF(20, 27)) {Caption = "Typical CheckBox"};
+            modalComponents.Add(checkBox);
 
             var newMapBtn = new GameButton(new PointF(5, 1.5f), "New Map");
             newMapBtn.OnClick += () =>
             {
+                LayoutManager.GetManager().HasFocus = true;
+                textBox.HasFocus = true;
                 LayoutManager.GetManager().IsShowingModal = true;
             };
             components.Add(newMapBtn);
@@ -46,6 +54,8 @@ namespace SpacePewPew.UI.Proxy.UICreators
                 LayoutManager.GetManager().SetComponents(ScreenType.MainMenu);
             };
             components.Add(backToMenuBtn);
+
+            
         }
     }
 }
