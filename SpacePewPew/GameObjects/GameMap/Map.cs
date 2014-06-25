@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using SpacePewPew.DataTypes;
 using SpacePewPew.GameLogic;
 using SpacePewPew.GameObjects.MapObjects;
 using SpacePewPew.Players.Strategies;

@@ -59,6 +59,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTypes\Delegates.cs" />
+    <Compile Include="DataTypes\Structs.cs" />
     <Compile Include="GameLogic\PlayerInfo.cs" />
     <Compile Include="GameObjects\GameMap\CellInfo.cs" />
     <Compile Include="GameObjects\GameMap\StoredMap.cs" />
@@ -66,7 +68,6 @@
     <Compile Include="MapEditor\Editor.cs" />
     <Compile Include="ShipBuilder\ShipInfo.cs" />
     <Compile Include="UI\HealthBar.cs" />
-    <Compile Include="UI\Action.cs" />
     <Compile Include="Consts.cs" />
     <Compile Include="Drawer.cs" />
     <Compile Include="ShipBuilder\ShipCreator.cs" />
@@ -96,11 +97,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GameObjects\Ships\Ship.cs" />
     <Compile Include="ShipBuilder\Race.cs" />
-    <Compile Include="UI\ListView.cs" />
-    <Compile Include="UI\ListViewItem.cs" />
+    <Compile Include="UI\GameListView\ListView.cs" />
+    <Compile Include="UI\GameListView\ListViewItem.cs" />
+    <Compile Include="UI\Proxy\Proxy.cs" />
     <Compile Include="UI\StatusBar.cs" />
-    <Compile Include="UI\LayoutManager.cs" />
-    <Compile Include="Utils.cs" />
+    <Compile Include="UI\Proxy\LayoutManager.cs" />
+    <Compile Include="DataTypes\Enums.cs" />
     <Compile Include="UI\Button.cs" />
     <Compile Include="UI\IUiElement.cs" />
     <EmbeddedResource Include="MainForm.resx">
@@ -115,7 +117,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

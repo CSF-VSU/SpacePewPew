@@ -20,14 +20,14 @@ namespace SpacePewPew.GameLogic
         {
             Map = new Map();
 
-            _races = new Dictionary<RaceName, Race>();
-            _races[RaceName.Human] = new Race(RaceName.Human);
-            _races[RaceName.Swarm] = new Race(RaceName.Swarm);
-            _races[RaceName.Dentelian] = new Race(RaceName.Dentelian);
-            _races[RaceName.Kronolian] = new Race(RaceName.Kronolian);
+            Races = new Dictionary<RaceName, Race>();
+            Races[RaceName.Human] = new Race(RaceName.Human);
+            Races[RaceName.Swarm] = new Race(RaceName.Swarm);
+            Races[RaceName.Dentelian] = new Race(RaceName.Dentelian);
+            Races[RaceName.Kronolian] = new Race(RaceName.Kronolian);
             
             IsResponding = true;
-            IsShowingModal = false;
+            //IsShowingModal = false;
 
             ShipCreator.GetCreator();
         }
@@ -48,7 +48,7 @@ namespace SpacePewPew.GameLogic
         #region Declarations
 
         public bool IsResponding { get; set; }
-        public bool IsShowingModal { get; set; }
+        //public bool IsShowingModal { get; set; }
 
         public Map Map { get; set; }
         
@@ -57,14 +57,13 @@ namespace SpacePewPew.GameLogic
 
         public Point BuildingCoordinate { get; set; }
         
-        private readonly Dictionary<RaceName, Race> _races;
+        public Dictionary<RaceName, Race> Races { get; set; }
 
         //public event DecisionHandler DecisionDone;
 
         public FileManager Manager { get; private set; }
+        public bool TimerEnabled { get; set; }
 
-
-        
         #endregion
 
         
@@ -85,7 +84,7 @@ namespace SpacePewPew.GameLogic
         public void BuildShip(int index)
         {
             if (!Map.IsBuildingArea(BuildingCoordinate)) return;
-            var ship = _races[CurrentPlayer.Race].BuildShip(index);
+            var ship = Races[CurrentPlayer.Race].BuildShip(index);
 
             if (CurrentPlayer.Money < ship.Cost) return;
             CurrentPlayer.Money -= ship.Cost;
@@ -104,7 +103,8 @@ namespace SpacePewPew.GameLogic
 
         public void Tick()
         {
-            if (IsShowingModal) return;
+            //if (IsShowingModal) return;
+            if (!TimerEnabled) return;
 
             if (--CurrentPlayer.TimeLeft == 0)
             {

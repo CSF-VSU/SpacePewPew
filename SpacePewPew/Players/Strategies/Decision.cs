@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Collections.Generic;
+using SpacePewPew.DataTypes;
 
 namespace SpacePewPew.Players.Strategies
 {

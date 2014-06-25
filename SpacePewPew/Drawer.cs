@@ -5,6 +5,8 @@ using SpacePewPew.GameObjects.GameMap;
 using SpacePewPew.GameObjects.MapObjects;
 using SpacePewPew.Players.Strategies;
 using SpacePewPew.UI;
+using SpacePewPew.UI.GameListView;
+using SpacePewPew.UI.Proxy;
 using Tao.DevIl;
 using Tao.FreeGlut;
 using Tao.OpenGl;
@@ -113,8 +115,6 @@ namespace SpacePewPew
 
         public void Initialize()
         {
-            #region GlutInitialize
-
             Glut.glutInit();
             Glut.glutInitDisplayMode(Glut.GLUT_RGB | Glut.GLUT_DOUBLE | Glut.GLUT_DEPTH);
 
@@ -130,9 +130,6 @@ namespace SpacePewPew
             Gl.glLoadIdentity();
             Gl.glClear(Gl.GL_COLOR_BUFFER_BIT);
 
-            #endregion
-
-            #region TexInitialize
 
             Textures = new Dictionary<string, uint>();
 
@@ -140,45 +137,38 @@ namespace SpacePewPew
             Il.ilEnable(Il.IL_ORIGIN_SET);
             Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA);
 
-            TexInit(@"..\..\Textures\BackgroundTexture.jpg", "Main Menu");
-            TexInit(@"..\..\Textures\BattleMap.jpg", "Battle Map");
+            TexInit(@"..\..\Textures\BackgroundTexture.jpg", "Main Menu");      // 1
+            TexInit(@"..\..\Textures\BattleMap.jpg", "Battle Map");             // 2
 
-            TexInit(@"..\..\ShipModels\Barge.png", "Barge");
-            TexInit(@"..\..\ShipModels\BargeRed.png", "BargeRed");
-            TexInit(@"..\..\ShipModels\BargeBlue.png", "BargeBlue");
+            TexInit(@"..\..\ShipModels\Barge.png", "Barge");                    // 3
+            TexInit(@"..\..\ShipModels\BargeRed.png", "BargeRed");              // 4
+            TexInit(@"..\..\ShipModels\BargeBlue.png", "BargeBlue");            // 5
 
-            TexInit(@"..\..\ShipModels\Fighter.png", "Fighter");
-            TexInit(@"..\..\ShipModels\FighterRed.png", "FighterRed");
-            TexInit(@"..\..\ShipModels\FighterBlue.png", "FighterBlue");
-
-
-
-            #endregion TexInitialize;
+            TexInit(@"..\..\ShipModels\Fighter.png", "Fighter");                // 6
+            TexInit(@"..\..\ShipModels\FighterRed.png", "FighterRed");          // 7
+            TexInit(@"..\..\ShipModels\FighterBlue.png", "FighterBlue");        // 8
         }
 
         public void Draw(LayoutManager manager, IMapView map) //, ref Action act)
         {
-            PointF[] coordinates;
+            var converter = Proxy.GetInstance();
+            var coordinates = new[]
+                    {
+                        new PointF(0, 0), converter.NewPoint(new PointF(Consts.OGL_WIDTH, 0)),
+                        converter.NewPoint(new PointF(Consts.OGL_WIDTH, Consts.OGL_HEIGHT)),
+                        converter.NewPoint(new PointF(0, Consts.OGL_HEIGHT))
+                    };
 
             switch (manager.ScreenType)
             {
                 #region MainMenuCase
                 case ScreenType.MainMenu:
                 {
-                    coordinates = new[]                     
-                    {      
-                        new PointF(0, 0), Additional.NewPoint(new PointF(Consts.OGL_WIDTH, 0)),
-                        Additional.NewPoint(new PointF(Consts.OGL_WIDTH, Consts.OGL_HEIGHT)),
-                        Additional.NewPoint(new PointF(0, Consts.OGL_HEIGHT))
-                    };
-
                     DrawTexture(Textures["Main Menu"], coordinates);
-                    
-                    foreach (var btn in manager.Components)
-                    {   
-                        DrawButton((btn.Value as GameButton), btn.Key);
-                        // DrawString(new PointF(btn.Value.Position.X + 2, btn.Value.Position.Y + 4), btn.Key);
 
+                    foreach (var item in manager.Components)
+                    {
+                        item.Draw();
                     }
                     break;
                 }
@@ -187,13 +177,6 @@ namespace SpacePewPew
                 #region GameCase
                 case ScreenType.Game:
                 {
-                    coordinates = new[]
-                    {
-                        new PointF(0, 0), Additional.NewPoint(new PointF(Consts.OGL_WIDTH, 0)),
-                        Additional.NewPoint(new PointF(Consts.OGL_WIDTH, Consts.OGL_HEIGHT)),
-                        Additional.NewPoint(new PointF(0, Consts.OGL_HEIGHT))
-                    };
-
                     DrawTexture(Textures["Battle Map"], coordinates);
 
                     DrawField(map);
@@ -205,21 +188,43 @@ namespace SpacePewPew
                         DrawShip(a.Value, map);
                     Gl.glDisable(Gl.GL_BLEND);
 
-                    DrawStatusBar(manager);
-
-                    if ((manager.Components["Shop Menu"] as ListView).Visible)
-                    {
-                        DrawListView(manager);
-                    }
-             
                     Animate(map);
-                }
 
+                    foreach (var item in manager.Components)
+                    {
+                        item.Draw();
+                    }
+                    if (!manager.IsShowingModal) return;
+                    
+                    ObscureScreen();
+                    foreach (var item in manager.ModalComponents)
+                    {
+                        if (item is ListView)
+                            (item as ListView).SetItemsEnabledBy(data =>
+                                Game.Instance().Races[Game.Instance().CurrentPlayer.Race].BuildShip((int) data.GlyphNum)
+                                    .Cost <= Game.Instance().CurrentPlayer.Money
+                            );
+
+                        item.Draw();
+                    }
+                }
                 break;
                 #endregion
             }
         }
 
+        private void ObscureScreen()
+        {
+            Gl.glColor4f(0, 0, 0, 0.7f);
+            Gl.glEnable(Gl.GL_BLEND);
+            Gl.glBegin(Gl.GL_POLYGON);
+            Gl.glVertex2d(0, 0);
+            Gl.glVertex2d(Consts.SCREEN_WIDTH, 0);
+            Gl.glVertex2d(Consts.SCREEN_WIDTH, Consts.SCREEN_HEIGHT);
+            Gl.glVertex2d(0, Consts.SCREEN_HEIGHT);
+            Gl.glEnd();
+            Gl.glDisable(Gl.GL_BLEND);
+        }
 
         #region coordinatesConvertation
 
@@ -262,7 +267,7 @@ namespace SpacePewPew
         {
             if (Il.ilLoadImage(texName))
             {
-                var width = Il.ilGetInteger(Il.IL_IMAGE_WIDTH);
+                var width  = Il.ilGetInteger(Il.IL_IMAGE_WIDTH);
                 var height = Il.ilGetInteger(Il.IL_IMAGE_HEIGHT);
                 var bitspp = Il.ilGetInteger(Il.IL_IMAGE_BITS_PER_PIXEL);
                 switch (bitspp)
@@ -275,11 +280,6 @@ namespace SpacePewPew
                         break;
                 }
             }
-            /*else
-            {
-                var s =  Il.ilGetError();
-                int a = 4;
-            }*/
         }
 
         private uint MakeGlTexture(int format, IntPtr pixels, int w, int h)
@@ -318,12 +318,11 @@ namespace SpacePewPew
             return texObject;
         }
 
-        private void DrawTexture(uint texture, PointF[] vertices)
+        public void DrawTexture(uint texture, PointF[] vertices)
         {
             Gl.glClearColor(255, 255, 255, 1);
-            //   Gl.glLoadIdentity();
             Gl.glEnable(Gl.GL_TEXTURE_2D);
-            Gl.glBindTexture(Gl.GL_TEXTURE_2D, texture); // Textures["Main Menu"]);
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, texture);
 
             Gl.glBegin(Gl.GL_QUADS);
             // указываем поочередно вершины и текстурные координаты
@@ -339,120 +338,6 @@ namespace SpacePewPew
             Gl.glEnd();
 
             Gl.glDisable(Gl.GL_TEXTURE_2D);
-        }
-
-        #endregion
-
-        #region UI Drawing
-
-        private void DrawButton(GameButton btn, string Name)
-        {
-            Gl.glColor3f(0,0,0);
-            Rect(btn.Position.X, btn.Position.Y, btn.Position.X + Consts.BUTTON_WIDTH, btn.Position.Y + Consts.BUTTON_HEIGHT);
-
-            Gl.glColor3f(1, 1, 0.3f);
-            Frame(btn.Position.X, btn.Position.Y, btn.Position.X + Consts.BUTTON_WIDTH, btn.Position.Y + Consts.BUTTON_HEIGHT);
-
-            DrawString(new PointF(btn.Position.X + 2, btn.Position.Y + 4), Name);
-
-            if (!btn.Enabled)
-            {
-                Gl.glColor4f(0.5f, 0.5f, 0.5f, 0.7f);
-
-                Gl.glEnable(Gl.GL_BLEND);
-                Rect(btn.Position.X, btn.Position.Y, btn.Position.X + Consts.BUTTON_WIDTH, btn.Position.Y + Consts.BUTTON_HEIGHT);  //STOYANOV PROSTO, SRSLY, SO EZ
-                Gl.glDisable(Gl.GL_BLEND);
-            }
-        }
-
-        private void DrawStatusBar(LayoutManager lm)
-        {
-            //StatusBar background
-            Gl.glColor3f(0.5f, 0.5f, 0.5f);
-
-            Rect(0, 0, Consts.SCREEN_WIDTH, Consts.STATUS_BAR_HEIGHT);
-
-            //PlayerName
-            Gl.glColor3f(0, 0, 0);
-            Rect(5, 1, 35, 6);
-            Gl.glColor3f(1, 1, 0.3f);
-            DrawString(new PointF(6, 5), PlayerInfo.Color.ToString());
-            
-            //stations
-            Gl.glColor3f(0, 0, 0);
-            Rect(45, 1, 60, 6);
-            Gl.glColor3f(1, 1, 0.3f);
-            DrawString(new PointF(46, 5), PlayerInfo.Ships.ToString());
-
-            //ResourceGain
-            Gl.glColor3f(0, 0, 0);
-            Rect(70, 1, 85, 6);
-            Gl.glColor3f(1, 1, 0.3f);
-            DrawString(new PointF(71,5), "+" + PlayerInfo.Ships);
-
-            //ResourceCount
-            Gl.glColor3f(0, 0, 0);
-            Rect(95, 1, 110, 6);
-            Gl.glColor3f(1, 1, 0.3f);
-            DrawString(new PointF(96,5), PlayerInfo.Money.ToString());
-
-            //TimeLeft
-            Gl.glColor3f(0, 0, 0);
-            Rect(120, 1, 135, 6);
-            Gl.glColor3f(1, 1, 0.3f);
-            DrawString(new PointF(121, 5), Additional.ConvertTime(PlayerInfo.TimeLeft));
-
-            Gl.glColor3f(0, 0, 0);
-            Gl.glLineWidth(2);
-
-            Gl.glBegin(Gl.GL_LINES);
-            Gl.glVertex2d(0, 7);
-            Gl.glVertex2d(Consts.SCREEN_WIDTH, 7);
-            Gl.glEnd();
-            Gl.glLineWidth(1);
-
-            Gl.glColor3f(1, 1, 0.3f);
-            Frame(5, 1, 35, 6);
-            Frame(45, 1, 60, 6);
-            Frame(70, 1, 85, 6);
-            Frame(95, 1, 110, 6);
-
-            var saveBtn = lm.Components["Save"] as GameButton;
-            DrawButton(saveBtn, "Save");
-
-            var endTurnBtn = lm.Components["End Turn"] as GameButton;
-            DrawButton(endTurnBtn, "End Turn");
-        }
-
-        private void DrawListView(LayoutManager manager)
-        {
-            Gl.glColor4f(0, 0, 0, 0.7f);
-
-            Gl.glEnable(Gl.GL_BLEND);
-            Rect(0, Consts.STATUS_BAR_HEIGHT, Consts.SCREEN_WIDTH, Consts.SCREEN_HEIGHT);  //STOYANOV PROSTO, SRSLY, SO EZ
-            Gl.glDisable(Gl.GL_BLEND);
-
-            Gl.glColor3f(0.5f, 0.5f, 0.5f);
-            PointF pos = (manager.Components["Shop Menu"] as ListView).Position;
-            Rect(pos.X, pos.Y, pos.X * 2.5f, Consts.SCREEN_HEIGHT - Consts.STATUS_BAR_HEIGHT / 2);
-            Frame(pos.X, pos.Y, pos.X * 2.5f, Consts.SCREEN_HEIGHT - Consts.STATUS_BAR_HEIGHT / 2);
-           
-            DrawButton(manager.Components["Quit Shop"] as GameButton, "Quit Shop");
-            DrawButton(manager.Components["Buy Ship"] as GameButton, "Buy Ship");
-      
-            var menu = manager.Components["Shop Menu"] as ListView;
-            DrawListViewItem(menu.Items[0], menu.Index == 0);
-            DrawListViewItem(menu.Items[1], menu.Index == 1);
-        }
-
-        public void DrawListViewItem(ListViewItem lvi, bool isSelected)
-        {
-            Gl.glColor3f(0, 0, 0);
-            Rect(lvi.Position.X, lvi.Position.Y, lvi.Position.X + Consts.LISTVIEWITEM_WIDTH, lvi.Position.Y + Consts.LISTVIEWITEM_HEIGHT);
-            if (isSelected)
-                Frame(lvi.Position.X, lvi.Position.Y, lvi.Position.X + Consts.LISTVIEWITEM_WIDTH, lvi.Position.Y + Consts.LISTVIEWITEM_HEIGHT);
-            DrawString(new PointF(lvi.Position.X + 2, lvi.Position.Y + Consts.LISTVIEWITEM_HEIGHT / 2 - 0.5f), lvi.ItemName);
-            DrawString(new PointF(lvi.Position.X + 67, lvi.Position.Y + Consts.LISTVIEWITEM_HEIGHT / 2 - 0.5f), lvi.ShipCost.ToString() );
         }
 
         #endregion
@@ -517,43 +402,6 @@ namespace SpacePewPew
 
         #endregion
 
-        #region fontDrawing
-
-        public void DrawString(PointF pos, string text)
-        {
-            Gl.glColor3f(1, 1, 0.3f);
-            Gl.glRasterPos2d(pos.X, pos.Y);
-            Glut.glutBitmapString(Glut.GLUT_BITMAP_9_BY_15, text);
-        }
-
-        #endregion
-
-        #region additionalDrawing
-        private void Rect(float x0, float y0, float x1, float y1)
-        {
-            Gl.glBegin(Gl.GL_POLYGON);
-            Gl.glVertex2d(x0, y0);
-            Gl.glVertex2d(x1, y0);
-            Gl.glVertex2d(x1, y1);
-            Gl.glVertex2d(x0, y1);
-            Gl.glEnd();
-        }
-
-        private void Frame(float x0, float y0, float x1, float y1)
-        {
-            Gl.glColor3f(1, 1, 0.3f);
-            Gl.glLineWidth(2);
-            Gl.glBegin(Gl.GL_LINE_STRIP);
-            Gl.glVertex2d(x0, y0);
-            Gl.glVertex2d(x1, y0);
-            Gl.glVertex2d(x1, y1);
-            Gl.glVertex2d(x0, y1);
-            Gl.glVertex2d(x0, y0);
-            Gl.glEnd();
-            Gl.glLineWidth(1);
-        }
-        #endregion
-
         #region shipDrawing
 
         public void DrawShip(ShipAttributes ship, IMapView map)
@@ -598,7 +446,7 @@ namespace SpacePewPew
 
         private void DrawHealthBar(HealthBar healthBar)
         {
-            Frame(healthBar.Position.X, healthBar.Position.Y + 2, healthBar.Position.X + 1, healthBar.Position.Y + 10);
+            UiElement.Frame(healthBar.Position.X, healthBar.Position.Y + 2, healthBar.Position.X + 1, healthBar.Position.Y + 10);
             float f = (float) healthBar.CurrentHealth/healthBar.MaxHealth;
             if (f >= 0.5f) 
                 Gl.glColor3f(0, 1, 0);
@@ -643,8 +491,14 @@ namespace SpacePewPew
             coors = dir == '+' ? rotate(20, side, translationX, translationY) : rotate(-20, side, translationX, translationY);
             return coors;
         }*/
+        /*
+        private PointF ElementaryTranslate(PointF a, PointF b, int multyplier)
+        {
+            return new PointF(a.X + (b.X - a.X) * multyplier / 10, a.Y + (b.Y - a.Y) * multyplier / 10);
+        }*/
 
-        private int getNewDirection(Point a, Point b)  //a - old direction, b - new
+
+        private int GetNewDirection(Point a, Point b)  //a - old direction, b - new
         {
             switch (a.X % 2)
             {
@@ -666,13 +520,7 @@ namespace SpacePewPew
             }
             return 0;
         }
-
-        /*
-        private PointF ElementaryTranslate(PointF a, PointF b, int multyplier)
-        {
-            return new PointF(a.X + (b.X - a.X) * multyplier / 10, a.Y + (b.Y - a.Y) * multyplier / 10);
-        }*/
-
+        
         
         private void DrawAction(IMapView map)
         {
@@ -743,12 +591,12 @@ namespace SpacePewPew
         private void Rotate(int shipId)
         {
             if (_processingDecision.Path.Count != 0)
-                _newDir = getNewDirection(ShipsInfo[shipId].Pos,
+                _newDir = GetNewDirection(ShipsInfo[shipId].Pos,
                     _processingDecision.Path[_processingDecision.Path.Count - 1]);
             else
             {
                 if (_processingDecision.DecisionType == DecisionType.Attack)
-                    _newDir = getNewDirection(ShipsInfo[shipId].Pos, _processingDecision.PointB);
+                    _newDir = GetNewDirection(ShipsInfo[shipId].Pos, _processingDecision.PointB);
             }
 
             ShipsInfo[shipId].Direction = _newDir;
@@ -851,13 +699,13 @@ namespace SpacePewPew
             if (animationTick != 0)
             {
                 animationTick--;
-                if (!Game.Instance().IsShowingModal)
-                    Game.Instance().IsShowingModal = true;
+                /*if (!Game.Instance().IsShowingModal)
+                    Game.Instance().IsShowingModal = true;*/
             }
             else
             {
                 animation = "none";
-                Game.Instance().IsShowingModal = false;
+                //Game.Instance().IsShowingModal = false;
             }
         }
 
@@ -874,7 +722,7 @@ namespace SpacePewPew
             {
                 position.X += (float)rand.Next(-60, 60) / 10;
                 position.Y += (float)rand.Next(-60, 60) / 10;
-                DrawString(position, "BOOM!");
+                //DrawString(position, "BOOM!");
             }
         }
 
@@ -967,7 +815,7 @@ namespace SpacePewPew
 
                 if (bullets[i].ShowTime == 0) continue;
                 
-                DrawString(bullets[i].Pos, bullets[i].Damage.ToString());
+                //DrawString(bullets[i].Pos, bullets[i].Damage.ToString());
                 bullets[i].ShowTime--;
             }
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Serialization;
+using SpacePewPew.DataTypes;
 using SpacePewPew.GameObjects.Ships;
 
 namespace SpacePewPew.ShipBuilder
