@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using SpacePewPew.UI.Proxy;
 
-namespace SpacePewPew.UI.Proxy.UICreators
+namespace SpacePewPew.UI.Controlling.UICreators
 {
     public class EditorUICreator : IUiCreator
     {

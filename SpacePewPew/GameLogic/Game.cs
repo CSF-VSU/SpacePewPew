@@ -48,8 +48,6 @@ namespace SpacePewPew.GameLogic
         #region Declarations
 
         public bool IsResponding { get; set; }
-        //public bool IsShowingModal { get; set; }
-
         public Map Map { get; set; }
         
         public List<Player> Players { get; private set; }
@@ -58,8 +56,6 @@ namespace SpacePewPew.GameLogic
         public Point BuildingCoordinate { get; set; }
         
         public Dictionary<RaceName, Race> Races { get; set; }
-
-        //public event DecisionHandler DecisionDone;
 
         public FileManager Manager { get; private set; }
         public bool TimerEnabled { get; set; }
@@ -90,6 +86,7 @@ namespace SpacePewPew.GameLogic
             CurrentPlayer.Money -= ship.Cost;
             ship.Color = CurrentPlayer.Color;
             Map.BuildShip(ship, BuildingCoordinate);
+            //TODO: decisiontype.Buy может пригодиться, только если после покупки корабля, скажем, рисуется анимация его постройки/появления
         }
 
         public IMapView GetGameField()
@@ -103,7 +100,6 @@ namespace SpacePewPew.GameLogic
 
         public void Tick()
         {
-            //if (IsShowingModal) return;
             if (!TimerEnabled) return;
 
             if (--CurrentPlayer.TimeLeft == 0)

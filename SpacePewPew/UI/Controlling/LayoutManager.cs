@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using SpacePewPew.GameLogic;
-using SpacePewPew.UI.Proxy.UICreators;
+using SpacePewPew.UI.Controlling.UICreators;
 
 namespace SpacePewPew.UI.Proxy
 {

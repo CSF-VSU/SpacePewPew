@@ -10,11 +10,8 @@ namespace SpacePewPew
 
     public enum DecisionType
     {
-        None,
-        Halt,
         Move,
-        Attack,
-        Buy
+        Attack
     }
 
     public enum ScreenType

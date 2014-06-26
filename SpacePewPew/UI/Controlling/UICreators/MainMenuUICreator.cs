@@ -2,8 +2,9 @@
 using System.Drawing;
 using System.Windows.Forms;
 using SpacePewPew.GameLogic;
+using SpacePewPew.UI.Proxy;
 
-namespace SpacePewPew.UI.Proxy.UICreators
+namespace SpacePewPew.UI.Controlling.UICreators
 {
     public class MainMenuUICreator : IUiCreator
     {

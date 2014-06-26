@@ -103,10 +103,5 @@ namespace SpacePewPew.UI.Proxy
         {
             _keyController.KeyPress(e);
         }
-
-        public void KeyPress(KeyPressEventArgs e)
-        {
-            //_keyController.KeyDown(e.KeyChar);
-        }
     }
 }

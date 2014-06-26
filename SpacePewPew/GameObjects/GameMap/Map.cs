@@ -120,6 +120,9 @@ namespace SpacePewPew.GameObjects.GameMap
         {
             var path = FindWay(ChosenShip, p);
 
+            if (path == null)
+                return null;
+
             MapCells[p.X, p.Y].Ship = MapCells[ChosenShip.X, ChosenShip.Y].Ship;
             MapCells[ChosenShip.X, ChosenShip.Y].Ship = null;
 
@@ -336,7 +339,7 @@ namespace SpacePewPew.GameObjects.GameMap
 
         public List<Point> FindWay(Point startPoint, Point destination)
         {
-            bool wayExists = false;
+            var wayExists = false;
             var way = new List<Point>();
             int n = Consts.MAP_WIDTH, m = Consts.MAP_HEIGHT;
             for (var i = 0; i < n; i++)

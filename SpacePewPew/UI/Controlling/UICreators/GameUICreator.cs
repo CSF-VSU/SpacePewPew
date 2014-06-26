@@ -2,8 +2,9 @@
 using System.Drawing;
 using SpacePewPew.DataTypes;
 using SpacePewPew.GameLogic;
+using SpacePewPew.UI.Proxy;
 
-namespace SpacePewPew.UI.Proxy.UICreators
+namespace SpacePewPew.UI.Controlling.UICreators
 {
     public class GameUICreator : IUiCreator
     {
@@ -42,6 +43,7 @@ namespace SpacePewPew.UI.Proxy.UICreators
 
             var pos = quitShopBtn.Position;
             pos.X -= Consts.BUTTON_WIDTH + 2;
+
             var buyShipBtn = new GameButton(pos, "Buy Ship");
             buyShipBtn.OnClick += () =>
             {

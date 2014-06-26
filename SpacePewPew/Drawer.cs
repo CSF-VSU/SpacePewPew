@@ -5,7 +5,6 @@ using SpacePewPew.GameObjects.GameMap;
 using SpacePewPew.GameObjects.MapObjects;
 using SpacePewPew.Players.Strategies;
 using SpacePewPew.UI;
-using SpacePewPew.UI.GameListView;
 using SpacePewPew.UI.Proxy;
 using Tao.DevIl;
 using Tao.FreeGlut;
@@ -152,6 +151,8 @@ namespace SpacePewPew
 
             TexInit(@"..\..\Textures\checkBox.jpg", "UICheckBox");              // 10
             TexInit(@"..\..\Textures\checkBoxUn.jpg", "UICheckBoxUn");          // 11
+
+            TexInit(@"..\..\Textures\WBred.png", "Station");                    // 12
         }
 
         public void Draw(LayoutManager manager, IMapView map) //, ref Action act)
@@ -169,6 +170,17 @@ namespace SpacePewPew
                 #region MainMenuCase
                 case ScreenType.MainMenu:
                     DrawTexture(Textures["Main Menu"], coordinates);
+
+                    var c = new[]
+                    {
+                        new PointF(10,10),
+                        new PointF(60,10),
+                        new PointF(60,60),
+                        new PointF(10,60)
+                    };
+                    Gl.glEnable(Gl.GL_BLEND);
+                    DrawTexture(Textures["Station"], c);
+                    Gl.glDisable(Gl.GL_BLEND);
                     break;
                 
                 #endregion

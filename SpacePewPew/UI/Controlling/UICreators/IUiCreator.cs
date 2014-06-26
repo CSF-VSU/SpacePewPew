@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SpacePewPew.UI.Proxy.UICreators
+namespace SpacePewPew.UI.Controlling.UICreators
 {
     public interface IUiCreator
     {
