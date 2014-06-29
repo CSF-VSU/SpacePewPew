@@ -25,5 +25,6 @@ namespace SpacePewPew
         public static readonly float LISTVIEWITEM_HEIGHT = 2.5f * BUTTON_HEIGHT;
         
         public static readonly int INCOME_PER_STATION = 5;
+        public static readonly int HEAL_POWER = 4;
     }
 }

@@ -9,6 +9,5 @@ namespace SpacePewPew.GameObjects.GameMap
         public int Height { get; set; }
         public CellInfo[,] MapData { get; set; }
         public int NumPlayers { get; set; }
-        //public PointF[] PlayerPos { get;set; }
     }
 }

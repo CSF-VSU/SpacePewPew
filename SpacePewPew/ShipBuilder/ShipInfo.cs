@@ -1,4 +1,5 @@
-﻿using SpacePewPew.DataTypes;
+﻿using System.Collections.Generic;
+using SpacePewPew.DataTypes;
 
 namespace SpacePewPew.ShipBuilder
 {
@@ -18,5 +19,7 @@ namespace SpacePewPew.ShipBuilder
         public int MinDamage { get; set; }
         public int MaxDamage { get; set; }
         public int Volleys { get; set; }
+
+        public List<AbilityName> Abilities { get; set; }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using SpacePewPew.DataTypes;
 
 namespace SpacePewPew.GameObjects.Ships
@@ -17,7 +19,18 @@ namespace SpacePewPew.GameObjects.Ships
         public int Cost { get; set; }
 
         public int MaxHealth { get; set; }
-        public int Health { get; set; }
+
+        private int _health;
+        public int Health 
+        {
+            get { return _health; }
+            set
+            {
+                if (value > MaxHealth) _health = MaxHealth;
+                else if (value < 0) _health = 0;
+                else _health = value;
+            } 
+        }
 
         public int Exp { get; set; }
         public int NextLvlExp { get; set; }
@@ -30,13 +43,8 @@ namespace SpacePewPew.GameObjects.Ships
         public int MaxDamage { get; set; }
         public int Volleys { get; set; }
 
-
+        public List<AbilityName> Abilities { get; set; }
         #endregion
-
-        /*public Ship(int id)
-        {
-            Id = id;
-        }*/
 
         public object Clone()
         {

@@ -28,9 +28,10 @@ namespace SpacePewPew.UI.Controlling.UICreators
             var data = new List<ListViewItemData>
                        {
                            new ListViewItemData {GlyphNum = 6, Appendix = "20", Text = "Fighter"},
-                           new ListViewItemData {GlyphNum = 3, Appendix = "30", Text = "Barge"}
+                           new ListViewItemData {GlyphNum = 3, Appendix = "30", Text = "Barge"},
+                           new ListViewItemData {GlyphNum = 14, Appendix = "18", Text = "Healer"}
                        };
-            var listView = new GameListView.ListView(listViewPos, data, 2);
+            var listView = new GameListView.ListView(listViewPos, data, 3);
             modalComponents.Add(listView);
 
             var quitShopBtn = new GameButton(new PointF(70, 87), "Quit Shop");

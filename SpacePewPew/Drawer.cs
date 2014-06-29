@@ -156,9 +156,13 @@ namespace SpacePewPew
 
             TexInit(@"..\..\Textures\WB.png", "Station");                       // 12
             TexInit(@"..\..\Textures\WBred.png", "StationRed");                 // 13
+
+            TexInit(@"..\..\ShipModels\Healer2.png", "Healer");                 // 14
+            TexInit(@"..\..\ShipModels\HealerRed.png", "HealerRed");            // 15
+            TexInit(@"..\..\ShipModels\HealerBlue.png", "HealerBlue");          // 16
         }
 
-        public void Draw(LayoutManager manager, IMapView map) //, ref Action act)
+        public void Draw(LayoutManager manager, IMapView map)
         {
             var converter = Proxy.GetInstance();
             var coordinates = new[]
@@ -182,7 +186,7 @@ namespace SpacePewPew
                         new PointF(10,60)
                     };
                     Gl.glEnable(Gl.GL_BLEND);
-                    DrawTexture(Textures["Station"], c);
+                    DrawTexture(Textures["Healer"], c);
                     Gl.glDisable(Gl.GL_BLEND);
                     break;
                 
@@ -293,11 +297,10 @@ namespace SpacePewPew
             for (var i = 0; i < Consts.MAP_WIDTH; i++)
                 for (var j = 0; j < Consts.MAP_HEIGHT; j++)
                 {
-                    PointF center;
-                    if (i % 2 == 0)
-                        center = new PointF(Consts.MAP_START_POS.X + i / 2 * 3 * Consts.CELL_SIDE + Consts.CELL_SIDE, Consts.MAP_START_POS.Y + j * (float)Math.Sqrt(3) * Consts.CELL_SIDE + Consts.CELL_SIDE * (float)Math.Sqrt(3) / 2);
-                    else
-                        center = new PointF(Consts.MAP_START_POS.X + (1.5f + (i - 1) / 2 * 3) * Consts.CELL_SIDE + Consts.CELL_SIDE, Consts.MAP_START_POS.Y + (float)Math.Sqrt(3) * Consts.CELL_SIDE / 2 + j * (float)Math.Sqrt(3) * Consts.CELL_SIDE + Consts.CELL_SIDE * (float)Math.Sqrt(3) / 2);
+                    var center = i % 2 == 0 ? 
+                        new PointF(Consts.MAP_START_POS.X + i / 2 * 3 * Consts.CELL_SIDE + Consts.CELL_SIDE, Consts.MAP_START_POS.Y + j * (float)Math.Sqrt(3) * Consts.CELL_SIDE + Consts.CELL_SIDE * (float)Math.Sqrt(3) / 2) :
+                        new PointF(Consts.MAP_START_POS.X + (1.5f + (i - 1) / 2 * 3) * Consts.CELL_SIDE + Consts.CELL_SIDE, Consts.MAP_START_POS.Y + (float)Math.Sqrt(3) * Consts.CELL_SIDE / 2 + j * (float)Math.Sqrt(3) * Consts.CELL_SIDE + Consts.CELL_SIDE * (float)Math.Sqrt(3) / 2);
+                    
                     if (Math.Sqrt(Math.Pow(p.X - center.X, 2) + Math.Pow(p.Y - center.Y, 2)) < Consts.CELL_SIDE)
                     {
                         LightenedCell = new PointF(center.X - Consts.CELL_SIDE, center.Y - Consts.CELL_SIDE * (float)Math.Sqrt(3) / 2);
@@ -506,7 +509,7 @@ namespace SpacePewPew
         private void DrawHealthBar(HealthBar healthBar)
         {
             UiElement.Frame(healthBar.Position.X, healthBar.Position.Y + 2, healthBar.Position.X + 1, healthBar.Position.Y + 10);
-            float f = (float) healthBar.CurrentHealth/healthBar.MaxHealth;
+            var f = (float) healthBar.CurrentHealth/healthBar.MaxHealth;
             if (f >= 0.5f) 
                 Gl.glColor3f(0, 1, 0);
             else if (f > 0.25f && f < 0.5f)
@@ -520,6 +523,9 @@ namespace SpacePewPew
             Gl.glVertex2f(healthBar.Position.X + 1, healthBar.Position.Y + 10 - 8*f);
             Gl.glVertex2f(healthBar.Position.X, healthBar.Position.Y + 10 - 8*f);
             Gl.glEnd();
+
+            UiElement.DrawString(new PointF(healthBar.Position.X, healthBar.Position.Y - 2),
+                healthBar.CurrentHealth.ToString());
         }
 
 
@@ -586,25 +592,18 @@ namespace SpacePewPew
             switch (_state)
             {
                 case ActionState.None:
-                    {
-                        GetShipsFromIMapView(map);
-                        if (map.MapCells[map.ChosenShip.X, map.ChosenShip.Y].Ship != null)
-                            _shipId = map.MapCells[map.ChosenShip.X, map.ChosenShip.Y].Ship.Id;
-                        else
-                            _shipId = -1;
-                        break;
-                    }
-
+                    GetShipsFromIMapView(map);
+                    if (map.MapCells[map.ChosenShip.X, map.ChosenShip.Y].Ship != null)
+                        _shipId = map.MapCells[map.ChosenShip.X, map.ChosenShip.Y].Ship.Id;
+                    else
+                        _shipId = -1;
+                    break;
                 case ActionState.Rotating:
-                    {
-                        Rotate(_shipId);
-                        break;
-                    }
+                    Rotate(_shipId);
+                    break;
                 case ActionState.Moving:
-                    {
-                        Move(_shipId);
-                        break;
-                    }
+                    Move(_shipId);
+                    break;
                 case ActionState.Attack:
                     Attack(_shipId);
                     break;
@@ -640,6 +639,10 @@ namespace SpacePewPew
                             case "Barge":
                                 ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Barge",
                                     map.MapCells[i, j].Ship.Color, new Point(i, j), 0, new HealthBar(map.MapCells[i,j].Ship.MaxHealth, CellToScreen(new Point(i,j))));
+                                break;
+                            case "Healer":
+                                ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Healer",
+                                    map.MapCells[i, j].Ship.Color, new Point(i, j), 0, new HealthBar(map.MapCells[i, j].Ship.MaxHealth, CellToScreen(new Point(i, j))));
                                 break;
                         }
                     }
@@ -761,16 +764,11 @@ namespace SpacePewPew
                 animationTick--;
                 if (!Proxy.GetInstance().IsLocked)
                     Proxy.GetInstance().IsLocked = true;
-
-                /*if (!Game.Instance().IsShowingModal)
-                    Game.Instance().IsShowingModal = true;*/
             }
             else
             {
                 animation = "none";
                 Proxy.GetInstance().IsLocked = false;
-
-                //Game.Instance().IsShowingModal = false;
             }
         }
 
@@ -805,7 +803,7 @@ namespace SpacePewPew
             attacker.X += 3 / 2 * Consts.CELL_SIDE;
             attacker.Y += (float) Math.Sqrt(3) / 2 * Consts.CELL_SIDE;
 
-            var Delta = new PointF((target.X - attacker.X)/20, (target.Y - attacker.Y)/20);
+            var delta = new PointF((target.X - attacker.X)/20, (target.Y - attacker.Y)/20);
 
             var battle = _processingDecision.Battle;
             //стрельба блядь поочередная сука
@@ -852,7 +850,7 @@ namespace SpacePewPew
                     if (bullets[i].IsMine)
                     {
                         if (!IsAround(bullets[i].Pos, target, 0.5f))
-                            bullets[i].Pos = new PointF(bullets[i].Pos.X + Delta.X, bullets[i].Pos.Y + Delta.Y);
+                            bullets[i].Pos = new PointF(bullets[i].Pos.X + delta.X, bullets[i].Pos.Y + delta.Y);
                         else
                         {
                             bullets[i].Timeleft = 100;
@@ -862,7 +860,7 @@ namespace SpacePewPew
                         }
                     }
                     else if (!IsAround(bullets[i].Pos, attacker, 0.5f))
-                        bullets[i].Pos = new PointF(bullets[i].Pos.X - Delta.X, bullets[i].Pos.Y - Delta.Y);
+                        bullets[i].Pos = new PointF(bullets[i].Pos.X - delta.X, bullets[i].Pos.Y - delta.Y);
                     else
                     {  
                         bullets[i].Timeleft = 100;

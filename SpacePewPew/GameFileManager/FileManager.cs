@@ -7,18 +7,18 @@ namespace SpacePewPew.GameFileManager
 {
     public class FileManager
     {
-        private GameState state;
+        private GameState _state;
 
         public void SaveGame(Game game)
         {
-            state = new GameState(game.Map, game.Players, game.Players.IndexOf(game.CurrentPlayer));
+            _state = new GameState(game.Map, game.Players, game.Players.IndexOf(game.CurrentPlayer));
 
             try
             {
                 using (Stream stream = File.Open("test.bin", FileMode.Create))
                 {
                     var bin = new BinaryFormatter();
-                    bin.Serialize(stream, state);
+                    bin.Serialize(stream, _state);
                 }
             }
             catch (IOException)
@@ -32,9 +32,9 @@ namespace SpacePewPew.GameFileManager
             using (var fs = new FileStream("test.bin", FileMode.Open))
             {
                 var bin = new BinaryFormatter();
-                state = (GameState) bin.Deserialize(fs);
+                _state = (GameState) bin.Deserialize(fs);
 
-                Game.Instance().LoadGame(state);
+                Game.Instance().LoadGame(_state);
             }
         }
     }

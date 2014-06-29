@@ -6,23 +6,27 @@ using System.Linq;
 using SpacePewPew.DataTypes;
 using SpacePewPew.GameLogic;
 using SpacePewPew.GameObjects.MapObjects;
+using SpacePewPew.GameObjects.Ships.Abilities;
 using SpacePewPew.Players.Strategies;
 using SpacePewPew.GameObjects.Ships;
 
 namespace SpacePewPew.GameObjects.GameMap
 {
     [Serializable]
-    public class Map : IMapView
+    public class Map : IMapView, IMapAbilityView
     {
         #region Declarations
         private bool _activeSelectExists;
+        private Dictionary<AbilityName, IAbility> _abilities;
 
         public bool IsResponding { get; set; }
         public Cell[,] MapCells { get; set; }
         public List<Point> Lightened { get; set; }
         public Point ChosenShip { get; set; }
+        
         public Random Random { get; set; }
 
+        
         #endregion
 
         #region Map Builders
@@ -31,6 +35,8 @@ namespace SpacePewPew.GameObjects.GameMap
         {
             Random = new Random();
             MapCells = new Cell[0, 0];
+
+            _abilities = new Dictionary<AbilityName, IAbility> {{AbilityName.Heal, new Heal()}};
 
             _activeSelectExists = false;
             IsResponding = true;
@@ -288,13 +294,13 @@ namespace SpacePewPew.GameObjects.GameMap
             return reachable.Select(FindNeighbours).Any(neighboursList => Enumerable.Contains(neighboursList, p));
         }
 
-        private IEnumerable<Ship> GetShipsAround(Point p)
+        public IEnumerable<Ship> GetShipsAround(Point p)
         {
             var neighbours = FindNeighbours(p);
             return from n in neighbours where MapCells[n.X, n.Y].Ship != null select MapCells[n.X, n.Y].Ship;
         }
 
-        private bool HasEnemyIn(IEnumerable<Ship> ships)
+        public bool HasEnemyIn(IEnumerable<Ship> ships)
         {
             return ships.Any(ship => ship.Color != Game.Instance().CurrentPlayer.Color);
         }
@@ -370,7 +376,6 @@ namespace SpacePewPew.GameObjects.GameMap
                     MapCells[i, j].Visited = false;
                 }
             int x = startPoint.X, y = startPoint.Y;
-            int oldX = x, oldY = y;
             MapCells[x, y].Visited = true;
             var q = new Queue();
             q.Enqueue(new Point(x, y));
@@ -381,7 +386,9 @@ namespace SpacePewPew.GameObjects.GameMap
                     var isDone = false;
                     wayExists = false;
                     var current = (Point)q.Dequeue();
+                    int oldX;
                     x = oldX = current.X;
+                    int oldY;
                     y = oldY = current.Y;
                     var neighbours = FindNeighbours(current);
                     foreach (var t in neighbours)
@@ -501,6 +508,29 @@ namespace SpacePewPew.GameObjects.GameMap
                     if (MapCells[i,j].Obstacle is Station && (MapCells[i,j].Obstacle as Station).OwnerColor == color)
                         yield return MapCells[i, j].Obstacle as Station;
         }*/
+
+        #endregion
+
+        #region Ship Abilities' Implementation
+
+        public void PerformAbility(AbilityName ability, Ship invokator)
+        {
+            var coords = GetShipCoordinates(invokator);
+            _abilities[ability].Perform(this, coords);
+        }
+
+        private Point GetShipCoordinates(Ship ship)
+        {
+            for (var j = 0; j < Consts.MAP_HEIGHT; j++)
+            {
+                for (var i = 0; i < Consts.MAP_WIDTH; i++)
+                {
+                    if (MapCells[i, j].Ship == ship)
+                        return new Point(i, j);
+                }
+            }
+            return new Point(-1, -1);
+        }
 
         #endregion
     }

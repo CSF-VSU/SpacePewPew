@@ -8,10 +8,16 @@ namespace SpacePewPew.DataTypes
         Kronolian
     }
 
+    public enum AbilityName
+    {
+        Heal
+    }
+
     public enum DecisionType
     {
         Move,
-        Attack
+        Attack,
+        Ability
     }
 
     public enum ScreenType

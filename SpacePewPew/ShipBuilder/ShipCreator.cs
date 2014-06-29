@@ -4,6 +4,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using SpacePewPew.DataTypes;
 using SpacePewPew.GameObjects.Ships;
+using SpacePewPew.GameObjects.Ships.Abilities;
 
 namespace SpacePewPew.ShipBuilder
 {
@@ -15,7 +16,7 @@ namespace SpacePewPew.ShipBuilder
         private ShipCreator()
         {
             _ship = new Ship();
-            _builder = new Dictionary<ShipNum, ShipInfo>();
+            Builder = new Dictionary<ShipNum, ShipInfo>();
 
             var shipRecords = new List<ShipInfo>();
             var serializer = new XmlSerializer(shipRecords.GetType());
@@ -25,7 +26,7 @@ namespace SpacePewPew.ShipBuilder
                 foreach (var shipRecord in shipRecords)
                 {
                     var num = new ShipNum { Index = shipRecord.Index, Race = shipRecord.Race };
-                    _builder[num] = shipRecord;
+                    Builder[num] = shipRecord;
                 }
             }
         }
@@ -41,38 +42,38 @@ namespace SpacePewPew.ShipBuilder
 
         #region Id
 
-        private static int id;
+        private static int _id;
 
         public static int GetNextId()
         {
-            return id++;
+            return _id++;
         }
 
         #endregion
 
-        public static Dictionary<ShipNum, ShipInfo> _builder;
-
+        public static Dictionary<ShipNum, ShipInfo> Builder;
 
         public Ship BuildShip(ShipNum key)
         {
             var product = (Ship) _ship.Clone();
             product.Id = GetNextId();
 
-            product.Name = _builder[key].Name;
-            product.Description = _builder[key].Description;
+            product.Name = Builder[key].Name;
+            product.Description = Builder[key].Description;
             
-            product.Cost = _builder[key].Cost;
+            product.Cost = Builder[key].Cost;
             
-            product.MaxHealth = _builder[key].HP;
+            product.MaxHealth = Builder[key].HP;
             product.Health = product.MaxHealth;
 
-            product.Speed = _builder[key].Speed;
+            product.Speed = Builder[key].Speed;
             product.RemainedSpeed = product.Speed;
 
-            product.MinDamage = _builder[key].MinDamage;
-            product.MaxDamage = _builder[key].MaxDamage;
-            product.Volleys = _builder[key].Volleys;
-            
+            product.MinDamage = Builder[key].MinDamage;
+            product.MaxDamage = Builder[key].MaxDamage;
+            product.Volleys = Builder[key].Volleys;
+
+            product.Abilities = Builder[key].Abilities;
             product.Exp = 0;
 
             product.TurnState = TurnState.Finished;

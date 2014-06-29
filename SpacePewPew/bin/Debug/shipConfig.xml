@@ -23,4 +23,19 @@
     <MaxDamage>8</MaxDamage>
     <Volleys>3</Volleys>
   </ShipInfo>
+  <ShipInfo>
+    <Race>Human</Race>
+    <Index>2</Index>
+    <Name>Healer</Name>
+    <Description>Can repair nearby allies</Description>
+    <Cost>18</Cost>
+    <HP>20</HP>
+    <Speed>4</Speed>
+    <MinDamage>1</MinDamage>
+    <MaxDamage>5</MaxDamage>
+    <Volleys>3</Volleys>
+    <Abilities>
+      <AbilityName>Heal</AbilityName>
+    </Abilities>
+  </ShipInfo>
 </ArrayOfShipInfo>

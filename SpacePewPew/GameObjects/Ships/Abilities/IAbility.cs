@@ -3,8 +3,8 @@ using SpacePewPew.GameObjects.GameMap;
 
 namespace SpacePewPew.GameObjects.Ships.Abilities
 {
-    interface IAbility
+    public interface IAbility
     {
-        void Perform(IMapView map, Point coords);
+        void Perform(IMapAbilityView map, Point coords);
     }
 }

@@ -65,8 +65,11 @@
     <Compile Include="GameLogic\Editor.cs" />
     <Compile Include="GameLogic\PlayerInfo.cs" />
     <Compile Include="GameObjects\GameMap\CellInfo.cs" />
+    <Compile Include="GameObjects\GameMap\IMapAbilityView.cs" />
     <Compile Include="GameObjects\GameMap\StoredMap.cs" />
     <Compile Include="GameObjects\MapObjects\Dock.cs" />
+    <Compile Include="GameObjects\Ships\Abilities\IAbility.cs" />
+    <Compile Include="GameObjects\Ships\Abilities\Heal.cs" />
     <Compile Include="MapEditor\Editor.cs" />
     <Compile Include="ShipBuilder\ShipInfo.cs" />
     <Compile Include="UI\Controlling\KeyController.cs" />

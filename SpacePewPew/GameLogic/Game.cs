@@ -76,6 +76,16 @@ namespace SpacePewPew.GameLogic
 
             CurrentPlayer.Money += CurrentPlayer.StationCount*Consts.INCOME_PER_STATION;
 
+            var ships = Map.GetShipIterator();
+            foreach (var ship in ships.Where(ship => ship.Abilities != null 
+                && ship.Color == CurrentPlayer.Color))
+            {
+                foreach (var skill in ship.Abilities)
+                {
+                    Map.PerformAbility(skill, ship);
+                }
+            }
+
             Map.PassTurnRefresh();
         }
 
