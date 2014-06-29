@@ -1,10 +1,12 @@
 ﻿using System.Drawing;
 using System.Linq;
+using SpacePewPew.DataTypes;
 using SpacePewPew.GameLogic;
 using SpacePewPew.GameObjects.GameMap;
 using SpacePewPew.GameObjects.MapObjects;
 using SpacePewPew.Players.Strategies;
 using SpacePewPew.UI;
+using SpacePewPew.UI.Controlling;
 using SpacePewPew.UI.Proxy;
 using Tao.DevIl;
 using Tao.FreeGlut;
@@ -152,7 +154,8 @@ namespace SpacePewPew
             TexInit(@"..\..\Textures\checkBox.jpg", "UICheckBox");              // 10
             TexInit(@"..\..\Textures\checkBoxUn.jpg", "UICheckBoxUn");          // 11
 
-            TexInit(@"..\..\Textures\WBred.png", "Station");                    // 12
+            TexInit(@"..\..\Textures\WB.png", "Station");                       // 12
+            TexInit(@"..\..\Textures\WBred.png", "StationRed");                 // 13
         }
 
         public void Draw(LayoutManager manager, IMapView map) //, ref Action act)
@@ -190,7 +193,9 @@ namespace SpacePewPew
                 {
                     DrawTexture(Textures["Battle Map"], coordinates);
                     DrawField(map);
-            
+
+                    DrawMapObjects(map); //по сути здесь будет отрисовка планет, станций и пр. статического.
+
                     Gl.glEnable(Gl.GL_BLEND);
                     DrawAction(map);
 
@@ -209,6 +214,47 @@ namespace SpacePewPew
             }
 
             DrawUI(manager);
+        }
+
+        private void DrawMapObjects(IMapView map)
+        {
+            for (var j = 0; j < Consts.MAP_HEIGHT; j++)
+            {
+                for (var i = 0; i < Consts.MAP_WIDTH; i++)
+                {
+                    if (!(map.MapCells[i, j].Object is Station)) continue;
+                    
+                    var coord = CellToScreen(new Point(i, j));
+                    var rect = new[]
+                    {
+                        coord,
+                        new PointF(coord.X + 15 - 3, coord.Y - 3),
+                        new PointF(coord.X + 15 - 3, coord.Y + 15 - 3),
+                        new PointF(coord.X - 3, coord.Y + 15 - 3)
+                    };
+                    Gl.glEnable(Gl.GL_BLEND);
+                    DrawTexture(12, rect);
+                    Gl.glDisable(Gl.GL_BLEND);
+
+                    switch ((map.MapCells[i, j].Object as Station).OwnerColor)
+                    {
+                        case PlayerColor.None:
+                            Gl.glColor4f(0, 0, 0, 0);
+                            break;
+                        case PlayerColor.Red:
+                            Gl.glColor3f(1, 0, 0);
+                            break;
+                        case PlayerColor.Blue:
+                            Gl.glColor3f(0, 0, 1);
+                            break;
+                    }
+                    
+                    Gl.glPointSize(7);
+                    Gl.glBegin(Gl.GL_POINTS);
+                    Gl.glVertex2f(coord.X + 15 - 4, coord.Y + 15 - 5);
+                    Gl.glEnd();
+                }
+            }
         }
 
         private void DrawUI(LayoutManager manager)
@@ -575,7 +621,8 @@ namespace SpacePewPew
             for (var i = 0; i < Consts.MAP_WIDTH; i++)
                 for (var j = 0; j < Consts.MAP_HEIGHT; j++)
                 {
-                    if (map.MapCells[i, j].Ship == null) continue;
+                    if (map.MapCells[i, j].Ship == null) 
+                        continue;
                     
                     ShipAttributes tmp1;
                     if (ShipsInfo.TryGetValue(map.MapCells[i, j].Ship.Id, out tmp1)) //сукасукасука!
@@ -626,7 +673,7 @@ namespace SpacePewPew
         }
 
 
-        private void Move(int ShipId)
+        private void Move(int shipId)
         {
             _nextCell = _processingDecision.Path[_processingDecision.Path.Count - 1];
             _processingDecision.Path.RemoveAt(_processingDecision.Path.Count - 1);
@@ -634,20 +681,20 @@ namespace SpacePewPew
             switch (_processingDecision.DecisionType)
             {
                 case DecisionType.Attack:
-                    ShipsInfo[ShipId].Pos = _nextCell;
-                    ShipsInfo[ShipId].HealthBar.Position = CellToScreen(_nextCell);
+                    ShipsInfo[shipId].Pos = _nextCell;
+                    ShipsInfo[shipId].HealthBar.Position = CellToScreen(_nextCell);
                     _state = ActionState.Rotating;
                     break;
                 case DecisionType.Move:
-                    ShipsInfo[ShipId].Pos = _nextCell;
-                    ShipsInfo[ShipId].HealthBar.Position = CellToScreen(_nextCell);
-                    _state = ShipsInfo[ShipId].Pos == _destination ? ActionState.None : ActionState.Rotating;
+                    ShipsInfo[shipId].Pos = _nextCell;
+                    ShipsInfo[shipId].HealthBar.Position = CellToScreen(_nextCell);
+                    _state = ShipsInfo[shipId].Pos == _destination ? ActionState.None : ActionState.Rotating;
                     break;
             }
 
             if (_nextCell != _destination)
             {
-                ShipsInfo[ShipId].Pos = _nextCell;
+                ShipsInfo[shipId].Pos = _nextCell;
 
                 //TODO : это используется при плавном повороте, которого у нас все равно нет :3
                 //newDir = getNewDirection(ShipsInfo[ShipId].Pos, nextCell);
@@ -688,7 +735,7 @@ namespace SpacePewPew
         #region Animation
 
 
-        int animationTick = 0;
+        int animationTick;
         string animation = "none";
         Point animationPos = new Point(0, 0);
 
@@ -712,12 +759,17 @@ namespace SpacePewPew
             if (animationTick != 0)
             {
                 animationTick--;
+                if (!Proxy.GetInstance().IsLocked)
+                    Proxy.GetInstance().IsLocked = true;
+
                 /*if (!Game.Instance().IsShowingModal)
                     Game.Instance().IsShowingModal = true;*/
             }
             else
             {
                 animation = "none";
+                Proxy.GetInstance().IsLocked = false;
+
                 //Game.Instance().IsShowingModal = false;
             }
         }
@@ -735,7 +787,7 @@ namespace SpacePewPew
             {
                 position.X += (float)rand.Next(-60, 60) / 10;
                 position.Y += (float)rand.Next(-60, 60) / 10;
-                //DrawString(position, "BOOM!");
+                UiElement.DrawString(position, "BOOM!");
             }
         }
 
@@ -828,7 +880,7 @@ namespace SpacePewPew
 
                 if (bullets[i].ShowTime == 0) continue;
                 
-                //DrawString(bullets[i].Pos, bullets[i].Damage.ToString());
+                UiElement.DrawString(bullets[i].Pos, bullets[i].Damage.ToString());
                 bullets[i].ShowTime--;
             }
         }

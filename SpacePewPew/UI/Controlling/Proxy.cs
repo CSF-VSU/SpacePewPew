@@ -1,13 +1,15 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+using SpacePewPew.DataTypes;
 using SpacePewPew.GameLogic;
-using SpacePewPew.UI.Controlling;
+using SpacePewPew.UI.Proxy;
 using Tao.OpenGl;
 
-namespace SpacePewPew.UI.Proxy
+namespace SpacePewPew.UI.Controlling
 {
     public class Proxy
     {
+        public bool IsLocked { get; set; }
         public LayoutManager Manager { get; set; }
         private readonly KeyController _keyController;
         private readonly Game _game;
@@ -19,6 +21,7 @@ namespace SpacePewPew.UI.Proxy
         private Proxy()
         {
             Manager = LayoutManager.GetManager();
+            IsLocked = false;
             _game = Game.Instance();
             _drawer = Drawer.Instance();
             _keyController = new KeyController();
@@ -54,6 +57,9 @@ namespace SpacePewPew.UI.Proxy
 
         public void OnClick(Point location, MouseButtons mouseButton)
         {
+            if (IsLocked)
+                return;
+            
             var newPoint = NewPoint(location);
 
             switch (mouseButton)

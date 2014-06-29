@@ -53,6 +53,11 @@ namespace SpacePewPew.GameObjects.GameMap
             MapCells[2, 0].Object = new Dock();
             MapCells[2, 1].Object = new Dock();
 
+            MapCells[4,  2].Object = new Station();
+            MapCells[13, 5].Object = new Station();
+            MapCells[0,  6].Object = new Station();
+            MapCells[17, 1].Object = new Station();
+
             MapCells[15, 6].Object = new Dock();
             MapCells[15, 7].Object = new Dock();
             MapCells[16, 6].Object = new Dock();
@@ -123,8 +128,15 @@ namespace SpacePewPew.GameObjects.GameMap
             if (path == null)
                 return null;
 
+            //!!!
             MapCells[p.X, p.Y].Ship = MapCells[ChosenShip.X, ChosenShip.Y].Ship;
             MapCells[ChosenShip.X, ChosenShip.Y].Ship = null;
+            if (MapCells[p.X, p.Y].Object is Station)
+            {
+                Game.Instance().StationCapture((MapCells[p.X, p.Y].Object as Station).OwnerColor);
+                (MapCells[p.X, p.Y].Object as Station).Capture(Game.Instance().CurrentPlayer.Color);
+            }
+            //!!!
 
             MapCells[p.X, p.Y].Ship.RemainedSpeed -= path.Count;
             MapCells[p.X, p.Y].Ship.TurnState = TurnState.InAction;
@@ -152,8 +164,17 @@ namespace SpacePewPew.GameObjects.GameMap
             else
             {
                 nearEnemy = path[0];
+
+                //!!!
                 MapCells[nearEnemy.X, nearEnemy.Y].Ship = MapCells[ChosenShip.X, ChosenShip.Y].Ship;
                 MapCells[ChosenShip.X, ChosenShip.Y].Ship = null;
+                if (MapCells[nearEnemy.X, nearEnemy.Y].Object is Station)
+                {
+                    Game.Instance().StationCapture((MapCells[nearEnemy.X, nearEnemy.Y].Object as Station).OwnerColor);
+                    (MapCells[nearEnemy.X, nearEnemy.Y].Object as Station).Capture(Game.Instance().CurrentPlayer.Color);
+
+                }
+                //!!!
             }
 
             MapCells[nearEnemy.X, nearEnemy.Y].Ship.TurnState = TurnState.Finished;

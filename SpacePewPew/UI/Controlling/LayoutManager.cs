@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using SpacePewPew.DataTypes;
 using SpacePewPew.GameLogic;
 using SpacePewPew.UI.Controlling.UICreators;
 

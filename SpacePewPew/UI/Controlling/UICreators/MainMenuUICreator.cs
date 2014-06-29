@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using SpacePewPew.DataTypes;
 using SpacePewPew.GameLogic;
 using SpacePewPew.UI.Proxy;
 

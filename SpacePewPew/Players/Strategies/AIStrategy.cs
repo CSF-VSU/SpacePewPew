@@ -1,4 +1,5 @@
 ﻿using System;
+using SpacePewPew.DataTypes;
 using SpacePewPew.GameObjects.GameMap;
 
 namespace SpacePewPew.Players.Strategies

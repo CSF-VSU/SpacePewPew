@@ -1,4 +1,4 @@
-namespace SpacePewPew
+namespace SpacePewPew.DataTypes
 {
     public enum RaceName
     {

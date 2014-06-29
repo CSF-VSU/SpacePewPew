@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using SpacePewPew.DataTypes;
 
 namespace SpacePewPew.GameLogic
 {
@@ -12,6 +13,11 @@ namespace SpacePewPew.GameLogic
         public static int Ships
         {
             get { return Game.Instance().Map.GetShipIterator(Color).Count(); }
+        }
+
+        public static int Stations
+        {
+            get { return Game.Instance().CurrentPlayer.StationCount; }
         }
 
         public static int Money

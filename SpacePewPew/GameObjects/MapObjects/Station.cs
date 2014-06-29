@@ -1,4 +1,5 @@
 ﻿using System;
+using SpacePewPew.DataTypes;
 
 namespace SpacePewPew.GameObjects.MapObjects
 {
@@ -8,8 +9,9 @@ namespace SpacePewPew.GameObjects.MapObjects
         public PlayerColor OwnerColor { get; set; }
         public int Income { get; set; }
 
-        protected Station()
+        public Station()
         {
+            OwnerColor = PlayerColor.None;
             IsPassable = true;
             IsDestructable = false;
             Income = 5;

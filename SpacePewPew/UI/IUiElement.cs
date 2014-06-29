@@ -35,7 +35,7 @@ namespace SpacePewPew.UI
             Gl.glLineWidth(1);
         }
 
-        protected  void DrawString(PointF pos, string text)
+        public static void DrawString(PointF pos, string text)
         {
             Gl.glColor3f(1, 1, 0.3f);
             Gl.glRasterPos2d(pos.X, pos.Y);

@@ -1,4 +1,5 @@
 ﻿using System;
+using SpacePewPew.DataTypes;
 
 namespace SpacePewPew.GameObjects.Ships
 {

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using SpacePewPew.DataTypes;
 using SpacePewPew.UI.Proxy;
 
 namespace SpacePewPew.UI.Controlling.UICreators

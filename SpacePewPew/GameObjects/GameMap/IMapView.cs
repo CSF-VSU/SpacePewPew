@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Collections.Generic;
+using SpacePewPew.DataTypes;
 using SpacePewPew.GameObjects.Ships;
 
 namespace SpacePewPew.GameObjects.GameMap

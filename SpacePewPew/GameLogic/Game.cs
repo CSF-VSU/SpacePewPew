@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using SpacePewPew.DataTypes;
 using SpacePewPew.GameFileManager;
 using SpacePewPew.GameObjects.GameMap;
 using SpacePewPew.Players;
@@ -27,7 +29,6 @@ namespace SpacePewPew.GameLogic
             Races[RaceName.Kronolian] = new Race(RaceName.Kronolian);
             
             IsResponding = true;
-            //IsShowingModal = false;
 
             ShipCreator.GetCreator();
         }
@@ -39,7 +40,6 @@ namespace SpacePewPew.GameLogic
 
         public void Init(Drawer drawer)
         {
-            //DecisionDone += drawer.DecisionHandler;
             Manager = new FileManager();
         }
 
@@ -73,8 +73,24 @@ namespace SpacePewPew.GameLogic
                 index = 0;
             Players[index].TimeLeft = Players[index].MaxTurnTime;
             CurrentPlayer = Players[index];
-            
+
+            CurrentPlayer.Money += CurrentPlayer.StationCount*Consts.INCOME_PER_STATION;
+
             Map.PassTurnRefresh();
+        }
+
+        private Player GetPlayerByColor(PlayerColor color)
+        {
+            return Players.FirstOrDefault(player => player.Color == color);
+        }
+
+        public void StationCapture(PlayerColor prevOwner)
+        {
+            GetPlayerByColor(CurrentPlayer.Color).StationCount++;
+
+            if (prevOwner == PlayerColor.None) return;
+            
+            GetPlayerByColor(prevOwner).StationCount--;
         }
 
         public void BuildShip(int index)

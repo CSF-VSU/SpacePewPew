@@ -1,4 +1,6 @@
-﻿namespace SpacePewPew.ShipBuilder
+﻿using SpacePewPew.DataTypes;
+
+namespace SpacePewPew.ShipBuilder
 {
     public class ShipInfo
     {

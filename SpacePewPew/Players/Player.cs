@@ -1,4 +1,5 @@
 ﻿using System;
+using SpacePewPew.DataTypes;
 using SpacePewPew.Players.Strategies;
 
 ﻿namespace SpacePewPew.Players
@@ -29,7 +30,7 @@ using SpacePewPew.Players.Strategies;
             TimeLeft =      30 * 25;
             MaxTurnTime =   30 * 25;
             UnitCount = 0;
-            StationCount = 1;
+            StationCount = 0;
             IsHuman = isHuman;
             Strategy = new HumanStrategy();
         }

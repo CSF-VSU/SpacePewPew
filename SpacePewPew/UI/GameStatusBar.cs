@@ -28,13 +28,13 @@ namespace SpacePewPew.UI
             Gl.glColor3f(0, 0, 0);
             Rect(45, 1, 60, 6);
             Gl.glColor3f(1, 1, 0.3f);
-            DrawString(new PointF(46, 5), PlayerInfo.Ships.ToString());
+            DrawString(new PointF(46, 5), PlayerInfo.Stations.ToString());
 
             //ResourceGain
             Gl.glColor3f(0, 0, 0);
             Rect(70, 1, 85, 6);
             Gl.glColor3f(1, 1, 0.3f);
-            DrawString(new PointF(71, 5), "+" + PlayerInfo.Ships);
+            DrawString(new PointF(71, 5), "+" + PlayerInfo.Stations * Consts.INCOME_PER_STATION);
 
             //ResourceCount
             Gl.glColor3f(0, 0, 0);
@@ -46,7 +46,7 @@ namespace SpacePewPew.UI
             Gl.glColor3f(0, 0, 0);
             Rect(120, 1, 135, 6);
             Gl.glColor3f(1, 1, 0.3f);
-            DrawString(new PointF(121, 5), Proxy.Proxy.GetInstance().ConvertTime(PlayerInfo.TimeLeft));
+            DrawString(new PointF(121, 5), Controlling.Proxy.GetInstance().ConvertTime(PlayerInfo.TimeLeft));
 
             Gl.glColor3f(0, 0, 0);
             Gl.glLineWidth(2);
