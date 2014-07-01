@@ -4,10 +4,10 @@ using SpacePewPew.DataTypes;
 using SpacePewPew.GameLogic;
 using SpacePewPew.GameObjects.GameMap;
 using SpacePewPew.GameObjects.MapObjects;
+using SpacePewPew.GameObjects.Ships.Abilities.AbilityContainer;
 using SpacePewPew.Players.Strategies;
 using SpacePewPew.UI;
 using SpacePewPew.UI.Controlling;
-using SpacePewPew.UI.Proxy;
 using Tao.DevIl;
 using Tao.FreeGlut;
 using Tao.OpenGl;
@@ -16,6 +16,9 @@ using Tao.OpenGl;
 
 namespace SpacePewPew
 {
+
+    //TODO: передавать в начале хода decision'ы нового типа для отрисовки хила
+
     public class Drawer
     {
         public class Bullet
@@ -626,7 +629,7 @@ namespace SpacePewPew
                     ShipAttributes tmp1;
                     if (ShipsInfo.TryGetValue(map.MapCells[i, j].Ship.Id, out tmp1)) //сукасукасука!
                         ShipsInfo[map.MapCells[i, j].Ship.Id].Pos = new Point(i, j);
-                        // = new ShipAttributes("Ship", "ShipColor", new Point(i, j), 0); //попровить этот хуец
+                        // = new ShipAttributes("Ship", "ShipColor", new Point(i, j), 0); //TODO: попровить этот хуец
                     else
                     {
                         switch (map.MapCells[i,j].Ship.Name)
@@ -921,14 +924,26 @@ namespace SpacePewPew
         #endregion
         //-------------------------------
 
-        public void DecisionHandler(object sender, DecisionArgs e)
+        public void DrawClick(Decision e)
         {
-            _processingDecision = e.Decision;
+            _processingDecision = e;
 
             _state = ActionState.Rotating;
 
             if (_processingDecision.Path.Count != 0)
                 _destination = _processingDecision.Path[0];
+        }
+
+        public void DrawAbilities()
+        {
+            //_processingDecision = e;
+            //...
+        }
+
+        //this.List<AbilityResult> a = new ...
+        public void AddAbilityToDraw(AbilityResult abilityResult)
+        {
+            //a.Add
         }
     }
 }

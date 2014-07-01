@@ -12,5 +12,7 @@ namespace SpacePewPew.GameObjects.GameMap
         
         IEnumerable<Ship> GetShipsAround(Point p);
         bool HasEnemyIn(IEnumerable<Ship> ships);
+        Ship GetShipFromPoint(Point p);
+        Point GetShipPosition(Ship s);
     }
 }

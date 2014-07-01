@@ -7,6 +7,7 @@ using SpacePewPew.DataTypes;
 using SpacePewPew.GameLogic;
 using SpacePewPew.GameObjects.MapObjects;
 using SpacePewPew.GameObjects.Ships.Abilities;
+using SpacePewPew.GameObjects.Ships.Abilities.AbilityContainer;
 using SpacePewPew.Players.Strategies;
 using SpacePewPew.GameObjects.Ships;
 
@@ -316,6 +317,20 @@ namespace SpacePewPew.GameObjects.GameMap
             return MapCells[p.X, p.Y].Ship != null;
         }
 
+        public Ship GetShipFromPoint(Point p)
+        {
+            return MapCells[p.X, p.Y].Ship;
+        }
+
+        public Point GetShipPosition(Ship s)
+        {
+            for (var j = 0; j < MapCells.GetLength(1); j++)
+                for (var i = 0; i < MapCells.GetLength(0); i++)
+                    if (MapCells[i,j].Ship == s)
+                        return new Point(i,j);
+            return new Point(-1, -1);
+        }
+
         private bool HasObstacle(Point p)
         {
             return MapCells[p.X, p.Y].Object != null;
@@ -435,7 +450,6 @@ namespace SpacePewPew.GameObjects.GameMap
             return way;
         }
 
-
         private List<Point> Light(Point startPoint)
         {
             var speed = MapCells[startPoint.X, startPoint.Y].Ship.RemainedSpeed;
@@ -513,10 +527,10 @@ namespace SpacePewPew.GameObjects.GameMap
 
         #region Ship Abilities' Implementation
 
-        public void PerformAbility(AbilityName ability, Ship invokator)
+        public AbilityResult PerformAbility(AbilityName ability, Ship invokator)
         {
             var coords = GetShipCoordinates(invokator);
-            _abilities[ability].Perform(this, coords);
+            return _abilities[ability].Perform(this, coords);
         }
 
         private Point GetShipCoordinates(Ship ship)

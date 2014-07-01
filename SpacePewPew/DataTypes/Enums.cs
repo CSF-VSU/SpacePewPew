@@ -16,8 +16,7 @@ namespace SpacePewPew.DataTypes
     public enum DecisionType
     {
         Move,
-        Attack,
-        Ability
+        Attack
     }
 
     public enum ScreenType

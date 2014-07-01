@@ -82,11 +82,12 @@ namespace SpacePewPew.GameLogic
             {
                 foreach (var skill in ship.Abilities)
                 {
-                    Map.PerformAbility(skill, ship);
+                    Drawer.Instance().AddAbilityToDraw(Map.PerformAbility(skill, ship));
                 }
             }
 
             Map.PassTurnRefresh();
+            Drawer.Instance().DrawAbilities();
         }
 
         private Player GetPlayerByColor(PlayerColor color)
@@ -137,16 +138,15 @@ namespace SpacePewPew.GameLogic
             var decision = CurrentPlayer.Strategy.MakeDecision(Map);
 
             if (decision != null)
-                Drawer.Instance().DecisionHandler(this, new DecisionArgs { Decision = decision });
+                Drawer.Instance().DrawClick(decision);
         }
 
         public void MouseClick(Point p)
         {
-            if (IsResponding)
-            {
-                CurrentPlayer.Strategy.ClickAppeared = true;
-                CurrentPlayer.Strategy.MousePos = p;
-            }
+            if (!IsResponding) return;
+
+            CurrentPlayer.Strategy.ClickAppeared = true;
+            CurrentPlayer.Strategy.MousePos = p;
         }
         #endregion
 

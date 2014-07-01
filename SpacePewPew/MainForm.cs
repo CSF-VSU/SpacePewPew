@@ -2,7 +2,6 @@
 using System.Windows.Forms;
 using SpacePewPew.GameLogic;
 using SpacePewPew.UI.Controlling;
-using SpacePewPew.UI.Proxy;
 
 namespace SpacePewPew
 {

@@ -68,6 +68,7 @@
     <Compile Include="GameObjects\GameMap\IMapAbilityView.cs" />
     <Compile Include="GameObjects\GameMap\StoredMap.cs" />
     <Compile Include="GameObjects\MapObjects\Dock.cs" />
+    <Compile Include="GameObjects\Ships\Abilities\AbilityContainer\AbilityResult.cs" />
     <Compile Include="GameObjects\Ships\Abilities\IAbility.cs" />
     <Compile Include="GameObjects\Ships\Abilities\Heal.cs" />
     <Compile Include="MapEditor\Editor.cs" />

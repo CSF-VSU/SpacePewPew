@@ -2,7 +2,6 @@
 using System.Drawing;
 using SpacePewPew.DataTypes;
 using SpacePewPew.GameLogic;
-using SpacePewPew.UI.Proxy;
 
 namespace SpacePewPew.UI.Controlling.UICreators
 {

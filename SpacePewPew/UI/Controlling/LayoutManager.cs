@@ -6,7 +6,7 @@ using SpacePewPew.DataTypes;
 using SpacePewPew.GameLogic;
 using SpacePewPew.UI.Controlling.UICreators;
 
-namespace SpacePewPew.UI.Proxy
+namespace SpacePewPew.UI.Controlling
 {
     public class LayoutManager
     {

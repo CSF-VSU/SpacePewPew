@@ -2,7 +2,6 @@
 using System.Windows.Forms;
 using SpacePewPew.DataTypes;
 using SpacePewPew.GameLogic;
-using SpacePewPew.UI.Proxy;
 using Tao.OpenGl;
 
 namespace SpacePewPew.UI.Controlling

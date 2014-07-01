@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using SpacePewPew.DataTypes;
-using SpacePewPew.UI.Proxy;
 
 namespace SpacePewPew.UI.Controlling
 {
@@ -18,7 +17,7 @@ namespace SpacePewPew.UI.Controlling
             _manager = LayoutManager.GetManager();
 
             _characters = new HashSet<Keys>
-            {
+            {                
                 Keys.A,
                 Keys.B,
                 Keys.C,
@@ -88,8 +87,15 @@ namespace SpacePewPew.UI.Controlling
 
                 if (_characters.Contains(key) || _numbers.Contains(key))
                     item.TypeCharacter(kc.ConvertToString(key)[0]);
-                else if (key == Keys.Back)
-                    item.EraseLastCharacter();
+                else switch (key)
+                {
+                    case Keys.Space:
+                        item.TypeCharacter(' ');
+                        break;
+                    case Keys.Back:
+                        item.EraseLastCharacter();
+                        break;
+                }
             }
             else
             {
