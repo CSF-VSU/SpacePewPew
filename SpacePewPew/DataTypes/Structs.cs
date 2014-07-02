@@ -11,7 +11,7 @@
     {
         public int Damage { get; set; }
         public bool IsDestroyed { get; set; }
-        //public string Debuff { get; set; }
+        public AbilityName Debuff { get; set; }
         public bool IsMineAttack { get; set; }
     }
 

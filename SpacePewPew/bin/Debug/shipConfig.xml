@@ -38,4 +38,19 @@
       <AbilityName>Heal</AbilityName>
     </Abilities>
   </ShipInfo>
+  <ShipInfo>
+    <Race>Human</Race>
+    <Index>3</Index>
+    <Name>Infestor</Name>
+    <Description>Spreads corrosion and death :3</Description>
+    <Cost>20</Cost>
+    <HP>20</HP>
+    <Speed>5</Speed>
+    <MinDamage>4</MinDamage>
+    <MaxDamage>7</MaxDamage>
+    <Volleys>1</Volleys>
+    <Abilities>
+      <AbilityName>Corrosion</AbilityName>
+    </Abilities>
+  </ShipInfo>
 </ArrayOfShipInfo>

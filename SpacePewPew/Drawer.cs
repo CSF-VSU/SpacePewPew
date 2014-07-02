@@ -1,4 +1,6 @@
 ﻿using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using SpacePewPew.DataTypes;
 using SpacePewPew.GameLogic;
@@ -6,6 +8,7 @@ using SpacePewPew.GameObjects.GameMap;
 using SpacePewPew.GameObjects.MapObjects;
 using SpacePewPew.GameObjects.Ships.Abilities.AbilityContainer;
 using SpacePewPew.Players.Strategies;
+using SpacePewPew.Properties;
 using SpacePewPew.UI;
 using SpacePewPew.UI.Controlling;
 using Tao.DevIl;
@@ -141,28 +144,33 @@ namespace SpacePewPew
             Il.ilEnable(Il.IL_ORIGIN_SET);
             Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA);
 
-            TexInit(@"..\..\Textures\BackgroundTexture.jpg", "Main Menu");      // 1
-            TexInit(@"..\..\Textures\BattleMap.jpg", "Battle Map");             // 2
+            TexInit(Resources.BackgroundTexture, "Main Menu", false);
+            TexInit(Resources.BattleMap, "Battle Map", false);
 
-            TexInit(@"..\..\ShipModels\Barge.png", "Barge");                    // 3
-            TexInit(@"..\..\ShipModels\BargeRed.png", "BargeRed");              // 4
-            TexInit(@"..\..\ShipModels\BargeBlue.png", "BargeBlue");            // 5
+            TexInit(Resources.Barge,      "Barge",        true);
+            TexInit(Resources.BargeRed,   "BargeRed",     true);
+            TexInit(Resources.BargeBlue,  "BargeBlue",    true);
 
-            TexInit(@"..\..\ShipModels\Fighter.png", "Fighter");                // 6
-            TexInit(@"..\..\ShipModels\FighterRed.png", "FighterRed");          // 7
-            TexInit(@"..\..\ShipModels\FighterBlue.png", "FighterBlue");        // 8
+            TexInit(Resources.Fighter,     "Fighter",     true);
+            TexInit(Resources.FighterRed,  "FighterRed",  true);
+            TexInit(Resources.FighterBlue, "FighterBlue", true);
 
-            TexInit(@"..\..\Textures\editorbg.jpg", "EditorBG");                // 9
+            TexInit(Resources.editorbg,    "EditorBG",    false);
 
-            TexInit(@"..\..\Textures\checkBox.jpg", "UICheckBox");              // 10
-            TexInit(@"..\..\Textures\checkBoxUn.jpg", "UICheckBoxUn");          // 11
+            TexInit(Resources.checkBox,    "UICheckBox",   false);
+            TexInit(Resources.checkBoxUn,  "UICheckBoxUn", false);
 
-            TexInit(@"..\..\Textures\WB.png", "Station");                       // 12
-            TexInit(@"..\..\Textures\WBred.png", "StationRed");                 // 13
+            TexInit(Resources.WB,          "Station",     true);
+            TexInit(Resources.WBred,       "StationRed",  true);
 
-            TexInit(@"..\..\ShipModels\Healer2.png", "Healer");                 // 14
-            TexInit(@"..\..\ShipModels\HealerRed.png", "HealerRed");            // 15
-            TexInit(@"..\..\ShipModels\HealerBlue.png", "HealerBlue");          // 16
+            TexInit(Resources.Healer2,    "Healer",       true);
+            TexInit(Resources.HealerRed,  "HealerRed",    true);
+            TexInit(Resources.HealerBlue, "HealerBlue",   true);
+
+            TexInit(Resources.Infestor,       "Infestor",      true);         
+            TexInit(Resources.InfestorRed,    "InfestorRed",   true);               
+            TexInit(Resources.InfestorBlue,   "InfestorBlue",  true);                
+            TexInit(Resources.InfestorGreen,  "InfestorGreen", true);                
         }
 
         public void Draw(LayoutManager manager, IMapView map)
@@ -189,7 +197,7 @@ namespace SpacePewPew
                         new PointF(10,60)
                     };
                     Gl.glEnable(Gl.GL_BLEND);
-                    DrawTexture(Textures["Healer"], c);
+                    DrawTexture(Textures["Station"], c);
                     Gl.glDisable(Gl.GL_BLEND);
                     break;
                 
@@ -329,10 +337,29 @@ namespace SpacePewPew
 
         #region textureDrawing
 
-        private void TexInit(string texName, string texDictName)
+        private void TexInit(Bitmap bmp, string texDictName, bool hasAlpha)
         {
-            if (!Il.ilLoadImage(texName)) return;
-            
+            byte[] byteArray;
+            using (var stream = new MemoryStream())
+            {
+                bmp.Save(stream, hasAlpha ? ImageFormat.Png : ImageFormat.Jpeg);
+
+                stream.Close();
+
+                byteArray = stream.ToArray();
+            }
+
+            if (hasAlpha)
+            {
+                if (!Il.ilLoadL(Il.IL_PNG, byteArray, byteArray.GetLength(0)))
+                    return;
+            }
+            else
+            {
+                if (!Il.ilLoadL(Il.IL_JPG, byteArray, byteArray.GetLength(0)))
+                    return;
+            }
+
             var width  = Il.ilGetInteger(Il.IL_IMAGE_WIDTH);
             var height = Il.ilGetInteger(Il.IL_IMAGE_HEIGHT);
             var bitspp = Il.ilGetInteger(Il.IL_IMAGE_BITS_PER_PIXEL);
@@ -346,6 +373,25 @@ namespace SpacePewPew
                     break;
             }
         }
+
+        /*private void TexInit(string texName, string texDictName)
+        {
+            if (!Il.ilLoadImage(texName)) 
+                return;
+            
+            var width  = Il.ilGetInteger(Il.IL_IMAGE_WIDTH);
+            var height = Il.ilGetInteger(Il.IL_IMAGE_HEIGHT);
+            var bitspp = Il.ilGetInteger(Il.IL_IMAGE_BITS_PER_PIXEL);
+            switch (bitspp)
+            {
+                case 24:
+                    Textures[texDictName] = MakeGlTexture(Gl.GL_RGB, Il.ilGetData(), width, height);
+                    break;
+                case 32:
+                    Textures[texDictName] = MakeGlTexture(Gl.GL_RGBA, Il.ilGetData(), width, height);
+                    break;
+            }
+        }*/
 
         private uint MakeGlTexture(int format, IntPtr pixels, int w, int h)
         {
@@ -483,7 +529,7 @@ namespace SpacePewPew
         
         private void DrawShipStatus(IMapView map)
         {
-            var ships = map.GetShipIterator(Game.Instance().CurrentPlayer.Color);
+            var ships = map.GetShips(Game.Instance().CurrentPlayer.Color);
             foreach (var ship in ships)
             {
                 
@@ -647,6 +693,10 @@ namespace SpacePewPew
                                 ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Healer",
                                     map.MapCells[i, j].Ship.Color, new Point(i, j), 0, new HealthBar(map.MapCells[i, j].Ship.MaxHealth, CellToScreen(new Point(i, j))));
                                 break;
+                            case "Infestor":
+                                ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Infestor",
+                                    map.MapCells[i, j].Ship.Color, new Point(i, j), 0, new HealthBar(map.MapCells[i, j].Ship.MaxHealth, CellToScreen(new Point(i, j))));
+                                break;
                         }
                     }
                     //ShipsInfo[map.MapCells[i, j].Ship.Id] = new ShipAttributes("Ship",
@@ -795,7 +845,7 @@ namespace SpacePewPew
         readonly List<Bullet> bullets = new List<Bullet>();
 
         private int attackerId; //TODO: исправить говнокод :(
-        private int damageNumber = 0;
+        //private int damageNumber = 0;
         public void Firing(IMapView map)
         {
             var attacker = CellToScreen(ShipsInfo[attackerId].Pos);

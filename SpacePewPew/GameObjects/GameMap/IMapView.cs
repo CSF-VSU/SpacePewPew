@@ -11,7 +11,7 @@ namespace SpacePewPew.GameObjects.GameMap
         Cell[,] MapCells { get; set; }
         List<Point> Lightened { get; set; }
 
-        IEnumerable<Ship> GetShipIterator(PlayerColor color);
-        IEnumerable<Ship> GetShipIterator();
+        IEnumerable<Ship> GetShips(PlayerColor color);
+        IEnumerable<Ship> GetShips();
     }
 }

@@ -26,5 +26,7 @@ namespace SpacePewPew
         
         public static readonly int INCOME_PER_STATION = 5;
         public static readonly int HEAL_POWER = 4;
+        public static readonly int STATION_HEAL_POWER = 8;
+        public static readonly int CORROSION_POWER = 7;
     }
 }

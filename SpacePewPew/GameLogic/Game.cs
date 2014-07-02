@@ -5,6 +5,9 @@ using System.Linq;
 using SpacePewPew.DataTypes;
 using SpacePewPew.GameFileManager;
 using SpacePewPew.GameObjects.GameMap;
+using SpacePewPew.GameObjects.MapObjects;
+using SpacePewPew.GameObjects.Ships;
+using SpacePewPew.GameObjects.Ships.Abilities.AbilityContainer;
 using SpacePewPew.Players;
 using SpacePewPew.Players.Strategies;
 using SpacePewPew.ShipBuilder;
@@ -76,17 +79,11 @@ namespace SpacePewPew.GameLogic
 
             CurrentPlayer.Money += CurrentPlayer.StationCount*Consts.INCOME_PER_STATION;
 
-            var ships = Map.GetShipIterator();
-            foreach (var ship in ships.Where(ship => ship.Abilities != null 
-                && ship.Color == CurrentPlayer.Color))
-            {
-                foreach (var skill in ship.Abilities)
-                {
-                    Drawer.Instance().AddAbilityToDraw(Map.PerformAbility(skill, ship));
-                }
-            }
-
+            Map.HealDockedShips();
+            Map.PerformShipAbilities();
+            Map.CalculateShipEffects();
             Map.PassTurnRefresh();
+
             Drawer.Instance().DrawAbilities();
         }
 

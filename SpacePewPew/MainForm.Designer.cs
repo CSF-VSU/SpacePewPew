@@ -1,4 +1,6 @@
-﻿namespace SpacePewPew
+﻿using SpacePewPew.Properties;
+
+namespace SpacePewPew
 {
     partial class MainForm
     {
@@ -65,11 +67,13 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(834, 462);
             this.Controls.Add(this.OGL);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "MainForm";
             this.Text = "MainForm";
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.ResumeLayout(false);
-
         }
 
         #endregion

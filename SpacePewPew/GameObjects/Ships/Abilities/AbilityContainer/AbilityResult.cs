@@ -8,5 +8,11 @@ namespace SpacePewPew.GameObjects.Ships.Abilities.AbilityContainer
     {
         public AbilityName Name { get; set; }
         public List<Point> Area { get; set; }
+        public Point Invoker { get; set; }
+
+        public AbilityResult()
+        {
+            Area = new List<Point>();
+        }
     }
 }

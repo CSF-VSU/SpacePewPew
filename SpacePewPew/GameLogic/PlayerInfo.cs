@@ -12,7 +12,7 @@ namespace SpacePewPew.GameLogic
 
         public static int Ships
         {
-            get { return Game.Instance().Map.GetShipIterator(Color).Count(); }
+            get { return Game.Instance().Map.GetShips(Color).Count(); }
         }
 
         public static int Stations

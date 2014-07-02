@@ -14,7 +14,7 @@ namespace SpacePewPew.GameObjects.Ships.Abilities
             var ships = map.GetShipsAround(coords);
             var myColor = Game.Instance().CurrentPlayer.Color;
 
-            var result = new AbilityResult{Name = AbilityName.Heal};
+            var result = new AbilityResult{Name = AbilityName.Heal, Invoker = coords};
             
             foreach (var ship in ships.Where(ship => ship.Color == myColor && ship.Health < ship.MaxHealth))
             {

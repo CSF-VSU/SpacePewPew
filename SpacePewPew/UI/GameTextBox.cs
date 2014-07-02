@@ -5,7 +5,7 @@ namespace SpacePewPew.UI
 {
     public class GameTextBox : UiElement
     {
-        public event EventHandler Tick;
+        //public event EventHandler Tick;
         private int _width = 40;
 
         public string Text { get; set; }

@@ -69,8 +69,10 @@
     <Compile Include="GameObjects\GameMap\StoredMap.cs" />
     <Compile Include="GameObjects\MapObjects\Dock.cs" />
     <Compile Include="GameObjects\Ships\Abilities\AbilityContainer\AbilityResult.cs" />
+    <Compile Include="GameObjects\Ships\Abilities\Corrosion.cs" />
     <Compile Include="GameObjects\Ships\Abilities\IAbility.cs" />
     <Compile Include="GameObjects\Ships\Abilities\Heal.cs" />
+    <Compile Include="GameObjects\Ships\ActiveEffects\ActiveEffect.cs" />
     <Compile Include="MapEditor\Editor.cs" />
     <Compile Include="ShipBuilder\ShipInfo.cs" />
     <Compile Include="UI\Controlling\KeyController.cs" />
@@ -130,6 +132,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -140,6 +143,78 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Textures\BackgroundTexture.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShipModels\InfestorRed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Textures\BattleMap.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Textures\checkBox.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Textures\checkBoxUn.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Textures\editorbg.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShipModels\Barge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShipModels\BargeBlue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShipModels\BargeGreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShipModels\BargeRed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShipModels\Fighter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShipModels\FighterBlue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShipModels\FighterGreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShipModels\FighterRed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShipModels\Healer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShipModels\Healer2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShipModels\HealerBlue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShipModels\HealerGreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShipModels\HealerRed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShipModels\Infestor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShipModels\InfestorBlue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShipModels\InfestorGreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Textures\WB.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Textures\WBred.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

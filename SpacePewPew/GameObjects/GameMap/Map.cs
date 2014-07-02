@@ -8,6 +8,7 @@ using SpacePewPew.GameLogic;
 using SpacePewPew.GameObjects.MapObjects;
 using SpacePewPew.GameObjects.Ships.Abilities;
 using SpacePewPew.GameObjects.Ships.Abilities.AbilityContainer;
+using SpacePewPew.GameObjects.Ships.ActiveEffects;
 using SpacePewPew.Players.Strategies;
 using SpacePewPew.GameObjects.Ships;
 
@@ -37,7 +38,11 @@ namespace SpacePewPew.GameObjects.GameMap
             Random = new Random();
             MapCells = new Cell[0, 0];
 
-            _abilities = new Dictionary<AbilityName, IAbility> {{AbilityName.Heal, new Heal()}};
+            _abilities = new Dictionary<AbilityName, IAbility>
+            {
+                {AbilityName.Heal, new Heal()},
+                {AbilityName.Corrosion, new Corrosion()}
+            };
 
             _activeSelectExists = false;
             IsResponding = true;
@@ -135,23 +140,10 @@ namespace SpacePewPew.GameObjects.GameMap
             if (path == null)
                 return null;
 
-            //!!!
-            MapCells[p.X, p.Y].Ship = MapCells[ChosenShip.X, ChosenShip.Y].Ship;
-            MapCells[ChosenShip.X, ChosenShip.Y].Ship = null;
+            MoveShip(ChosenShip, p, path.Count);
+
             if (MapCells[p.X, p.Y].Object is Station)
-            {
-                Game.Instance().StationCapture((MapCells[p.X, p.Y].Object as Station).OwnerColor);
-                (MapCells[p.X, p.Y].Object as Station).Capture(Game.Instance().CurrentPlayer.Color);
-            }
-            //!!!
-
-            MapCells[p.X, p.Y].Ship.RemainedSpeed -= path.Count;
-            MapCells[p.X, p.Y].Ship.TurnState = TurnState.InAction;
-
-            if (MapCells[p.X, p.Y].Ship.RemainedSpeed == 0)
-            {
-                MapCells[p.X, p.Y].Ship.TurnState = HasEnemyIn(GetShipsAround(p)) ? TurnState.InAction : TurnState.Finished;
-            }
+                CaptureStation(p);
 
             return new Decision { DecisionType = DecisionType.Move, PointA = ChosenShip, PointB = p, Path = path, ShipIndex = -1 };
         }
@@ -172,16 +164,10 @@ namespace SpacePewPew.GameObjects.GameMap
             {
                 nearEnemy = path[0];
 
-                //!!!
-                MapCells[nearEnemy.X, nearEnemy.Y].Ship = MapCells[ChosenShip.X, ChosenShip.Y].Ship;
-                MapCells[ChosenShip.X, ChosenShip.Y].Ship = null;
-                if (MapCells[nearEnemy.X, nearEnemy.Y].Object is Station)
-                {
-                    Game.Instance().StationCapture((MapCells[nearEnemy.X, nearEnemy.Y].Object as Station).OwnerColor);
-                    (MapCells[nearEnemy.X, nearEnemy.Y].Object as Station).Capture(Game.Instance().CurrentPlayer.Color);
+                MoveShip(ChosenShip, nearEnemy, path.Count);
 
-                }
-                //!!!
+                if (MapCells[nearEnemy.X, nearEnemy.Y].Object is Station)
+                    CaptureStation(nearEnemy);
             }
 
             MapCells[nearEnemy.X, nearEnemy.Y].Ship.TurnState = TurnState.Finished;
@@ -233,7 +219,25 @@ namespace SpacePewPew.GameObjects.GameMap
                 MapCells[coord.X, coord.Y].Ship = null;
                 isDestroyed = true;
             }
-            var record = new AttackInfo {Damage = myDmg, IsDestroyed = isDestroyed, IsMineAttack = isAtkMine};
+
+            var record = new AttackInfo { Damage = myDmg, IsDestroyed = isDestroyed, IsMineAttack = isAtkMine };
+
+            if (attacker.Abilities != null)
+                foreach (var skill in attacker.Abilities)
+                {
+                    switch (skill)
+                    {
+                        case AbilityName.Corrosion:
+                            record.Debuff = AbilityName.Corrosion;
+                            target.Status.Add(new ActiveEffect
+                            {
+                                Name = EffectName.Corrosion,
+                                TurnsLeft = 5
+                            });
+                            break;
+                    }
+                }
+
             log.Add(record);
             return isDestroyed;
         }
@@ -242,6 +246,32 @@ namespace SpacePewPew.GameObjects.GameMap
 
         #region Extra Methods
 
+        private void MoveShip(Point from, Point to, int pathLength)
+        {
+            MapCells[to.X, to.Y].Ship = MapCells[from.X, from.Y].Ship;
+            MapCells[from.X, from.Y].Ship = null;
+
+            var ship = MapCells[to.X, to.Y].Ship;
+            ship.RemainedSpeed -= pathLength;
+            ship.TurnState = TurnState.InAction;
+
+            if (ship.RemainedSpeed == 0)
+            {
+                ship.TurnState = HasEnemyIn(GetShipsAround(to)) ? TurnState.InAction : TurnState.Finished;
+            }
+        }
+
+        private void CaptureStation(Point stationPoint)
+        {
+            var ship = GetShipFromPoint(stationPoint);
+
+            Game.Instance().StationCapture((MapCells[stationPoint.X, stationPoint.Y].Object as Station).OwnerColor);
+            (MapCells[stationPoint.X, stationPoint.Y].Object as Station).Capture(Game.Instance().CurrentPlayer.Color);
+
+            ship.RemainedSpeed = 0;
+            ship.TurnState = TurnState.Finished;
+        }
+
         public void PassTurnRefresh()
         {
             _activeSelectExists = false;
@@ -249,7 +279,7 @@ namespace SpacePewPew.GameObjects.GameMap
             Lightened = new List<Point>();
 
             var color = Game.Instance().CurrentPlayer.Color;
-            var ships = GetShipIterator(color);
+            var ships = GetShips(color);
 
             foreach (var ship in ships)
             {
@@ -328,6 +358,15 @@ namespace SpacePewPew.GameObjects.GameMap
                 for (var i = 0; i < MapCells.GetLength(0); i++)
                     if (MapCells[i,j].Ship == s)
                         return new Point(i,j);
+            return new Point(-1, -1);
+        }
+
+        public Point GetStationPosition(Station s)
+        {
+            for (var j = 0; j < MapCells.GetLength(1); j++)
+                for (var i = 0; i < MapCells.GetLength(0); i++)
+                    if (MapCells[i, j].Object is Station && (MapCells[i,j].Object as Station) == s)
+                        return new Point(i, j);
             return new Point(-1, -1);
         }
 
@@ -497,7 +536,7 @@ namespace SpacePewPew.GameObjects.GameMap
         #endregion
 
         #region Iterator
-        public IEnumerable<Ship> GetShipIterator(PlayerColor color)
+        public IEnumerable<Ship> GetShips(PlayerColor color)
         {
             var result = new List<Ship>();
             for (var i = 0; i < MapCells.GetLength(0); i++)
@@ -507,7 +546,7 @@ namespace SpacePewPew.GameObjects.GameMap
             return result;
         }
 
-        public IEnumerable<Ship> GetShipIterator()
+        public IEnumerable<Ship> GetShips()
         {
             for (var i = 0; i < MapCells.GetLength(0); i++)
                 for (var j = 0; j < MapCells.GetLength(1); j++)
@@ -515,19 +554,27 @@ namespace SpacePewPew.GameObjects.GameMap
                         yield return MapCells[i, j].Ship;
         }
 
-        /*public IEnumerable<Station> GetStationIterator(PlayerColor color)
+        public IEnumerable<Station> GetStations(PlayerColor color)
         {
             for (var i = 0; i < MapCells.GetLength(0); i++)
                 for (var j = 0; j < MapCells.GetLength(1); j++)
-                    if (MapCells[i,j].Obstacle is Station && (MapCells[i,j].Obstacle as Station).OwnerColor == color)
-                        yield return MapCells[i, j].Obstacle as Station;
-        }*/
+                    if (MapCells[i,j].Object is Station && (MapCells[i,j].Object as Station).OwnerColor == color)
+                        yield return MapCells[i, j].Object as Station;
+        }
+
+        public IEnumerable<Station> GetStations()
+        {
+            for (var i = 0; i < MapCells.GetLength(0); i++)
+                for (var j = 0; j < MapCells.GetLength(1); j++)
+                    if (MapCells[i, j].Object is Station)
+                        yield return MapCells[i, j].Object as Station;
+        }
 
         #endregion
 
         #region Ship Abilities' Implementation
 
-        public AbilityResult PerformAbility(AbilityName ability, Ship invokator)
+        private AbilityResult PerformAbility(AbilityName ability, Ship invokator)
         {
             var coords = GetShipCoordinates(invokator);
             return _abilities[ability].Perform(this, coords);
@@ -547,5 +594,56 @@ namespace SpacePewPew.GameObjects.GameMap
         }
 
         #endregion
+
+        public void HealDockedShips()
+        {
+            foreach (var station in GetStations())
+            {
+                var coord = GetStationPosition(station);
+                var ship = GetShipFromPoint(coord);
+
+                if (ship != null && ship.Color == Game.Instance().CurrentPlayer.Color && ship.Health < ship.MaxHealth)
+                    ship.Health += Consts.STATION_HEAL_POWER;
+
+                var result = new AbilityResult { Name = AbilityName.Heal };
+                result.Area.Add(coord);
+
+                Drawer.Instance().AddAbilityToDraw(result);
+            }
+        }
+
+        public void PerformShipAbilities()
+        {
+            foreach (var ship in GetShips().Where(ship => ship.Abilities != null
+                && ship.Color == Game.Instance().CurrentPlayer.Color))
+            {
+                foreach (var skill in ship.Abilities)
+                {
+                    Drawer.Instance().AddAbilityToDraw(PerformAbility(skill, ship));
+                }
+            }
+        }
+
+        public void CalculateShipEffects()
+        {
+            foreach (var ship in GetShips())
+            {
+                if (ship.Status == null)
+                    continue;
+
+                foreach (var effect in ship.Status)
+                {
+                    switch (effect.Name)
+                    {
+                        case EffectName.Corrosion:
+                            if (ship.Health > Consts.CORROSION_POWER)
+                                ship.Health -= Consts.CORROSION_POWER;
+                            else
+                                ship.Health = 1;
+                            break;
+                    }
+                }
+            }
+        }
     }
 }

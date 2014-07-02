@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using SpacePewPew.DataTypes;
+using SpacePewPew.GameObjects.Ships.ActiveEffects;
 
 namespace SpacePewPew.GameObjects.Ships
 {
@@ -44,6 +44,7 @@ namespace SpacePewPew.GameObjects.Ships
         public int Volleys { get; set; }
 
         public List<AbilityName> Abilities { get; set; }
+        public List<ActiveEffect> Status { get; set; }  
         #endregion
 
         public object Clone()

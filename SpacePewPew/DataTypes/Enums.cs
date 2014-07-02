@@ -10,7 +10,13 @@ namespace SpacePewPew.DataTypes
 
     public enum AbilityName
     {
-        Heal
+        Heal,
+        Corrosion
+    }
+
+    public enum EffectName
+    {
+        Corrosion
     }
 
     public enum DecisionType

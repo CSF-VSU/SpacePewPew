@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using SpacePewPew.GameLogic;
+using SpacePewPew.Properties;
 using SpacePewPew.UI.Controlling;
 
 namespace SpacePewPew
@@ -57,6 +58,11 @@ namespace SpacePewPew
         private void OGL_KeyUp(object sender, KeyEventArgs e)
         {
             //...
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            //Text = Resources.GetCaption;
         }
     }
 }
