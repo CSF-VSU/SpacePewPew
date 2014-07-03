@@ -49,3 +49,12 @@ D:\Studying\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.csprojResolveAssem
 D:\Studying\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.MainForm.resources
 D:\Studying\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.Properties.Resources.resources
 D:\Studying\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.csproj.GenerateResource.Cache
+C:\Users\РЕТ\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.exe
+C:\Users\РЕТ\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.pdb
+C:\Users\РЕТ\SpacePewPew\SpacePewPew\bin\Debug\SpacePewPew.exe
+C:\Users\РЕТ\SpacePewPew\SpacePewPew\bin\Debug\SpacePewPew.pdb
+C:\Users\РЕТ\SpacePewPew\SpacePewPew\bin\Debug\Tao.DevIl.xml
+C:\Users\РЕТ\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.csprojResolveAssemblyReference.cache
+C:\Users\РЕТ\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.MainForm.resources
+C:\Users\РЕТ\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.Properties.Resources.resources
+C:\Users\РЕТ\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.csproj.GenerateResource.Cache

@@ -13,5 +13,6 @@ namespace SpacePewPew.GameObjects.GameMap
         public bool IsLightened { get; set; }
         public Point Previous { get; set; }
         public bool Visited { get; set; }
+        public bool IsControlled { get; set; }
     }
 }

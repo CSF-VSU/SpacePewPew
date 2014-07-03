@@ -25,6 +25,7 @@ namespace SpacePewPew.GameObjects.GameMap
         public Cell[,] MapCells { get; set; }
         public List<Point> Lightened { get; set; }
         public Point ChosenShip { get; set; }
+        public List<Point> ControlledZones { get; set; }
         
         public Random Random { get; set; }
 
@@ -115,6 +116,7 @@ namespace SpacePewPew.GameObjects.GameMap
             }
             else
             {
+                SetControlledZones();
                 if (!HasShip(p))
                 {
                     return null;
@@ -139,6 +141,27 @@ namespace SpacePewPew.GameObjects.GameMap
 
             if (path == null)
                 return null;
+
+            //CONTROLLED ZONES
+            int counter = 0;
+            if (MapCells[ChosenShip.X, ChosenShip.Y].IsControlled)
+            {
+                path.RemoveRange(0, path.Count - 1);
+                p = new Point(path[0].X, path[0].Y);
+            }
+            else
+            {
+                for (int i = path.Count - 1; i > 0; i--)
+                {
+                    counter++;
+                    if (MapCells[path[i].X, path[i].Y].IsControlled)
+                    {
+                        path.RemoveRange(0, path.Count - counter);
+                        p = new Point(path[0].X, path[0].Y);
+                        break;
+                    }
+                }
+            }
 
             MoveShip(ChosenShip, p, path.Count);
 
@@ -246,6 +269,43 @@ namespace SpacePewPew.GameObjects.GameMap
 
         #region Extra Methods
 
+        public void SetControlledZones()
+        {
+            ControlledZones = new List<Point>();
+            Uncontrol();
+            List<Point> enemies = FindAllEnemies();
+            foreach (Point a in enemies)
+            {
+                List<Point> aroundEnemy = FindNeighbours(a);
+                aroundEnemy.Add(a);
+                foreach (Point t in aroundEnemy)
+                {
+                    ControlledZones.Add(t);
+                    MapCells[t.X, t.Y].IsControlled = true;
+                }
+            }
+        }
+
+        public void Uncontrol()
+        {
+            for (var i = 0; i < Consts.MAP_WIDTH; i++)
+                for (var j = 0; j < Consts.MAP_HEIGHT; j++)
+                    MapCells[i, j].IsControlled = false;
+        }
+
+        public List<Point> FindAllEnemies()
+        {
+            var res = new List<Point>();
+            for (var i = 0; i < Consts.MAP_WIDTH; i++)
+                for (var j = 0; j < Consts.MAP_HEIGHT; j++)
+                {
+                    var a = new Point(i, j);
+                    if (IsEnemy(a))
+                        res.Add(a);
+                }
+            return res;
+        }
+        
         private void MoveShip(Point from, Point to, int pathLength)
         {
             MapCells[to.X, to.Y].Ship = MapCells[from.X, from.Y].Ship;
@@ -301,6 +361,11 @@ namespace SpacePewPew.GameObjects.GameMap
         private bool IsNeighbourCellEmpty(Cell c)
         {
             return (!(c.Visited) && (c.Object == null || c.Object.IsPassable) && c.Ship == null);
+        }
+
+        private bool IsNeighbourCellNotControlled(Cell c)
+        {
+            return (!(c.Visited) && (c.Object == null || c.Object.IsPassable) && c.Ship == null && !(c.IsControlled));
         }
 
         public void BuildShip(Ship ship, Point coord)
