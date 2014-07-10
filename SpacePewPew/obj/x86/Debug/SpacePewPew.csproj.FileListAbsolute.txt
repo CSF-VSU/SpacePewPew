@@ -58,3 +58,13 @@ C:\Users\РЕТ\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.csprojResolveA
 C:\Users\РЕТ\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.MainForm.resources
 C:\Users\РЕТ\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.Properties.Resources.resources
 C:\Users\РЕТ\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.csproj.GenerateResource.Cache
+D:\Разное\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.exe
+D:\Разное\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.pdb
+D:\Разное\SpacePewPew\SpacePewPew\bin\Debug\SpacePewPew.exe
+D:\Разное\SpacePewPew\SpacePewPew\bin\Debug\SpacePewPew.pdb
+D:\Разное\SpacePewPew\SpacePewPew\bin\Debug\Tao.DevIl.xml
+D:\Разное\SpacePewPew\SpacePewPew\obj\x86\Debug\ResolveAssemblyReference.cache
+D:\Разное\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.MainForm.resources
+D:\Разное\SpacePewPew\SpacePewPew\obj\x86\Debug\SpacePewPew.Properties.Resources.resources
+D:\Разное\SpacePewPew\SpacePewPew\obj\x86\Debug\GenerateResource.read.1.tlog
+D:\Разное\SpacePewPew\SpacePewPew\obj\x86\Debug\GenerateResource.write.1.tlog

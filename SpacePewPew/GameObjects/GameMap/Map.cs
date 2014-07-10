@@ -143,27 +143,9 @@ namespace SpacePewPew.GameObjects.GameMap
                 return null;
 
             //CONTROLLED ZONES
-            int counter = 0;
-            if (MapCells[ChosenShip.X, ChosenShip.Y].IsControlled)
-            {
-                path.RemoveRange(0, path.Count - 1);
-                p = new Point(path[0].X, path[0].Y);
-            }
-            else
-            {
-                for (int i = path.Count - 1; i > 0; i--)
-                {
-                    counter++;
-                    if (MapCells[path[i].X, path[i].Y].IsControlled)
-                    {
-                        path.RemoveRange(0, path.Count - counter);
-                        p = new Point(path[0].X, path[0].Y);
-                        break;
-                    }
-                }
-            }
-
-            MoveShip(ChosenShip, p, path.Count);
+            
+            //
+            MoveShip(ChosenShip, ref p, path);
 
             if (MapCells[p.X, p.Y].Object is Station)
                 CaptureStation(p);
@@ -187,7 +169,7 @@ namespace SpacePewPew.GameObjects.GameMap
             {
                 nearEnemy = path[0];
 
-                MoveShip(ChosenShip, nearEnemy, path.Count);
+                MoveShip(ChosenShip, ref nearEnemy, path);
 
                 if (MapCells[nearEnemy.X, nearEnemy.Y].Object is Station)
                     CaptureStation(nearEnemy);
@@ -306,15 +288,38 @@ namespace SpacePewPew.GameObjects.GameMap
             return res;
         }
         
-        private void MoveShip(Point from, Point to, int pathLength)
+        private void MoveShip(Point from, ref Point to, List<Point> path)
         {
+            bool controlled = false;
+            int counter = 0;
+            {
+                for (int i = path.Count - 1; i > 0; i--)
+                {
+                    counter++;
+                    if (MapCells[path[i].X, path[i].Y].IsControlled)
+                    {
+                        path.RemoveRange(0, path.Count - counter);
+                        to = new Point(path[0].X, path[0].Y);
+                        controlled = true;
+                        break;
+                    }
+                }
+            }
+
             MapCells[to.X, to.Y].Ship = MapCells[from.X, from.Y].Ship;
             MapCells[from.X, from.Y].Ship = null;
 
             var ship = MapCells[to.X, to.Y].Ship;
-            ship.RemainedSpeed -= pathLength;
-            ship.TurnState = TurnState.InAction;
+            if (controlled)
+            {
+                ship.RemainedSpeed = 0;
+            }
+            else
+            {
+                ship.RemainedSpeed -= path.Count;
+            }
 
+            ship.TurnState = TurnState.InAction;
             if (ship.RemainedSpeed == 0)
             {
                 ship.TurnState = HasEnemyIn(GetShipsAround(to)) ? TurnState.InAction : TurnState.Finished;
@@ -485,6 +490,7 @@ namespace SpacePewPew.GameObjects.GameMap
 
         public List<Point> FindWay(Point startPoint, Point destination)
         {
+            bool controlled = MapCells[destination.X, destination.Y].IsControlled;
             var wayExists = false;
             var way = new List<Point>();
             int n = Consts.MAP_WIDTH, m = Consts.MAP_HEIGHT;
@@ -514,27 +520,54 @@ namespace SpacePewPew.GameObjects.GameMap
                     {
                         x = t.X;
                         y = t.Y;
-
-                        if (x == destination.X && y == destination.Y)
+                        if (controlled)
                         {
-                            if (IsNeighbourCellEmpty(MapCells[t.X, t.Y]) || MapCells[x, y].Ship != null)
+                            if (x == destination.X && y == destination.Y)
                             {
-                                MapCells[t.X, t.Y].Visited = true;
-                                MapCells[t.X, t.Y].Previous = new Point(oldX, oldY);
-                                q.Enqueue(new Point(t.X, t.Y));
-                                wayExists = true;
-                                isDone = true;
-                                break;
+                                if (IsNeighbourCellEmpty(MapCells[t.X, t.Y]) || MapCells[x, y].Ship != null)
+                                {
+                                    MapCells[t.X, t.Y].Visited = true;
+                                    MapCells[t.X, t.Y].Previous = new Point(oldX, oldY);
+                                    q.Enqueue(new Point(t.X, t.Y));
+                                    wayExists = true;
+                                    isDone = true;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                if (IsNeighbourCellEmpty(MapCells[t.X, t.Y]))
+                                {
+                                    MapCells[t.X, t.Y].Visited = true;
+                                    MapCells[t.X, t.Y].Previous = new Point(oldX, oldY);
+                                    wayExists = true;
+                                    q.Enqueue(new Point(t.X, t.Y));
+                                }
                             }
                         }
                         else
                         {
-                            if (IsNeighbourCellEmpty(MapCells[t.X, t.Y]))
+                            if (x == destination.X && y == destination.Y)
                             {
-                                MapCells[t.X, t.Y].Visited = true;
-                                MapCells[t.X, t.Y].Previous = new Point(oldX, oldY);
-                                wayExists = true;
-                                q.Enqueue(new Point(t.X, t.Y));
+                                if (IsNeighbourCellNotControlled(MapCells[t.X, t.Y]) || MapCells[x, y].Ship != null)
+                                {
+                                    MapCells[t.X, t.Y].Visited = true;
+                                    MapCells[t.X, t.Y].Previous = new Point(oldX, oldY);
+                                    q.Enqueue(new Point(t.X, t.Y));
+                                    wayExists = true;
+                                    isDone = true;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                if (IsNeighbourCellNotControlled(MapCells[t.X, t.Y]))
+                                {
+                                    MapCells[t.X, t.Y].Visited = true;
+                                    MapCells[t.X, t.Y].Previous = new Point(oldX, oldY);
+                                    wayExists = true;
+                                    q.Enqueue(new Point(t.X, t.Y));
+                                }
                             }
                         }
                     }
@@ -572,6 +605,7 @@ namespace SpacePewPew.GameObjects.GameMap
             {
                 var tmp = lightened.ToList();
                 foreach (var t in tmp)
+                    if (!(MapCells[t.X, t.Y].IsControlled))
                     LightNeighbours(ref lightened, t);
                 counter++;
                 if (counter >= speed)
